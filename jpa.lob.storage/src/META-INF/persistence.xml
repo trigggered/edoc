@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="jpa.lob.storage">
+	    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:jboss/datasources/OraDS</jta-data-source>
+		
+		<class>lob.storage.model.LobAttribute</class>
+		<class>lob.storage.model.LobContentType</class>
+		<class>lob.storage.model.LobDbStorage</class>
+		<class>lob.storage.model.LobFsStorage</class>
+		<class>lob.storage.model.LobLog</class>
+		<class>lob.storage.model.LobStorageType</class>
+		<class>lob.storage.model.LobVersion</class>				
+		
+		<properties>
+		    <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>	
+			
+		</properties>
+	</persistence-unit>
+</persistence>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="jpa.lob.storage" basedir="." default="default">
+<property name="src.dir" value="src" />
+<property name="build.dir" value="bin" />
+<property name="dest.dir" value="./../to deploy" />
+<property name="jar.filename" value="jpa.lob.storage.jar" />
+
+<property name="mdb.core.dir" value="./../mdb.core/WebContent/WEB-INF/lib" />
+
+<path id="compile.classpath">
+    <fileset dir="./../../lib">
+        <include name="**/*.jar" />
+        <include name="**/*.xml" />
+    </fileset>
+</path>
+
+<target name="default" depends="compile, buildjar,deploy, clean">
+</target>
+
+
+<target name="compile" description="Java compile">
+     <javac destdir="${build.dir}" classpathref="compile.classpath">
+          <src path="${src.dir}"/>
+     </javac>                         
+</target>
+
+
+ 
+<target name="buildjar" description="make jar file" depends="compile">
+                         <jar destfile="${jar.filename}">
+                                 <fileset dir="${build.dir}">
+                                        <include name="**/*.class"/>
+                                        <include name="**/*.xml"/>
+                                        <include name="**/*.properties"/>  
+                                 </fileset>
+                                 <!-- <fileset dir="${src.dir}" includes="**/*.java"/>  --> 
+                         </jar>
+</target>
+                 
+
+
+<target name="deploy">
+    <copy file="${jar.filename}" todir="${dest.dir}" />
+    
+    <copy file="${jar.filename}" todir="${mdb.core.dir}"/>
+    <!--         
+    <copy file="${jar.filename}" todir="${mdb.ui.dir}"/>       
+    <copy file="${jar.filename}" todir="${iopday.ui.dir}"/>
+    -->  
+</target>
+
+ <target name="clean" description="clean up">
+                         <echo>I'm cleaning up.</echo>
+                         <delete file="${jar.filename}"/>
+ </target>
+                 
+</project>
