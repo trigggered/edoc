@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="document.flow.ui" basedir="." default="default"> 
+<property name="src.dir" value="src" />
+<property name="build.dir" value="war" />
+
+<property name="war.filename" value="document.flow.ui.war" />
+
+<property name="jboss.home" value="/u01/app/jboss" />
+<property name="jboss.deployments.dir" value="${jboss.home}/standalone/deployments" />
+<property name="dest.dir" value="./../to deploy" />
+<property name="globallib.dir" value="./../../lib" />
+<property name="mdb.shared.dir" value="./../mdb.core.shared" />
+<property name="mdb.core.ui.dir" value="./../mdb.core.ui" />
+
+
+<property name="mdb.shared.filename" value="mdb.core.shared.jar" />
+<property name="mdb.core.ui.filename" value="mdb.core.ui.jar" />
+<property name="lib.dir" value="war/WEB-INF/lib" />
+<property name="classes.dir" value="war/WEB-INF/classes" />
+
+
+<path id="compile.classpath">
+	    <fileset dir="${globallib.dir}">
+	        <include name="**/*.jar" />
+	        <include name="**/*.xml" />
+	    </fileset>
+	
+    <fileset dir="${build.dir}/WEB-INF/lib">
+        <include name="**/*.jar" />
+        <include name="**/*.xml" />
+    </fileset>
+</path>
+
+<target name="default" depends="build-dependence,copy-dependence, gwtc, buildwar,deploy, jboss.deploy"> </target>
+<target name="to_deploy" depends="buildwar,deploy, jboss.deploy"> </target>
+<target name="default_wo_gwtc" depends="build-dependence,copy-dependence,buildwar,deploy, jboss.deploy"> </target>
+
+
+<target name="build-deploy-dependence" depends="build-dependence, copy-dependence">
+</target>
+
+<target name="build-dependence">
+    <subant target="default">
+      <fileset dir="${mdb.shared.dir}" includes="build.xml"/>
+      <fileset dir="${mdb.core.ui.dir}" includes="build.xml"/>      
+    </subant>
+</target>
+
+<target name="copy-dependence">
+    <copy file="${dest.dir}/${mdb.shared.filename}" todir="${lib.dir}" />       
+    <copy file="${dest.dir}/${mdb.core.ui.filename}" todir="${lib.dir}" />    
+</target>
+
+
+<target name="onlybuildwar" depends="buildwar, deploy">
+</target>
+
+<target name="gwtc" description="GWT compile to JavaScript">    
+    <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+        <classpath>
+            <pathelement location="${src.dir}" />
+            <path refid="compile.classpath" />
+        </classpath>
+        <arg line="-logLevel INFO" />
+        <jvmarg value="-Xmx1024M" />
+        <arg value="document.ui.DocumentsUI" />
+    </java>
+</target>
+ 
+<target name="buildwar">
+    <war basedir="war" destfile="${war.filename}" webxml="war/WEB-INF/web.xml">
+        <exclude name="WEB-INF/**" />
+        <exclude name="**/*.log" />
+        <webinf dir="war/WEB-INF/">
+            <include name="**/gwt-servlet.jar" />
+            <include name="**/mdb.core.shared.jar" />
+            <include name="**/mdb.core.ui.jar" />
+
+            <include name="**/gson-2.2.2.jar" />
+            <include name="**/commons-logging-1.1.3.jar"/>            
+            
+             <include name="**/spring**" />
+             <include name="**/aopalliance**" /> 
+            <include name="**/classes/**" />
+            <include name="**/applicationContext.xml"/>       
+            <include name="**/jboss-deployment-structure.xml"/> 
+            <include name="**/commons-fileupload-1.3.jar"/>
+        </webinf>       
+    </war>    
+</target>
+
+
+<target name="deploy">
+    <copy file="${war.filename}" todir="${dest.dir}" />
+</target>
+
+<target name="jboss.deploy">
+    <delete file="${jboss.deployments.dir}/${war.filename}.deployed"/>    	
+    <copy file="${war.filename}" todir="${jboss.deployments.dir}" />    
+    <delete file="${war.filename}"  />
+    
+</target>
+
+
+</project>

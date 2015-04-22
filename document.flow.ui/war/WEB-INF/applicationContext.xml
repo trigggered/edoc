@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+    
+ <beans:bean id="customAuthListener" class="document.ui.server.auth.CustomAuthListener"/>
+         
+ <beans:bean id="userDetailsContextMapper"
+	class="document.ui.server.auth.ldap.AttributesLDAPUserDetailsContextMapper"/>
+
+    <!-- LDAP server details --> 
+   <authentication-manager>
+     <authentication-provider ref="adAuthenticationProvider" />
+   </authentication-manager>
+       
+   
+     <beans:bean id="adAuthenticationProvider"
+         class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
+         <!-- class="document.ui.server.auth.ad.CustomAdAuthenticationProvider"> -->        			         	
+    <beans:constructor-arg value="bnppua.net.intra" />
+    <!--  <beans:constructor-arg value="ldap://msf-iev-bnppua-11.ns.ua.net.intra/" />-->
+     <beans:constructor-arg value="ldap://10.91.63.26" />
+     <beans:property name="userDetailsContextMapper" ref="userDetailsContextMapper" />
+    </beans:bean>
+    
+
+   
+    <http auto-config="true" pattern="/**">
+        <!-- Login pages -->
+
+         <form-login default-target-url="/index.html"            		
+            		login-page="/pages/loginPage.jsp"            		 
+            		login-processing-url="/login"
+            		authentication-failure-url="/pages/loginPage.jsp?auth=fail"/>         
+        
+        <logout logout-url="/logout" logout-success-url="/pages/loginPage.jsp" delete-cookies="JSESSIONID"  invalidate-session="true"/>      
+        
+         
+            
+        <!-- Security zones -->
+       
+       <!-- 
+        <intercept-url pattern="/document.flow.ui/**" access="ROLE_USER"/>
+        <intercept-url pattern="/gwt/**" access="ROLE_USER"/>        
+        <intercept-url pattern="/**/*.html" access="ROLE_USER"/>      
+       -->
+        
+        <intercept-url pattern="/document.flow.ui/**" access="IS_AUTHENTICATED_FULLY"/>
+        <intercept-url pattern="/gwt/**" access="IS_AUTHENTICATED_FULLY"/>        
+        <intercept-url pattern="/**/*.html" access="IS_AUTHENTICATED_FULLY"/>
+        
+        <intercept-url pattern="/pages/loginPage.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" />         
+        <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        
+    </http>
+
+</beans:beans>
