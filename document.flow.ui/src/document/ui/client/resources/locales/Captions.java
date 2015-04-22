@@ -3,7 +3,6 @@
  */
 package document.ui.client.resources.locales;
 
-import com.google.gwt.core.client.JavaScriptObject;
 
 
 /**
@@ -20,7 +19,7 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	public static final String ON_APPROOVAL =  "На согласование" ;
 	public static final String ON_SIGN =  "На подпись" ;
 	public static final String SIGN = "Подписать" ;
-	
+		
 	public static final String Q_ADD_TO_FAVORIT = "Добавить документ в избранное";
 
 	public static final String TO_REVOKE_STATUS = "Отозвать";

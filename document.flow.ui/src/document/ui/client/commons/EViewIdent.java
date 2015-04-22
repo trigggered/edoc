@@ -38,6 +38,8 @@ public enum EViewIdent {
 	SignatoryAssists,
 	DicBA, 
 	DicRegions,
+	DicBAGrEmp,
+	DicGrEmp,
 	
 	/*Security*/		
 	RoleActions,

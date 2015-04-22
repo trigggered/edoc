@@ -110,7 +110,8 @@ insert into mdb.app_menu (id_menu_parent, id_app, name)
   insert into mdb.app_menu (id_menu_parent, id_app, name, action)
     values (l_menuId, l_appId, 'Избранные сотрудники', 'FavoritesEmp') ;
     
-          
+ insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
+     values (l_menuId, l_appId, 'Избрынные получатели - исполнители ','DicGrEmp');            
   
 	
   
@@ -131,6 +132,9 @@ insert into mdb.app_menu (id_menu_parent, id_app, name)
   values (l_menuId, l_appId, 'Справочники БА') returning id_menu  into l_menuId1;
   
   
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
+     values (l_menuId1, l_appId, 'Группы получателей - исполнителей ','DicBAGrEmp');   
+     
         
     insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
      values (l_menuId1, l_appId, 'Подписанты и  ассистенты','SignatoryAssists');   

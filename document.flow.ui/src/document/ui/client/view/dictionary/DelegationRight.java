@@ -3,7 +3,6 @@
  */
 package document.ui.client.view.dictionary;
 
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import mdb.core.ui.client.data.impl.ViewDataConverter;
@@ -15,7 +14,6 @@ import mdb.core.ui.client.view.data.grid.MasterDetailGridView;
 import mdb.core.ui.client.view.dialogs.SelectDialog;
 
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 import document.ui.client.commons.EViewIdent;
 import document.ui.client.resources.locales.Captions;
@@ -30,12 +28,7 @@ public class DelegationRight extends MasterDetailGridView {
 	
 	private static final Logger _logger = Logger
 			.getLogger(DelegationRight.class.getName());
-	//final static int MASTER_ENTITY_ID =  MdbEntityConst.DicSignatories;
-	/*
-	final static int MASTER_ENTITY_ID =  MdbEntityConst.DicSignatories;
-	final static int DETAILE_ENTITY_ID =  MdbEntityConst.DicSignatoriesAssist ;
-	
-	*/
+
 	final static int MASTER_ENTITY_ID =  MdbEntityConst.DelegationHow;
 	final static int DETAILE_ENTITY_ID =  MdbEntityConst.DelegationTo ;
 	private int _whatDelegation=0;
@@ -56,16 +49,11 @@ public class DelegationRight extends MasterDetailGridView {
 		case SignatoryAssists:
 			_whatDelegation = 1;
 			setCaption(Captions.DELEGATION_SIGN);
-			/*
-			 setMainEntityId(  MdbEntityConst.DicSignatories);
-			 setDetalEntityId(  MdbEntityConst.DicSignatoriesAssist);
-			 */
 			break;
 		case ApprovalAssists:
 			_whatDelegation = 2;
-			setCaption(Captions.DELEGATION_APPROVAL);			
-			/*setMainEntityId(  MdbEntityConst.DelegationHow);
-			 setDetalEntityId(  MdbEntityConst.DelegationTo);-*/
+			setCaption(Captions.DELEGATION_APPROVAL);		
+			
 			break;
 		}
 		
@@ -156,18 +144,13 @@ public class DelegationRight extends MasterDetailGridView {
 	}
 	
 
-	protected HashMap<String,String>  getDetaileReqParams(ListGridRecord masterSelectedData) {
-		HashMap<String,String> toReturn = null;
-		if (masterSelectedData !=null) {	
-			String masterId = masterSelectedData.getAttribute(_relationField);				
-		 
-			toReturn = new HashMap<String,String>();
-			toReturn.put(_relationField,masterId);
-		}
-		return toReturn;
-	}
-	
-		
+	/* (non-Javadoc)
+	 * @see mdb.core.ui.client.view.data.grid.MasterDetailGridView#getRelationField()
+	 */
+	@Override
+	protected String getRelationField() {
+		return _relationField;
+	}		
 	
 		
 	

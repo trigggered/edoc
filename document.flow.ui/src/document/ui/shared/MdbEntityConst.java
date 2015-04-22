@@ -111,5 +111,8 @@ public class MdbEntityConst {
 
 	public static final int DOC_PUBLISHED = 5409;
 	
+	public static final int DIC_FAV_GR_EMP = 5429;
+	public static final int DIC_FAV_EMP =5430;		
+	
 }
 
