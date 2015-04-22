@@ -3,22 +3,18 @@
  */
 package document.ui.client.view.dictionary.ent;
 
-import java.util.HashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mdb.core.ui.client.events.ICallbackEvent;
+import mdb.core.ui.client.view.data.grid.GridView;
+import mdb.core.ui.client.events.IDataEditHandler;
+import mdb.core.ui.client.view.data.grid.ListOfGrids;
+import mdb.core.ui.client.view.data.grid.MasterDetailGridView;
+
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 import document.ui.client.view.dialogs.EmpSelectDlg;
 import document.ui.shared.MdbEntityConst;
-import mdb.core.ui.client.data.impl.ViewDataConverter;
-import mdb.core.ui.client.events.ICallbackEvent;
-import mdb.core.ui.client.events.IDataEditHandler;
-import mdb.core.ui.client.view.data.grid.GridView;
-import mdb.core.ui.client.view.data.grid.ListOfGrids;
-import mdb.core.ui.client.view.data.grid.MasterDetailGridView;
-import mdb.core.ui.client.view.dialogs.SelectDialog;
 
 /**
  * @author azhuk
@@ -104,5 +100,6 @@ public class DicFavEmployeeGr extends MasterDetailGridView {
 			}
 		});			
 	}	
+
 	
 }

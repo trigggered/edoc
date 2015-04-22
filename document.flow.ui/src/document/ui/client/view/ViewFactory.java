@@ -361,7 +361,10 @@ public class ViewFactory {
 			break;
 		case DocumentCard:
 			view.setCaption(Captions.DOC_CARD);			
-			break;		
+			break;
+		case DicBAGrEmp:
+			view.setCaption(Captions.DIC_FAV_GR_EMP);
+			break;
 		default:
 			break;				
 		}  

@@ -143,6 +143,7 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	public static final String Q_TO_CANCEL_STATUS = "Перевести в статус \"Отмененный\"?";
 	
 	public static final String PROCESS_APP_SIGN_STOP = "Согласование/подписание документа остановлено!";
-	public static final String DOC_PUBLISHED = "Опубликованные";		
+	public static final String DOC_PUBLISHED = "Опубликованные";
+	public static final String DIC_FAV_GR_EMP = "Избранные группы сотрудников";		
 	
 }
