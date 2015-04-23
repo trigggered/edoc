@@ -5,7 +5,6 @@ package document.ui.server.auth.ad;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Logger;
 
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,9 +17,6 @@ import org.springframework.security.core.GrantedAuthority;
 public class CustomAdAuthenticationProvider extends ActiveDirectoryLdapAuthenticationProvider {
 	
 
-	private static final Logger _logger = Logger
-			.getLogger(CustomAdAuthenticationProvider.class.getName());
-	
 	/**
 	 * @param domain
 	 * @param url
@@ -33,7 +29,8 @@ public class CustomAdAuthenticationProvider extends ActiveDirectoryLdapAuthentic
 	 @Override
 	   protected Collection<? extends GrantedAuthority> loadUserAuthorities(DirContextOperations userData, String username, String password) {
 		 
-		 ArrayList<GrantedAuthority> authorities = (ArrayList<GrantedAuthority>) super.loadUserAuthorities(userData, username, password);
+		 @SuppressWarnings("unchecked")
+		ArrayList<GrantedAuthority> authorities = (ArrayList<GrantedAuthority>) super.loadUserAuthorities(userData, username, password);
 		
 		 
 		 /*		 

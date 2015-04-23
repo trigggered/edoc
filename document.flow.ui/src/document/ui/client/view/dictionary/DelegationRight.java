@@ -14,6 +14,7 @@ import mdb.core.ui.client.view.data.grid.MasterDetailGridView;
 import mdb.core.ui.client.view.dialogs.SelectDialog;
 
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.grid.ListGrid;
 
 import document.ui.client.commons.EViewIdent;
 import document.ui.client.resources.locales.Captions;
@@ -52,8 +53,9 @@ public class DelegationRight extends MasterDetailGridView {
 			break;
 		case ApprovalAssists:
 			_whatDelegation = 2;
-			setCaption(Captions.DELEGATION_APPROVAL);		
-			
+			setCaption(Captions.DELEGATION_APPROVAL);
+			break;
+		default:
 			break;
 		}
 		
@@ -150,6 +152,14 @@ public class DelegationRight extends MasterDetailGridView {
 	@Override
 	protected String getRelationField() {
 		return _relationField;
+	}
+
+	/* (non-Javadoc)
+	 * @see mdb.core.ui.client.view.data.IListDataView#getListGrid()
+	 */
+	@Override
+	public ListGrid getListGrid() {
+		return getMaster().getListGrid();
 	}		
 	
 		

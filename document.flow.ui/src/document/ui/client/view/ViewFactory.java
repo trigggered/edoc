@@ -19,7 +19,6 @@ import document.ui.client.commons.EViewIdent;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.resources.locales.Images;
 import document.ui.client.view.dictionary.DictionaryViewFactory;
-import document.ui.client.view.dictionary.ent.DicFavEmployeeGr;
 import document.ui.client.view.dictionary.ent.MapListOfDepartments;
 import document.ui.client.view.doc.DocumentsOfDay;
 import document.ui.client.view.doc.DocumentsTreeInOut;
@@ -62,15 +61,11 @@ public class ViewFactory {
 	  case SAP_HR_PERS_ORGEH:
 	  case SAP_HR_PERS_WERKS:
 	  case CodeDocReserv:
+	  case DicBAGrEmp:  
+	  case DicGrEmp:
 		  return DictionaryViewFactory.create(viewIdent);
 		  
-	  case DicBAGrEmp:
-		  return new DicFavEmployeeGr();
-		  
-	  case DicGrEmp:
-		  return null;		
-		  
-		 
+	   
 	  case MapListOfDepartments:
 		  return new MapListOfDepartments();		  
 	  case Home:

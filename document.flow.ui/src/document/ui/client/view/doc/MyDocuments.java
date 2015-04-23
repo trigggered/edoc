@@ -3,7 +3,6 @@
  */
 package document.ui.client.view.doc;
 
-import java.util.logging.Logger;
 
 import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.data.bind.DataBindException;
@@ -46,15 +45,7 @@ public class MyDocuments extends DataView{
 			 
 		 }
 	}
-	
-	private static final Logger _logger = Logger.getLogger(MyDocuments.class
-			.getName());
-
-	
 		
-	private  final int ENTITY_ID_FOR_APPROVAL=MdbEntityConst.MY_DOC_FOR_APPROVAL;
-	//private  final int ENTITY_ID_FOR_EXEC_INFORM=MdbEntityConst.MY_DOC_EXEC_INFORM;	
-	
 	GridView _grForExecution;
 	GridView _grForSigning;
 	GridView _grForApproval; 

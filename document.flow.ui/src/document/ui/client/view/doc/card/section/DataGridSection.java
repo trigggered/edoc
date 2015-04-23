@@ -14,6 +14,7 @@ import mdb.core.ui.client.events.IDataEditHandler;
 import mdb.core.ui.client.view.data.grid.GridView;
 import mdb.core.ui.client.view.dialogs.SelectDialog;
 import mdb.core.ui.client.view.dialogs.edit.EditDialog;
+import mdb.core.ui.client.view.dialogs.select.MultiStepSelectDialog;
 import mdb.core.ui.client.view.utils.DateTimeHelper;
 
 import com.smartgwt.client.data.Criteria;
@@ -102,7 +103,7 @@ public class DataGridSection extends GridView implements IRemoteDataSave{
 		@Override
 		public void onEdit(Record record) {
 			
-			EmpSelectDlg.view(_selectedListEntityId,true, new ICallbackEvent<Record[]>() {
+			MultiStepSelectDialog.view(_selectedListEntityId,true, new ICallbackEvent<Record[]>() {
 				
 				@Override
 				public void doWork(Record[] data) {

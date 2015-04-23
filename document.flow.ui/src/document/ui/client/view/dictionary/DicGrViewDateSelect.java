@@ -5,7 +5,6 @@ package document.ui.client.view.dictionary;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.logging.Logger;
 
 import mdb.core.ui.client.command.ICommand;
 import mdb.core.ui.client.view.components.menu.IMenuButtons;
@@ -30,15 +29,13 @@ public class DicGrViewDateSelect extends DictionaryGridView {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final Logger _logger = Logger
-			.getLogger(DicGrViewDateSelect.class.getName());
-	
 	protected Date _dateB;
 	protected Date _dateE;
 	
 	class MenuDateSelect extends mdb.core.ui.client.view.components.menu.Menu {
 		
 	
+		@SuppressWarnings("serial")
 		public MenuDateSelect() {
 			super("MenuDateSelect");
 			

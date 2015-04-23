@@ -3,17 +3,20 @@
  */
 package document.ui.client.view.dictionary.ent;
 
-import java.util.logging.Logger;
-
+import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.events.ICallbackEvent;
-import mdb.core.ui.client.view.data.grid.GridView;
 import mdb.core.ui.client.events.IDataEditHandler;
+import mdb.core.ui.client.view.data.grid.GridView;
 import mdb.core.ui.client.view.data.grid.ListOfGrids;
 import mdb.core.ui.client.view.data.grid.MasterDetailGridView;
+import mdb.core.ui.client.view.dialogs.edit.EditDialog;
+import mdb.core.ui.client.view.dialogs.select.MultiStepSelectDialog;
 
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.grid.ListGrid;
 
-import document.ui.client.view.dialogs.EmpSelectDlg;
+import document.ui.client.commons.EViewIdent;
+import document.ui.client.resources.locales.Captions;
 import document.ui.shared.MdbEntityConst;
 
 /**
@@ -22,14 +25,17 @@ import document.ui.shared.MdbEntityConst;
  *
  */
 public class DicFavEmployeeGr extends MasterDetailGridView {
-	private static final Logger _logger = Logger
-			.getLogger(DicFavEmployeeGr.class.getName());
+	//private static final Logger _logger = Logger.getLogger(DicFavEmployeeGr.class.getName());
 
+	private EViewIdent _viewIdent;	
 	private final String RELATION_FIELD= "ID_FAV_GR_EMP";
-	
-	public DicFavEmployeeGr() {
+		
+	public DicFavEmployeeGr(	EViewIdent viewIdent	) {
+		_viewIdent = viewIdent;		
 		setMainEntityId(MdbEntityConst.DIC_FAV_GR_EMP );
 	}
+	
+	
 	/* (non-Javadoc)
 	 * @see mdb.core.ui.client.view.data.grid.MasterDetailGridView#getMaster()
 	 */
@@ -73,11 +79,32 @@ public class DicFavEmployeeGr extends MasterDetailGridView {
 		super.createComponents();
 		setSingleInstance(true);		
 		
+		if (_viewIdent == EViewIdent.DicGrEmp){
+			getParams().add("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()) );
+		}
+		
+		
+		getMaster().addInsertEvent(new IDataEditHandler() {
+			
+			@Override
+			public void onEdit(Record record) {
+				
+				Record initRecord =  null;
+			
+				if (_viewIdent == EViewIdent.DicBAGrEmp ) {
+					initRecord =  new Record();					
+					initRecord.setAttribute("OWN_OFFICER_NUM", 
+							AppController.getInstance().getCurrentUser().getId());					
+				}		
+				EditDialog.viewForNewRecord(getMaster().getMainDataSource(), initRecord,null);					
+			}
+		});
+		
 		
 		getDetail().addInsertEvent(new IDataEditHandler() {				
 			@Override
 			public void onEdit(Record record) {
-				EmpSelectDlg.view(MdbEntityConst.AddDocRecipients,true, new ICallbackEvent<Record[]>() {
+				MultiStepSelectDialog.view(MdbEntityConst.AddDocRecipients,true, new ICallbackEvent<Record[]>() {
 					
 					@Override
 					public void doWork(Record[] data) {
@@ -90,8 +117,7 @@ public class DicFavEmployeeGr extends MasterDetailGridView {
 							newRecord.setAttribute("NAME", rec.getAttribute("NAME"));
 							
 							String relId = getMaster().getSelectedRecord().getAttribute(getRelationField());							
-							newRecord.setAttribute(getRelationField(), relId );
-													 											
+							newRecord.setAttribute(getRelationField(), relId );													 											
 							
 							getDetail().getListGrid().getDataSource().addData(newRecord);					
 						}
@@ -99,7 +125,19 @@ public class DicFavEmployeeGr extends MasterDetailGridView {
 				});	 					
 			}
 		});			
-	}	
-
+	}
+	
+	
+	
+	@Override
+	public String getCaption() {
+		return Captions.DIC_FAV_GR_EMP;		
+	}
+	
+	@Override
+	public  ListGrid getListGrid() {
+		return getDetail().getListGrid();		
+	}
+	
 	
 }

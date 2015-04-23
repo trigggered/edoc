@@ -348,6 +348,7 @@ public class DataFieldsSection extends DataView implements IRemoteDataSave{
 
 	@Override
 	public boolean isHaseChanges() {		
+		@SuppressWarnings("rawtypes")
 		Map changetValues = _editDialog.getDataForm().getChangedValues();
 		return changetValues == null || changetValues.size() >0;
 	}

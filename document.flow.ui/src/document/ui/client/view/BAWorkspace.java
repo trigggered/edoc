@@ -63,6 +63,7 @@ public class BAWorkspace extends DataView {
 	
 	class MenuDocInFlow extends mdb.core.ui.client.view.components.menu.Menu {
 		
+		@SuppressWarnings("serial")
 		public MenuDocInFlow() {
 			super("MenuDocInFlow");
 			

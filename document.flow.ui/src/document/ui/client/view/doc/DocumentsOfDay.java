@@ -28,6 +28,7 @@ import com.smartgwt.client.widgets.layout.SectionStackSection;
 
 
 
+
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.doc.card.DocumentCard;
 import document.ui.shared.MdbEntityConst;
@@ -92,6 +93,7 @@ public class DocumentsOfDay extends DataView{
 	}
 
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void createMenu() {
 		

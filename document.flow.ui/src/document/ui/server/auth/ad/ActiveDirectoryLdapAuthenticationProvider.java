@@ -219,7 +219,7 @@ public  class ActiveDirectoryLdapAuthenticationProvider extends AbstractLdapAuth
     }
 
     void raiseExceptionForErrorCode(int code, NamingException exception) {
-        String hexString = Integer.toHexString(code);
+        //String hexString = Integer.toHexString(code);
         //Throwable cause = new ActiveDirectoryAuthenticationException(hexString, exception.getMessage(), exception);
         Throwable cause = new Exception(exception.getMessage());
         switch (code) {
