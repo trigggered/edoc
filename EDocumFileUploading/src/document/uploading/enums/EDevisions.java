@@ -121,9 +121,7 @@ public enum  EDevisions {
 	}
 	
 	public static EDevisions parseString (String value) {
-		EDevisions toReturn = null;
-		
-		 String[] ar = value.split("-");
+		String[] ar = value.split("-");
 		 if ( ar.length >0 ) {			 
 			 return fromString(ar[0].trim());			 
 		 }
