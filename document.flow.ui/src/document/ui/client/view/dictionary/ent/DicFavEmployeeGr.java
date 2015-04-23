@@ -101,9 +101,18 @@ public class DicFavEmployeeGr extends MasterDetailGridView {
 		});
 		
 		
+		
 		getDetail().addInsertEvent(new IDataEditHandler() {				
 			@Override
 			public void onEdit(Record record) {
+				
+				if (_viewIdent == EViewIdent.DicGrEmp &&  
+						getSelectedRecord().getAttributeAsInt(getRelationField()) ==1 ) {					
+					
+					return;
+				}
+				
+				
 				MultiStepSelectDialog.view(MdbEntityConst.AddDocRecipients,true, new ICallbackEvent<Record[]>() {
 					
 					@Override
