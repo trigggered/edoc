@@ -3,8 +3,6 @@
  */
 package document.ui.client.view.dialogs;
 
-import java.util.logging.Logger;
-
 import com.smartgwt.client.data.Record;
 
 import document.ui.client.resources.locales.Captions;
@@ -24,7 +22,6 @@ import mdb.core.ui.client.view.dialogs.select.MultiStepSelectDialog;
  */
 public class EmpSelectDlg extends MultiStepSelectDialog{
 	
-	private static final Logger _logger = Logger.getLogger(EmpSelectDlg.class.getName());
 	
 	class EmpSelectedGrid  extends GridView {
 		/* (non-Javadoc)
@@ -67,13 +64,11 @@ public class EmpSelectDlg extends MultiStepSelectDialog{
 		
 	}
 
-	public static void view (int entityId, boolean isCanMultiSelect, ICallbackEvent<Record[]>  callbackEvent) {
-		
+	public static void view (int entityId, boolean isCanMultiSelect, ICallbackEvent<Record[]>  callbackEvent) {		
 		SelectDialog dlg = new EmpSelectDlg(entityId, isCanMultiSelect, callbackEvent);
 		dlg.callRequestData();
 		
-		dlg.show();	
-		
+		dlg.show();		
 	}
 	
 	@Override

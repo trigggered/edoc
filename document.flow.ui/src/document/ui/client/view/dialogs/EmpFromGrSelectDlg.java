@@ -3,7 +3,6 @@
  */
 package document.ui.client.view.dialogs;
 
-import java.util.logging.Logger;
 
 import mdb.core.ui.client.events.ICallbackEvent;
 import mdb.core.ui.client.view.data.IListDataView;
@@ -21,8 +20,6 @@ import document.ui.client.view.dictionary.ent.DicFavEmployeeGr;
  *
  */
 public class EmpFromGrSelectDlg extends MultiStepSelectDialog {
-	private static final Logger _logger = Logger
-			.getLogger(EmpFromGrSelectDlg.class.getName());
 	
 	/**
 	 * @param entityId
