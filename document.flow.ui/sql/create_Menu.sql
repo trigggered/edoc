@@ -217,6 +217,8 @@ insert into mdb.app_menu (id_menu_parent, id_app, name)
   insert into mdb.app_menu (id_menu_parent, id_app, name,action)
     values (l_menuId2, l_appId,'Должности SAP', 'SAPJobs');     
   
+  
+  
   /*ORG UNIT*/
 
   /*  

@@ -71,4 +71,23 @@ public enum EDocStatus {
 		}
 	}
 	
+	public String toString() {			
+		switch (_value ) {
+			case 0: return "";
+			case 1: return "На исполнении";		
+			case 2: return "Отправлен ответ";
+			case 3: return "Отправлен ответ";
+			case 4: return "Проект документа";			
+			case 5: return "На согласовании";
+			case 6: return "Cогласованный";
+			case 7: return "На подписании";
+			case 8: return "Подписанный";
+			case 9: return "Действующий";
+			case 10: return "Отозванный";
+			case 11: return  "Отмененный";
+			
+			default:
+				return "";
+		}
+	}
 }

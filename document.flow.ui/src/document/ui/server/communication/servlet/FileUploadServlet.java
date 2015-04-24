@@ -28,6 +28,7 @@ import document.ui.server.communication.rpc.mail.MailingServiceImp;
 import document.ui.server.communication.rpc.mdbgw.MdbGatewayServiceImpl;
 import document.ui.server.fileupload.MemoryFileItemFactory;
 import document.ui.server.fileupload.UploadFileWriter;
+import document.ui.server.mail.EMailType;
 import document.ui.shared.MdbEntityConst;
 
 /**
@@ -162,17 +163,9 @@ public class FileUploadServlet extends HttpServlet {
 	 
 	 
 	 private void sendInfoMsgAboutNewVersion (long documentId, String attachmentName ) {
-		 MailingServiceImp maling = new MailingServiceImp();
+		 MailingServiceImp maling = new MailingServiceImp();		 		
+		  maling.sendInfoMessageTo(EMailType.ToAcceptingNewVersion, documentId, attachmentName);			 			
 		 
-		 HashMap<String, String>  info = DocumentFlowServiceImpl.getDocumentFlowInfo (documentId) ;
-		 
-		 	String procDeadline = info.get("DEADLINE");			
-			String docTypeName = info.get("CORR_TYPE_FULL");
-			String docName = info.get("NAME");
-			String author = info.get("EMP_AUTHOR");
-			
-			
-		 maling.sendInfoMsgAboutNewVersion(documentId, procDeadline, author, docTypeName, docName, attachmentName);
 	 }
 
     

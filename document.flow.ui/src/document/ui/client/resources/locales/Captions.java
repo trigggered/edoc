@@ -145,6 +145,9 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	public static final String PROCESS_APP_SIGN_STOP = "Согласование/подписание документа остановлено!";
 	public static final String DOC_PUBLISHED = "Опубликованные";
 	public static final String DIC_FAV_GR_EMP = "Избранные группы сотрудников";
-	public static final String Dictionary = "Справочник";		
+	public static final String Dictionary = "Справочник";
+	public static final String Q_SEND_REMEMBER_BY_DOC_TO_APPROVAL = "Направить напомнание о согласовантам?";
+	public static final String SEND_REMEMBER_TO_APPROVAL = "Напомнить согласовантам";
+	public static final String ONLY_AUTHOR_CAN_SEND_REMEMBER = "Только автор в статусе \"На согласовании\" может отправить напоминание";		
 	
 }

@@ -19,8 +19,12 @@ import mdb.core.shared.transformation.impl.ResultSetToJSONTransformation;
 import mdb.core.shared.transport.IRequestData;
 import mdb.core.shared.transport.IRequestData.ExecuteType;
 import mdb.core.shared.transport.Request;
+import document.ui.client.commons.EDocStatus;
 import document.ui.server.communication.rpc.flow.DocumentFlowServiceImpl.EFlowStage;
 import document.ui.server.communication.rpc.mdbgw.MdbRequester;
+import document.ui.server.mail.EMailType;
+import document.ui.server.mail.FlowMsgBuilder;
+import document.ui.server.mail.Message;
 import document.ui.shared.MdbEntityConst;
 
 
@@ -42,17 +46,7 @@ public class MailingServiceImp  {
 	Properties _mailProp;
 	List<String> _noMailFldList = new ArrayList<String>();  
 	
-	enum EEMailType{
-		EmailToAccepting,
-		EmailToSignatory,
-		EmailToRecipients,
-		EmailToExecutor,
-		CancelPublishEmailToAuthor, 
-		CancelSignEmailToAuthor,
-		CancelApprovalEmailToAuthor,		
-		EmailToAcceptingNewVersion,
-		DocumentPublished
-	}
+	FlowMsgBuilder _floMsgBuilder;
 	
 	public MailingServiceImp()  {
 		_logger.info("Try load Properties file "); 
@@ -62,290 +56,53 @@ public class MailingServiceImp  {
 			
 			fillNoMailingEmpList();
 		}
+		
+		_floMsgBuilder = new FlowMsgBuilder(_mailProp, _noMailFldList);
 	}
 	
 
-	private void sendInfoMessageTo(EEMailType mailType, long documentId,
-			String procDeadline, String author, String docTypeName,String docName ,String description) {
-	
-		String addFrom =_mailProp.getProperty("addrFrom");  
-		_logger.info("Addr from "+addFrom);
-		String subj = buildMailSubj(documentId, mailType );
-		_logger.info("Subject is :" + subj);
+	public  void sendInfoMessageTo(EMailType mailType, long documentId, String infoMessage) {	
 		
-		String content = buildMailContent(mailType, documentId ,procDeadline ,author,docTypeName,docName,  description) ;
-		_logger.info("Content is " + content);
-		
-		
-		String[]  recipients = getRecipientsAddr (mailType, documentId);
-		
-		_logger.info("Recipients is " + Arrays.toString(recipients));
-		
-				
-		
-		sendMessage (recipients, addFrom, subj, content );		
-		
+		Message msg = _floMsgBuilder.createMessage(mailType, documentId, infoMessage);
+		sendMessage(msg);				
 	}
 	
-	public void sendInfoMessageToAcceptingEmp(long documentId,
-			String procDeadline, String author, String docTypeName,String docName, String description) {
-		
-		sendInfoMessageTo( EEMailType.EmailToAccepting , documentId,
-				procDeadline, author, docTypeName,docName, description);						
-		
-	}	
 
-	public void sendInfoMessageAboutPublished(long documentId,
-			String procDeadline, String author, String docTypeName,String docName, String description) {
-		_logger.info("sendInfoMessageAboutPublished docId="+documentId);
-		sendInfoMessageTo( EEMailType.DocumentPublished , documentId,
-				procDeadline, author, docTypeName,docName, description);						
-		
-	}	
-	
-
-	public void sendInfoMsgAboutNewVersion(long documentId, String procDeadline, String author,
-			String docTypeName, String docName, String description) {
-		
-		sendInfoMessageTo( EEMailType.EmailToAcceptingNewVersion , documentId,
-				procDeadline, author, docTypeName,docName, description);		
-	}
-	
 	
 	public void sendCancelMessageToAuthor(EFlowStage stage, long documentId,
 			 String author, String docTypeName,String docName, String description) {
-		
-		//EFlowStage.InitSigne
-		//EFlowStage.Signe
-		
-		EEMailType etype =  EEMailType.CancelPublishEmailToAuthor;
+				
+		EMailType etype =  EMailType.CancelPublishEmailToAuthor;
 		
 		switch (stage ) {
 		case Unknown:
-			etype =  EEMailType.CancelPublishEmailToAuthor;
+			etype =  EMailType.CancelPublishEmailToAuthor;
 		case Approval:
-			etype =  EEMailType.CancelApprovalEmailToAuthor;
+			etype =  EMailType.CancelApprovalEmailToAuthor;
 			break;
 		case Signe:
 		case InitSigne:
-			etype =  EEMailType.CancelSignEmailToAuthor;					
+			etype =  EMailType.CancelSignEmailToAuthor;					
 			break;		
 		}
 		
-		sendInfoMessageTo( etype, documentId,
-				"", author, docTypeName,docName, description);						
+		sendInfoMessageTo( etype, documentId, description);						
 		
-	}
+	}	
 	
 	
-	public void sendToSignatoryEmp(long documentId, 
-			String procDeadline, String author, String docTypeName,String docName, String description) {
+	private void sendMessage (Message msg) {
 		
-		sendInfoMessageTo( EEMailType.EmailToSignatory, documentId,
-				procDeadline, author, docTypeName, docName, description);	
-	}
-	
-	private void sendMessage (String[]  recipients, String addFrom, String subj, String content ) {
-		if ( recipients== null || recipients.length == 0) {
+		if ( msg.getRecipients() == null || msg.getRecipients().length == 0) {
 			_logger.severe("Recipients list is empty");
 		}
-		else {
-			_mailClient.send(addFrom,recipients,subj,content);
-		}
+		else				
+		_mailClient.send(msg.getFrom(), msg.getRecipients(), msg.getSubject(),  msg.getBody());
 	}
-	
-	private String buildMailSubj(long documentId, EEMailType emailType ) {
-		
-		String propName = null;
-		switch (emailType) {
-			case EmailToAccepting:
-				propName = "Subj_for_approval";				
-				break;
-			case EmailToSignatory:
-				propName = "Subj_for_sign";
-				break;
-			case EmailToRecipients:				
-				break;
-			case EmailToExecutor:
-				break;
-			case CancelPublishEmailToAuthor:
-				propName = "Subj_for_cancel_pub";
-				break;
-			case CancelApprovalEmailToAuthor:
-				propName = "Subj_for_cancel_approval";
-				break;
-			case CancelSignEmailToAuthor:
-				propName = "Subj_for_cancel_sign";
-				break;	
-			case EmailToAcceptingNewVersion:
-				propName = "Subj_for_approval_new_vers";
-				break;
-			case DocumentPublished:
-				propName = "Subj_for_doc_pub";
-				break;
-		}
-		
-		String toReturn = _mailProp.getProperty(propName);
-		return String.format(toReturn, documentId);		
-	}
-	
-	
-	/**
-	 * @param documentId
-	 * @param accepting
-	 * @return
-	 */
-	private String buildMailContent(EEMailType emailType, 
-					long documentId, 
-					String procDeadline, 
-					String author, 
-					String docTypeName,
-					String docName,
-					String description) {
-		String propName = null;
-		switch (emailType) {
-			case EmailToAccepting:
-				propName = "Body_for_approval";				
-				break;
-			case EmailToSignatory:
-				propName = "Body_for_sign";
-				break;
-			case EmailToRecipients:
-				break;
-			case EmailToExecutor:
-				break;
-			case CancelPublishEmailToAuthor:
-				propName = "Body_for_cancel_pub";
-				break;
-			case CancelApprovalEmailToAuthor:
-				propName = "Body_for_cancel_approval";
-				break;
-			case CancelSignEmailToAuthor:				
-				propName = "Body_for_cancel_sign";
-				break;
-			case EmailToAcceptingNewVersion:
-				propName = "Body_for_approval_new_ver";	
-				break;
-			case DocumentPublished:
-				propName = "Body_for_doc_pub";
-				break;
-		}
-		
-		String toReturn = _mailProp.getProperty(propName);
-		
-		return String.format(toReturn, documentId, procDeadline, author,docTypeName , docName,  description,
-				buildLink(documentId), procDeadline );	
-	}
-	
-	
-	/**
-	 * @param documentId
-	 * @return
-	 */
-	private String buildLink(long documentId) {
-		String lnk = _mailProp.getProperty("open_doc_lnk");
-		return String.format(lnk, getHost(),documentId );		
-	}
-
-	
-	/**
-	 * @return
-	 */
-	private String getHost() {
-		String host = System.getProperty("jboss.host.name");
-		if ( host.contains("t-") ) {
-			return host;
-		}
-		else
-			return "doc.bnppua.net.intra";
-		//return System.getProperty("jboss.host.name")+":8081";	
-		
-	}
-
-	private String[]  getRecipientsAddr ( EEMailType emailType, long documentId) {
-		List<String> toReturn = new ArrayList<String>();		 
-		Request req = null;		 
-		Params params = new Params();
-		params.add("ID_DOC", String.valueOf(documentId));
-		int entittId = 0;
-		
-		String emailFldName = null;
-		String isSendInfoFldName = null;
-		String comareValue = null;
-		
-		switch (emailType) {
-			case EmailToAccepting:
-				entittId = MdbEntityConst.ACCEPTING_EMP;							
-				emailFldName ="E_MAILE";
-				isSendInfoFldName ="IS_ACCEPT";
-				comareValue="0";
-				break;
-				
-			case EmailToAcceptingNewVersion:
-				entittId = MdbEntityConst.ACCEPTING_EMP;						
-				emailFldName ="E_MAILE";
-				isSendInfoFldName ="GET_INF_NEW_VER";
-				comareValue="1";
-				break;
-				
-			case EmailToSignatory:
-				entittId =  MdbEntityConst.DocSignListEmp;	
-				emailFldName ="E_MAILE";
-				break;
-				
-			case EmailToRecipients:
-				entittId = MdbEntityConst.E_MAIL_DOC_RECIPIENTS;
-				params.add("RECIPIENTS_TYPE", "0");
-				emailFldName ="E_MAILE";
-				break;
-				
-			case EmailToExecutor:
-				entittId = MdbEntityConst.E_MAIL_DOC_RECIPIENTS;
-				params.add("RECIPIENTS_TYPE", "1");
-				emailFldName ="E_MAILE";
-				break;
-				
-			case CancelPublishEmailToAuthor:
-			case CancelSignEmailToAuthor:
-			case CancelApprovalEmailToAuthor:
-			case DocumentPublished:
-				entittId = MdbEntityConst.DocCard;
-				emailFldName ="AUTHOR_E_MAILE";
-				break;
-			}
-		
-			req= _mdbRequester.getNewRequest(entittId , ExecuteType.GetData, params );
-		
-			Request response = _mdbRequester.call(req);
-			IRequestData data= response.get( String.valueOf(entittId)  );
-			
-			List<HashMap<String, String>> lstMap = ResultSetToJSONTransformation.deserialise(data.getData() );
-			
-			if (lstMap != null) {
-				_logger.info("Recipients count = " +lstMap.size());
-				for (HashMap<String, String> map : lstMap) {
-					if (isSendInfoFldName != null) {						
-						String val =  map.get(isSendInfoFldName);						
-						if (val ==null || val.length() == 0 || val.equalsIgnoreCase(comareValue)) {
-							toReturn.add(map.get(emailFldName));
-						}						
-					}
-					else 						
-						toReturn.add(map.get(emailFldName));					
-				}
-			}	
-			
-			toReturn.removeAll(_noMailFldList);
-			String [] dsf = new String[toReturn.size()];
-			toReturn.toArray(dsf);		
-			
-		return dsf;
-	}
-	
 	
 	private void  fillNoMailingEmpList() {	
 	
-		int entittId = 5309;
+		int entittId = MdbEntityConst.NoMailingEmp;
 		String emailFldName = "E_MAILE";
 		
 		Request req= _mdbRequester.getNewRequest( entittId, ExecuteType.GetData, null );
@@ -362,5 +119,8 @@ public class MailingServiceImp  {
 						
 			}
 		}		
-	}	
+	}
+
+
+	
 }

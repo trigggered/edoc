@@ -1,7 +1,7 @@
 /**
  * 
  */
-package document.ui.server.communication.rpc.mail;
+package document.ui.server.mail;
 
 import java.util.Properties;
 import java.util.logging.Logger;

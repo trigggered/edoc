@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.print.Doc;
+
 import mdb.core.shared.transformation.impl.ResultSetToJSONTransformation;
 import mdb.core.shared.transport.IRequestData;
 import mdb.core.shared.transport.IRequestData.ExecuteType;
@@ -16,9 +18,12 @@ import mdb.core.shared.transport.RequestEntity;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import document.ui.client.commons.EDocStatus;
 import document.ui.client.communication.rpc.flow.DocumentFlowService;
 import document.ui.server.communication.rpc.mail.MailingServiceImp;
 import document.ui.server.communication.rpc.mdbgw.MdbRequester;
+import document.ui.server.mail.EMailType;
+import document.ui.server.utils.DocDataHelper;
 import document.ui.shared.MdbEntityConst;
 import mdb.core.shared.transformation.impl.JSONTransformation;
 /**
@@ -27,6 +32,11 @@ import mdb.core.shared.transformation.impl.JSONTransformation;
  *
  */
 public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements DocumentFlowService{
+
+	final int ACTION_SEND_DOC_TO_NEXT_STAGE = 2985;
+	final int ACTTION_CANCEL_PROCESS = 3024;
+	final int ACTTION_END_ALL_PROCESS = 3097;
+	final int ACTTION_CHANGE_PROCESS_DEADLINE = 3098;
 	
 	public enum EFlowStage {
 		  Unknown(0),
@@ -65,8 +75,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final Logger _logger = Logger.getLogger(
-			DocumentFlowServiceImpl.class.getName());
-
+			DocumentFlowServiceImpl.class.getName());	
 	
 	
 	MailingServiceImp _mailingService = new MailingServiceImp();	
@@ -80,66 +89,64 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	public boolean sendToTheNextStage(long documentId, String infoMessage,  int initiatorId) {
 		_logger.info("User Id = "+ initiatorId +" Send doc to next stage. DocId = "+documentId);			
 		
-		Map<String, String> mapParams = new HashMap<String,String>();
-		mapParams.put("id_doc", String.valueOf(documentId) );
-		mapParams.put("infoMsg", infoMessage);
-		mapParams.put("initialId", String.valueOf(initiatorId));
+		callActionFlowProcess(ACTION_SEND_DOC_TO_NEXT_STAGE, documentId, infoMessage, initiatorId, null);		
 		
-		String  jsonParamsStr= JSONTransformation.map2json(mapParams);
-		
-		_logger.info("Send document to next stage with parameters = "+ jsonParamsStr);
-		RequestEntity reqEntity = new RequestEntity (MdbEntityConst.FLOW_ENTITY_ID);
-		reqEntity.setExecuteType(ExecuteType.ExecAction);
-		reqEntity.setExecActionData(2985, jsonParamsStr, null);
-		
-		Request req = new Request();
-		req.add(reqEntity);
-		
-		_mdbRequester.call(req);
-		
-		callStageAction (documentId);		
+		callStageAction (documentId, infoMessage);		
 		
 		return true;
 	}
 	
+	
+	
 	@Override
-	public void sendRemember(long documentId) {
-		callStageAction(documentId);
+	public void sendRemember(long documentId, String infoMessage,  int initiatorId) {
+		callActionFlowProcess(ACTTION_CHANGE_PROCESS_DEADLINE, documentId, infoMessage, initiatorId, null);
+		callStageAction(documentId, null);
 	}
 	
 	@Override
-	public void sendPublishedInfoMsg(long documentId) {		
-		
-		_mailingService.sendInfoMessageAboutPublished(documentId,"", "", "",  "", "");
+	public void sendPublishedInfoMsg(long documentId, String infoMessage,  int initiatorId) {		
+		_mailingService.sendInfoMessageTo(EMailType.DocumentPublished , documentId, null);
 	}
+	
+	
+	@Override
+	public void sendApproveCurrentUserInfoMsg(long documentId, boolean approved , String infoMessage,
+			String  initName ) {		
+		_mailingService.sendInfoMessageTo(approved?EMailType.ApproveCurentUser:EMailType.NotApproveCurentUser
+			, documentId, infoMessage);
+	}
+	
 	
 	/**
 	 * @param documentId
 	 */
-	private void callStageAction(long documentId) {
+	private void callStageAction(long documentId, String infoMessage) {
 
-		HashMap<String, String>  info = getDocumentFlowInfo (documentId) ;
+		HashMap<String, String>  info = DocDataHelper.getDocumentFlowInfo (documentId) ;
 		
 		if (info== null ) {
 		 return ;		 
 		}
 		
 		EFlowStage stage = EFlowStage.fromInt(Integer.parseInt(info.get("ID_FLOW_STAGE")));
-		String procDeadline = info.get("DEADLINE"); 
+		
+		String procDeadline = info.get("DEADLINE");
+		/*
 		String author = info.get("EMP_AUTHOR");
 		String docTypeName = info.get("CORR_TYPE_FULL");;
 		String docName = info.get("NAME");;
-		String description = info.get("INFO_MSG");
-		
+		String description = info.get("INFO_MSG");		
+		*/
 		
 		switch ( stage   ) {
 		case Approval:
-			_mailingService.sendInfoMessageToAcceptingEmp(documentId,procDeadline, author, docTypeName,  docName, description);
+			_mailingService.sendInfoMessageTo(EMailType.ToAccepting , documentId, infoMessage);			
 			break;
 		case  InitSigne:
 			break;
 		case Signe:
-			_mailingService.sendToSignatoryEmp(documentId,procDeadline, author, docTypeName,  docName, description);
+			_mailingService.sendInfoMessageTo(EMailType.ToSignatory, documentId, infoMessage);			
 			break;
 		default:
 			break;
@@ -149,7 +156,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	}
 
 	public  static EFlowStage getDocumentFlowStage(long documentId) {		
-		HashMap<String, String> flowInfo = getDocumentFlowInfo (documentId) ;
+		HashMap<String, String> flowInfo =DocDataHelper.getDocumentFlowInfo (documentId) ;
 		
 		if (flowInfo!= null ) {
 			return EFlowStage.fromInt(Integer.parseInt(flowInfo.get("ID_FLOW_STAGE")));
@@ -158,27 +165,6 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	}
 	
 
-	public  static HashMap<String, String>  getDocumentFlowInfo (long documentId) {
-		Request req = new Request();
-		
-		RequestEntity reqEntity = new RequestEntity (MdbEntityConst.FLOW_ENTITY_ID);
-		reqEntity.getParams().add("ID_DOC", String.valueOf(documentId) );
-		req.add(reqEntity);
-		 MdbRequester  mdbRequester = new MdbRequester();
-		Request responce =  mdbRequester.call(req);
-		
-		 for (IRequestData resEntity : responce.getArrayListValues() ) {
-			 if ( resEntity.getEntityId() == MdbEntityConst.FLOW_ENTITY_ID) {
-				 
-				 List<HashMap<String, String>> lstMap = ResultSetToJSONTransformation.deserialise(resEntity.getData() );
-					
-					if (lstMap != null && lstMap.size() >0) {						
-						return lstMap.get(0);
-					}									
-			 }
-		 }		 
-		 return null;		
-	}
 
 	/* (non-Javadoc)
 	 * @see document.ui.client.communication.rpc.flow.DocumentFlowService#cancelProcess(long)
@@ -188,55 +174,79 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		
 		EFlowStage stage = EFlowStage.Unknown;
 		
-		HashMap<String, String>	  flowInfo = getDocumentFlowInfo (documentId) ;
+		final HashMap<String, String>	  flowInfo = DocDataHelper.getDocumentFlowInfo (documentId) ;
 		
-		
-		//String procDeadline = null; 
-		String author = null;
-		String docTypeName = null;
-		String docName = null;
-		String description = infoMessage;
 		
 		if (flowInfo != null ) {
 		
-			Map<String, String> mapParams = new HashMap<String,String>();
-			mapParams.put("ID_DOC", String.valueOf(documentId) );
-			mapParams.put("ID_FLOW", flowInfo.get("ID_FLOW"));
-			mapParams.put("INFOMSG", infoMessage);
-			mapParams.put("INITIATOR_ID", String.valueOf(initiatorId));
+			callActionFlowProcess(ACTTION_CANCEL_PROCESS, documentId, infoMessage,initiatorId, new HashMap<String, String>(){{
+		        put("ID_FLOW", flowInfo.get("ID_FLOW"));
+		    }});	
+							
 			
 			
-			String  jsonParamsStr= JSONTransformation.map2json(mapParams);
-			
-			_logger.info("CANCEL PROCESS   = "+ jsonParamsStr);
-			 
-					 
-			RequestEntity reqEntity = new RequestEntity (MdbEntityConst.FLOW_ENTITY_ID);
-			reqEntity.setExecuteType(ExecuteType.ExecAction);
-			reqEntity.setExecActionData(3024, jsonParamsStr, null);
-			
-			Request req = new Request();
-			req.add(reqEntity);
-			
-			_mdbRequester.call(req);		
-			
-			
-			 stage = EFlowStage.fromInt(Integer.parseInt(flowInfo.get("ID_FLOW_STAGE")));
+		 stage = EFlowStage.fromInt(Integer.parseInt(flowInfo.get("ID_FLOW_STAGE")));
 			//String procDeadline = info.get("DEADLINE"); 
-			author = flowInfo.get("EMP_AUTHOR");
-			docTypeName = flowInfo.get("CORR_TYPE_FULL");;
-			docName = flowInfo.get("NAME");;
+		 String author = flowInfo.get("EMP_AUTHOR");
+		 String docTypeName = flowInfo.get("CORR_TYPE_FULL");;
+		 String docName = flowInfo.get("NAME");;
 			
-		
+			_mailingService.sendCancelMessageToAuthor(stage, documentId, author, docTypeName, docName, infoMessage);
 		}					
 		else {
 			_logger.severe(String.format("Not found flow for documen ID =%s",documentId ));
 			 return ;
 		}							
 		
-		_mailingService.sendCancelMessageToAuthor(stage, documentId, author, docTypeName, docName, description);
 		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see document.ui.client.communication.rpc.flow.DocumentFlowService#endAllProcess(long, java.lang.String, int, int)
+	 */
+	@Override
+	public void forcedDocumentToStatus(long documentId, String infoMessage,
+			int initiatorId, final int toStatus) {
+		
+		
+		callActionFlowProcess(ACTTION_END_ALL_PROCESS, documentId, infoMessage,initiatorId, new HashMap<String, String>(){{
+	        put("ID_STATUS",String.valueOf(toStatus));
+	    }});	
+			
+			_mailingService.sendInfoMessageTo(EMailType.ChangeDocStatus,documentId,infoMessage);		
 	}	
 	
+	private void callActionFlowProcess(int actionId, long documentId, String infoMessage,
+			int initiatorId, Map<String, String> callParams  ) {
+		
+		Map<String, String> mapParams = new HashMap<String,String>();
+		
+		if (callParams!= null) {
+			mapParams.putAll(callParams);
+		}
+		
+		mapParams.put("ID_DOC", String.valueOf(documentId) );
+		mapParams.put("INFOMSG", infoMessage);
+		mapParams.put("INITIATOR_ID", String.valueOf(initiatorId));	
+		
+		 
+		
+		String  jsonParamsStr= JSONTransformation.map2json(mapParams);
+		
+		
+		_logger.info(String.format("Run process actionId =%s with params %s ",initiatorId,  jsonParamsStr));
+		 
+				 
+		RequestEntity reqEntity = new RequestEntity (MdbEntityConst.FLOW_ENTITY_ID);
+		reqEntity.setExecuteType(ExecuteType.ExecAction);
+		reqEntity.setExecActionData(actionId, jsonParamsStr, null);
+		
+		Request req = new Request();
+		req.add(reqEntity);
+		
+		_mdbRequester.call(req);												
+		
+	}
 
 }

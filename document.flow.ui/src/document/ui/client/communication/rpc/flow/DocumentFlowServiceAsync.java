@@ -15,11 +15,17 @@ public interface DocumentFlowServiceAsync {
 	void sendToTheNextStage(long documentId, String infoMessage, int initiatorId,
 			AsyncCallback<Boolean> callback);
 
-	void sendRemember(long documentId, AsyncCallback<Void> callback);
+	void sendRemember(long documentId, String infoMessage,  int initiatorId, AsyncCallback<Void> callback);
 
 	void cancelProcess(long documentId, String infoMessage, int initiatorId,
 			AsyncCallback<Void> callback);
 
-	void sendPublishedInfoMsg(long documentId, AsyncCallback<Void> callback);
+	void sendPublishedInfoMsg(long documentId, String infoMessage,  int initiatorId, AsyncCallback<Void> callback);
+
+	void forcedDocumentToStatus(long documentId, String infoMessage, int initiatorId,
+			int toStatus, AsyncCallback<Void> callback);
+
+	void sendApproveCurrentUserInfoMsg(long documentId, boolean approved,
+			String infoMessage, String initName, AsyncCallback<Void> callback);
 	
 }

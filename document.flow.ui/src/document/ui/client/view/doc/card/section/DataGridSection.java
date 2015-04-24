@@ -216,44 +216,6 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
 		}
 	};
 	
-/*
-	private  IDataEditHandler _openAttachment = new IDataEditHandler() {
-		
-		@Override
-		public void onEdit(final Record record) {			
-			
-			final String attributeId = record.getAttribute("ID_ATTRIBUTE");
-			final String fileName = record.getAttribute("NAME_LOB");
-		
-			_logger.info("Try download file:"+fileName + " AttributeId="+attributeId);
-			
-			SC.ask(Captions.Q_FILE_DOWNLOAD+ fileName, new BooleanCallback() {
-				
-				@Override
-				public void execute(Boolean value) {
-					if (!value) return;
-					
-					
-					
-					if (attributeId != null ) {
-						String url = GWT.getModuleBaseURL() + "download?AttributeId=" +attributeId;
-							//"&FileName=" + fileName+
-							//"&IsSign="+isSign;
-						
-						_logger.info("Downlod  URL= "+url);
-						Window.open( url, "_blank", "");								
-						
-					}else {
-						_logger.info("File:"+fileName + "not uploaded yet. AttributeId=null" );
-						SC.say("Get lob by ID_ATTRIBUTE="+record.getAttribute("ID_ATTRIBUTE") ) ;
-					}					
-				}
-			});	
-							 	 
-		}
-	};
-	
-*/
 	
 	@Override
 	public void prepareRequestData() {		

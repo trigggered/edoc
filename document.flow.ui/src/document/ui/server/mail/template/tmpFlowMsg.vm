@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>$subject </title>
+</head>
+<body>
+$subject
+</br>
+$deadline  
+</br>
+<hr>
+Автор:  		$author_name
+</br>
+Тип документа:  $doc_type; Ид. документа: $id_doc
+</br>
+Тема: 			$doc_subject
+</br>	
+<!-- Наименование вложения документа:	$doc_attachments
+</br> -->
+
+Краткое описание документа:	$doc_note
+</br>
+$infoMsg
+</br>
+Ссылка на документ: <a href="$doc_link">Ид. документа: $id_doc</a>
+</br>
+</br>
+
+<hr>
+Данное сообщение сгенерировано автоматически, отвечать на него не нужно
+</body>
+</html>

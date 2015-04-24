@@ -280,7 +280,7 @@ public class FlowProccessing implements IFlowProcessing {
 		callFlowProcessing (  documentId, infoMsg, callBack );		
 	}
 	
-	public  static void publishDoc( final int documentId, String infoMsg, int initialId, final ICommand<Boolean> callBack) {
+	public  static void publishDoc( final int documentId, final String infoMsg, final int initialId, final ICommand<Boolean> callBack) {
 		
 		_asyncFlowService.sendToTheNextStage(documentId, infoMsg , 
 				 AppController.getInstance().getCurrentUser().getId(),
@@ -290,7 +290,7 @@ public class FlowProccessing implements IFlowProcessing {
 			public void onSuccess(Boolean result) {
 				callBack.execute(true);				
 				
-					_asyncFlowService.sendPublishedInfoMsg(documentId, new AsyncCallback<Void>() {						
+					_asyncFlowService.sendPublishedInfoMsg(documentId,infoMsg, initialId,  new AsyncCallback<Void>() {						
 						@Override
 						public void onSuccess(Void result) {						
 							
@@ -315,9 +315,10 @@ public class FlowProccessing implements IFlowProcessing {
 	}
 	
 	
-	public static void sendRemember(final int documentId) {
+	public static void sendRemember(final long documentId) {
 		
-		_asyncFlowService.sendRemember(documentId, new AsyncCallback<Void>() {
+		int userId = AppController.getInstance().getCurrentUser().getId();
+		_asyncFlowService.sendRemember(documentId, null, userId, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -386,5 +387,12 @@ public class FlowProccessing implements IFlowProcessing {
 	}	
 	
 	
+	public static void forcedDocumentToStatus(final long docId, final EDocStatus newStatus,  final AsyncCallback<Void> callBack) {
+		
+		_asyncFlowService.forcedDocumentToStatus(docId, null,  AppController.getInstance().getCurrentUser().getId(), 
+				newStatus.getValue(), callBack);																			
+		
+				
+	}
 	
 }
