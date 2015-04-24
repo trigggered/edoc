@@ -10,10 +10,12 @@ import mdb.core.ui.client.view.components.menu.IMenuItem;
 import mdb.core.ui.client.view.data.IDataView;
 import mdb.core.ui.client.view.dialogs.message.Dialogs;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
 
 import document.ui.client.commons.EDocStatus;
+import document.ui.client.flow.impl.FlowProccessing;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.tools.SignControlWrapper;
 import document.ui.client.view.doc.card.DocumentActions;
@@ -29,6 +31,21 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 	
 	DocumentCard _card;
 	
+	AsyncCallback<Void> refreshCallBack = new AsyncCallback<Void>() {
+		
+		@Override
+		public void onSuccess(Void result) {
+			_card.refresh();
+		}
+		
+		@Override
+		public void onFailure(Throwable caught) {
+			// TODO Auto-generated method stub
+			
+			Dialogs.ShowWarnMessage(Captions.ERROR +"\n " + caught.getMessage());
+		}
+	}; 
+			
 	public MenuBAAction(DocumentCard card) {
 		super("MenuBAAction");
 		_card =  card;		
@@ -48,7 +65,8 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 					@Override
 					public void execute(Boolean value) {
 						if (value) {							
-							DocumentActions.udateDocStatus(_card, EDocStatus.Revoked);																							 
+							//DocumentActions.udateDocStatus(_card, EDocStatus.Revoked);							
+							FlowProccessing.forcedDocumentToStatus(_card.getDocumentId(), EDocStatus.Revoked, refreshCallBack);
 						}								
 					}
 				});										
@@ -67,7 +85,8 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 					@Override
 					public void execute(Boolean value) {
 						if (value) {
-							DocumentActions.udateDocStatus(_card, EDocStatus.Approval);
+							//DocumentActions.udateDocStatus(_card, EDocStatus.Approval);
+							FlowProccessing.forcedDocumentToStatus(_card.getDocumentId(), EDocStatus.Approval, refreshCallBack);
 						}
 						
 					}
@@ -87,7 +106,8 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 					@Override
 					public void execute(Boolean value) {
 						if (value) {
-							DocumentActions.udateDocStatus(_card, EDocStatus.Cancelled);
+							//DocumentActions.udateDocStatus(_card, EDocStatus.Cancelled);
+							FlowProccessing.forcedDocumentToStatus(_card.getDocumentId(), EDocStatus.Cancelled, refreshCallBack);
 						}
 						
 					}
@@ -143,9 +163,7 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 				}
 			}
 
-		});		
-		
-		
+		});
 		
 		
 		item = childMenu.addItem(Captions.DELETE_D0C, "", IMenuItem.ItemType.ToolButton,0);

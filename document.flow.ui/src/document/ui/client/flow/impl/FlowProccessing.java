@@ -315,7 +315,7 @@ public class FlowProccessing implements IFlowProcessing {
 	}
 	
 	
-	public static void sendRemember(final int documentId) {
+	public static void sendRemember(final long documentId) {
 		
 		_asyncFlowService.sendRemember(documentId, new AsyncCallback<Void>() {
 			
@@ -386,5 +386,12 @@ public class FlowProccessing implements IFlowProcessing {
 	}	
 	
 	
+	public static void forcedDocumentToStatus(final long docId, final EDocStatus newStatus,  final AsyncCallback<Void> callBack) {
+		
+		_asyncFlowService.forcedDocumentToStatus(docId, null,  AppController.getInstance().getCurrentUser().getId(), 
+				newStatus.getValue(), callBack);																			
+		
+				
+	}
 	
 }

@@ -13,6 +13,7 @@ import mdb.core.ui.client.view.components.menu.IMenuItem;
 import mdb.core.ui.client.view.dialogs.message.Dialogs;
 import document.ui.client.commons.EDocStatus;
 import document.ui.client.commons.checker.CheckDocumentUserRight;
+import document.ui.client.flow.impl.FlowProccessing;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.doc.card.DocumentActions;
 import document.ui.client.view.doc.card.DocumentCard;
@@ -89,7 +90,29 @@ public class MenuFile extends mdb.core.ui.client.view.components.menu.Menu  {
 					}																		
 					
 				}	
-			});				
+			});
+			
+			item = childMenu.addItem(Captions.SEND_REMEMBER_TO_APPROVAL, "", IMenuItem.ItemType.ToolButton,0);
+			item.setCommand(new ICommand<IMenuItem>() {						
+				@Override
+				public void execute(IMenuItem sender) {
+					
+					if (CheckDocumentUserRight.isAuthorCurrentUser(getCard()) && getCard().getDocumentStatus() == EDocStatus.AtTheApproval)  {
+						
+						Dialogs.AskDialog(Captions.Q_SEND_REMEMBER_BY_DOC_TO_APPROVAL, new BooleanCallback() {							
+							@Override
+							public void execute(Boolean value) {
+								if (value) {
+									FlowProccessing.sendRemember(_card.getDocumentId());
+								}							
+							}
+						});
+					}else {
+						Dialogs.ShowMessage(Captions.ONLY_AUTHOR_CAN_SEND_REMEMBER);
+					}
+										
+				}	
+			});		
 	}
 	
 }

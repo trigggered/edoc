@@ -27,6 +27,9 @@ import mdb.core.shared.transformation.impl.JSONTransformation;
  *
  */
 public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements DocumentFlowService{
+
+	final int ACTTION_CANCEL_PROCESS = 3024;
+	final int ACTTION_END_ALL_PROCESS = 3097;
 	
 	public enum EFlowStage {
 		  Unknown(0),
@@ -213,7 +216,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 					 
 			RequestEntity reqEntity = new RequestEntity (MdbEntityConst.FLOW_ENTITY_ID);
 			reqEntity.setExecuteType(ExecuteType.ExecAction);
-			reqEntity.setExecActionData(3024, jsonParamsStr, null);
+			reqEntity.setExecActionData(ACTTION_CANCEL_PROCESS , jsonParamsStr, null);
 			
 			Request req = new Request();
 			req.add(reqEntity);
@@ -235,6 +238,47 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		}							
 		
 		_mailingService.sendCancelMessageToAuthor(stage, documentId, author, docTypeName, docName, description);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see document.ui.client.communication.rpc.flow.DocumentFlowService#endAllProcess(long, java.lang.String, int, int)
+	 */
+	@Override
+	public void forcedDocumentToStatus(long documentId, String infoMessage,
+			int initiatorId, int toStatus) {
+
+		EFlowStage stage = EFlowStage.Unknown;		
+		
+		/*
+		String author = null;
+		String docTypeName = null;
+		String docName = null;
+		String description = infoMessage;
+		
+		*/
+		
+			Map<String, String> mapParams = new HashMap<String,String>();
+			mapParams.put("ID_DOC", String.valueOf(documentId) );
+			mapParams.put("INFOMSG", infoMessage);
+			mapParams.put("INITIATOR_ID", String.valueOf(initiatorId));
+			mapParams.put("ID_STATUS", String.valueOf(toStatus));
+			
+			String  jsonParamsStr= JSONTransformation.map2json(mapParams);
+			
+			_logger.info("RUN END ALL PROCESS   = "+ jsonParamsStr);
+			 
+					 
+			RequestEntity reqEntity = new RequestEntity (MdbEntityConst.FLOW_ENTITY_ID);
+			reqEntity.setExecuteType(ExecuteType.ExecAction);
+			reqEntity.setExecActionData(ACTTION_END_ALL_PROCESS, jsonParamsStr, null);
+			
+			Request req = new Request();
+			req.add(reqEntity);
+			
+			_mdbRequester.call(req);											
+		
+			//_mailingService.sendCancelMessageToAuthor(stage, documentId, author, docTypeName, docName, description);
 		
 	}	
 	

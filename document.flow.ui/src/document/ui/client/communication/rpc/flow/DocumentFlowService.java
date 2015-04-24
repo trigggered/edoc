@@ -21,4 +21,5 @@ public interface DocumentFlowService extends RemoteService{
 	public void sendPublishedInfoMsg(long documentId);
 	
 	void cancelProcess(long documentId, String infoMessage,  int initiatorId);
+	void forcedDocumentToStatus(long documentId, String infoMessage,  int initiatorId, int toStatus);
 }

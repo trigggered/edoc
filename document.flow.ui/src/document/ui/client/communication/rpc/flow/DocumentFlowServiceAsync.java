@@ -21,5 +21,8 @@ public interface DocumentFlowServiceAsync {
 			AsyncCallback<Void> callback);
 
 	void sendPublishedInfoMsg(long documentId, AsyncCallback<Void> callback);
+
+	void forcedDocumentToStatus(long documentId, String infoMessage, int initiatorId,
+			int toStatus, AsyncCallback<Void> callback);
 	
 }
