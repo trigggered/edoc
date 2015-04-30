@@ -17,6 +17,9 @@ import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.tab.events.TabSelectedEvent;
 import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
 
+import document.ui.client.resources.locales.Captions;
+import document.ui.shared.MdbEntityConst;
+
 public class SearchView extends DataView{	
 
 	//InputSearchCriteriaView _simpleSearchCriteriaView;
@@ -25,8 +28,20 @@ public class SearchView extends DataView{
 	
 	InputSearchCriteriaView _activeCriteriaView;
 	SearchResult _searchResult; 
+
+	final static int SIMPLE_SEARH = 2935;
+	final static int CONTEXT_SEARCH = 2946;
 	
-	@Override
+	
+	protected int getSimpleSearchActionId() {
+		return SIMPLE_SEARH;
+	}
+	
+	
+	protected int getContextSearchActionId() {
+		return CONTEXT_SEARCH;
+	}
+	
 	protected void createComponents () {
 		super.createComponents();
 		setSingleInstance(true);
@@ -35,21 +50,11 @@ public class SearchView extends DataView{
 		TabSet tabSet = new TabSet();
 		tabSet.setWidth100();
 
-		/*
-		Tab tabSearch = new Tab("Стандартный");		
-		_simpleSearchCriteriaView = new InputSearchCriteriaView(2934);
-		tabSearch.setPane(_simpleSearchCriteriaView);		
-		tabSearch.addTabSelectedHandler(new TabSelectedHandler() {			
-			@Override
-			public void onTabSelected(TabSelectedEvent event) {				
-				_activeCriteriaView = _simpleSearchCriteriaView;
-				
-			}
-		});
-		*/
 	
-		Tab tabAdvSearch = new Tab("Поиск");
-		_advancedSearchCriteriaView = new InputSearchCriteriaView(2935);
+	
+		Tab tabAdvSearch = new Tab(Captions.SEARCH);
+		_advancedSearchCriteriaView = new InputSearchCriteriaView(getSearchResultEntityId(),
+				getSimpleSearchActionId());
 		tabAdvSearch.setPane(_advancedSearchCriteriaView);
 		tabAdvSearch.addTabSelectedHandler(new TabSelectedHandler() {			
 			@Override
@@ -59,8 +64,9 @@ public class SearchView extends DataView{
 			}
 		});
 		
-		Tab tabContextSearch = new Tab("По содержимому");
-		_contextSearchCriteriaView = new InputSearchCriteriaView(2946);
+		Tab tabContextSearch = new Tab(Captions.CONTEXT_SEARCH );
+		_contextSearchCriteriaView = new InputSearchCriteriaView(getSearchResultEntityId(), 
+				getContextSearchActionId() );
 		tabContextSearch.setPane(_contextSearchCriteriaView);
 		tabContextSearch.addTabSelectedHandler(new TabSelectedHandler() {			
 			@Override
@@ -74,7 +80,7 @@ public class SearchView extends DataView{
 		tabSet.addTab(tabContextSearch);
 		
 		_searchResult = new SearchResult();
-		_searchResult.setMainEntityId(5096);
+		_searchResult.setMainEntityId( getSearchResultEntityId());
 		//_searchResult.setWidth100();
 		_searchResult.setWidth("50%");
 		
@@ -84,7 +90,9 @@ public class SearchView extends DataView{
 		getViewPanel().addMembers(la,_searchResult);		
 	}
 	
-	
+	protected int getSearchResultEntityId() {
+		return MdbEntityConst.DOC_LIST;
+	}
 	
 	protected Layout createBottomLayout() {
 		 Layout btnlayout = new HLayout();
@@ -96,7 +104,7 @@ public class SearchView extends DataView{
 
 	      
 		 Button btnClear = new Button();
-		 btnClear.setTitle( "Очистить");		  
+		 btnClear.setTitle( Captions.CLEAR);		  
 		 btnClear.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {		
 			@Override
 			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
@@ -105,7 +113,7 @@ public class SearchView extends DataView{
 		});	 
 	      
 		  Button btnOk = new Button();
-		  btnOk.setTitle( "Искать");		  
+		  btnOk.setTitle( Captions.SEARCH);		  
 	      btnOk.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {		
 			@Override
 			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
@@ -152,7 +160,7 @@ public class SearchView extends DataView{
 
 	@Override
 	public String getCaption() {
-		return "Поиск документов";
+		return  Captions.SEARCH;
 	}
 
 	@Override

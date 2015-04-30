@@ -24,7 +24,6 @@ import document.ui.client.commons.EViewIdent;
 import document.ui.client.communication.rpc.MyAuthService;
 import document.ui.client.communication.rpc.MyAuthServiceAsync;
 import document.ui.client.communication.rpc.mdbgw.MdbGWQueueProcessor;
-import document.ui.client.tools.SignControlWrapper;
 import document.ui.client.view.EdocAppController;
 import document.ui.client.view.ViewFactory;
 import document.ui.client.view.doc.card.DocumentCard;
@@ -33,7 +32,10 @@ import document.ui.shared.MdbEntityConst;
 
 public class Main extends AMainView   {
 	
-
+	private int _applicationID =1;
+	
+	
+	
 	private static  MyAuthServiceAsync _asyncAuthService = GWT.create(MyAuthService.class);
 		
     private static final Logger _logger = Logger.getLogger(Main.class.getName());    
@@ -46,12 +48,13 @@ public class Main extends AMainView   {
 
 	@Override
 	public void onModuleLoad() {
-		super.onModuleLoad();		
-		
-	
+		super.onModuleLoad();	
+		_logger.info("Start onModuleLoad");
 		//SignXWrapper.regSignControlAsHTML();
-		SignControlWrapper.getSignControl().regSignControlAsHTML();
 		//SignAppletWrapper.regSignControlAsHTML();
+		
+		/*Яна сказала не надо, без подписи 21.05.2015*/		
+		//SignControlWrapper.getSignControl().regSignControlAsHTML();		
 		retrieveUserInfoFromServer();		 
 	}
 	
@@ -60,10 +63,11 @@ public class Main extends AMainView   {
 		
 		Params params = new Params();
 		params.add("ID_USER",String.valueOf(AppController.getInstance().getCurrentUser().getId()) );
+		params.add("ID_APP",String.valueOf(getAppId()));
 		
 		IMenu mainMenu = new MdbMainMenu(MdbEntityConst.MAIN_MENU_ID ,getAppId(), getMenuContainer(), 
 				new MdbMainMenuCommand(this, getMdbMainMenuActionImpl() ), params );
-		mainMenu.setPosition(0);
+		mainMenu.setPosition(0);		
 	}
 	
 	
@@ -83,11 +87,20 @@ public class Main extends AMainView   {
 			
 				@Override
 				public void onSuccess(AuthUser result) {
-					_logger.info("Success Retrieve Auth UserInfo. User id is ="+result.getId() +" user roles:"+result.getRoles().toString());
-					AppController.getInstance().setCurrentUser(result);
+					_logger.info("Success Retrieve Auth UserInfo. User id is ="+result.getId() +" user roles:"+result.getRoles().toString());					
+					AppController.getInstance().setCurrentUser(result);					
 					AppController.getInstance().initialAppContext();
+					
+					if (checkOpenDocumentFromUrl() )
+					{
+						AppController.getInstance().getCurrentUser().setChooseApplicationID(_applicationID);	
+					}
+					else {
+						_applicationID = result.getChooseApplicationID();	
+					}
+					
 					registerDynamicMenu();
-					callRequestData();
+					callRequestData();										
 				}
 				
 				@Override
@@ -96,27 +109,47 @@ public class Main extends AMainView   {
 				}
 		});
 	}
+
+
 	
 	@Override
 	public void bindDataComponents() {
+		
+		if (checkOpenDocumentFromUrl ()) {
+			openDocumentFromUrl();
+		    
+		} else {
+			openViewInTab(
+		 			ViewFactory.create(EViewIdent.Home));
+		}		
 		super.bindDataComponents();
-		if (!checkOpenDocumentFromUrl ()) {
-	 
-		    openViewInTab(
-	 			ViewFactory.create(EViewIdent.Home));
-		}
 	}
 	
-	public boolean checkOpenDocumentFromUrl () {
+	
+	private boolean checkOpenDocumentFromUrl () {
 		String documentCardId = com.google.gwt.user.client.Window.Location.getParameter("DocumentCard");
-		_logger.info("Calling onValueChange. DocumentCard= "+documentCardId);
+		String appId = com.google.gwt.user.client.Window.Location.getParameter("AppId");
+		 
+		 
+		_logger.info("Calling onValueChange. DocumentCard= "+documentCardId+" AppID = "+appId);
 		boolean toReturn = documentCardId != null && documentCardId.length() >0;
-		
-		if (documentCardId != null && documentCardId.length() >0) {
-			 DocumentCard.OpenById(documentCardId);
-		}	
-		
+		if (toReturn && appId!=null) {			
+			_applicationID =Integer.parseInt(appId);					
+		}
 		return toReturn;
+	}
+	
+	private void openDocumentFromUrl () {
+		
+		String documentCardId = com.google.gwt.user.client.Window.Location.getParameter("DocumentCard");
+		String appId = com.google.gwt.user.client.Window.Location.getParameter("AppId");
+		
+		_logger.info("Calling onValueChange. DocumentCard= "+documentCardId+" AppID = "+appId);		
+		
+		if (documentCardId != null && documentCardId.length() >0) {			 
+			 DocumentCard.OpenById(documentCardId);
+		}
+
 	}
 	
 	@Override
@@ -131,7 +164,7 @@ public class Main extends AMainView   {
 	
 	@Override
 	public int getAppId() {
-		return 1;
+		return _applicationID;
 	}
 
 

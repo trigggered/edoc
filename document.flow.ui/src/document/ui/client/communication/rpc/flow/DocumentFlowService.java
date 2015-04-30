@@ -17,18 +17,16 @@ public interface DocumentFlowService extends RemoteService{
 	
 	public boolean  sendToTheNextStage(long documentId, String infoMessage, int initiatorId);
 	
-	public void sendRemember (long documentId, String infoMessage,  int initiatorId);
-	public void sendPublishedInfoMsg(long documentId,String infoMessage,  int initiatorId);
+	public void sendRemember (long documentId, String infoMessage,  int initiatorId);	
 	
 	void cancelProcess(long documentId, String infoMessage,  int initiatorId);
+
 	void forcedDocumentToStatus(long documentId, String infoMessage,  int initiatorId, int toStatus);
 
-	/**
-	 * @param documentId
-	 * @param approved
-	 * @param infoMessage
-	 * @param initName
-	 */
 	void sendApproveCurrentUserInfoMsg(long documentId, boolean approved,
 			String infoMessage, String initName);
+
+	void sendApproveResult(long documentId, String infoMessage, int initiatorId);
+
+	boolean publishDoc(int documentId, String infoMsg, int id);
 }

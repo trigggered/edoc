@@ -25,6 +25,7 @@ $infoMsg
 </br>
 Ссылка на документ: <a href="$doc_link">Ид. документа: $id_doc</a>
 </br>
+$doc_link
 </br>
 
 <hr>

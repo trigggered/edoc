@@ -29,6 +29,7 @@ import document.ui.shared.MdbEntityConst;
  * Creation date: Oct 1, 2014
  *
  */
+@Deprecated
 public class CopyOfMailingServiceImp  {
 	
 	private static final Logger _logger = Logger
@@ -103,17 +104,17 @@ public class CopyOfMailingServiceImp  {
 		//EFlowStage.InitSigne
 		//EFlowStage.Signe
 		
-		EMailType etype =  EMailType.CancelPublishEmailToAuthor;
+		EMailType etype =  EMailType.ToAuthorCancelPublish;
 		
 		switch (stage ) {
 		case Unknown:
-			etype =  EMailType.CancelPublishEmailToAuthor;
+			etype =  EMailType.ToAuthorCancelPublish;
 		case Approval:
-			etype =  EMailType.CancelApprovalEmailToAuthor;
+			etype =  EMailType.ToAuthorCancelApproval;
 			break;
 		case Signe:
 		case InitSigne:
-			etype =  EMailType.CancelSignEmailToAuthor;					
+			etype =  EMailType.ToAuthorCancelSign;					
 			break;		
 		}
 		
@@ -153,13 +154,13 @@ public class CopyOfMailingServiceImp  {
 				break;
 			case ToExecutor:
 				break;
-			case CancelPublishEmailToAuthor:
+			case ToAuthorCancelPublish:
 				propName = "Subj_for_cancel_pub";
 				break;
-			case CancelApprovalEmailToAuthor:
+			case ToAuthorCancelApproval:
 				propName = "Subj_for_cancel_approval";
 				break;
-			case CancelSignEmailToAuthor:
+			case ToAuthorCancelSign:
 				propName = "Subj_for_cancel_sign";
 				break;	
 			case ToAcceptingNewVersion:
@@ -199,13 +200,13 @@ public class CopyOfMailingServiceImp  {
 				break;
 			case ToExecutor:
 				break;
-			case CancelPublishEmailToAuthor:
+			case ToAuthorCancelPublish:
 				propName = "Body_for_cancel_pub";
 				break;
-			case CancelApprovalEmailToAuthor:
+			case ToAuthorCancelApproval:
 				propName = "Body_for_cancel_approval";
 				break;
-			case CancelSignEmailToAuthor:				
+			case ToAuthorCancelSign:				
 				propName = "Body_for_cancel_sign";
 				break;
 			case ToAcceptingNewVersion:
@@ -289,9 +290,10 @@ public class CopyOfMailingServiceImp  {
 				emailFldName ="E_MAILE";
 				break;
 				
-			case CancelPublishEmailToAuthor:
-			case CancelSignEmailToAuthor:
-			case CancelApprovalEmailToAuthor:
+			case ToAuthorCancelPublish:
+			case ToAuthorCancelSign:
+			case ToAuthorCancelApproval:
+			case ToAuthorCancel:
 			case DocumentPublished:
 				entittId = MdbEntityConst.DocCard;
 				emailFldName ="AUTHOR_E_MAILE";

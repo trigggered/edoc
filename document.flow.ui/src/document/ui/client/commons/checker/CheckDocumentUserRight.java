@@ -5,10 +5,11 @@ package document.ui.client.commons.checker;
 
 import java.util.logging.Logger;
 
-import com.smartgwt.client.util.BooleanCallback;
-
 import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.events.ICallbackEvent;
+
+import com.smartgwt.client.util.BooleanCallback;
+
 import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.commons.EDocStatus;
 import document.ui.client.view.doc.card.DocumentCard;
@@ -24,7 +25,8 @@ public class CheckDocumentUserRight {
 	private static final Logger _logger = Logger
 			.getLogger(CheckDocumentUserRight.class.getName());
 	
-	public static boolean isAuthorCurrentUser (DocumentCard card) {		
+	public static boolean isAuthorCurrentUser (DocumentCard card) {
+		_logger.info("Document Author="+ card.getDocumentAuthor());
 		return card.getDocumentAuthor() == AppController.getInstance().getCurrentUser().getId();
 	}
 	
@@ -52,17 +54,13 @@ public class CheckDocumentUserRight {
 	}
 	
 	public static boolean isHasBARole() {
-		boolean toReturn = false;
-		 for ( String role : AppController.getInstance().getCurrentUser().getRoles() ) {
-			 toReturn  = role.equals("1");
-			  if(toReturn) {
+		 for ( String role : AppController.getInstance().getCurrentUser().getRoles() ) {			 
+			  if( role.equals("1") ) {
 				  return true;
 			  }		 
-		 }
-	
-		 return toReturn ;
+		 }	
+		 return  false;
 	}
-	
 	
 	
 	public static void isCanAddNewVersion(DocumentCard card, BooleanCallback callBack) {
@@ -83,7 +81,7 @@ public class CheckDocumentUserRight {
 				switch (card.getDocumentStatus()  ) {
 				
 						case AtTheApproval:
-								CheckDocumentUserRight.isCurrentUserHasApprovRight(card, callBack);	
+								CheckDocumentUserRight.isCurrentUserHasApproveRight(card, callBack);	
 							break;
 						case AtTheSigning:
 							 isCanSignatoryDoc(card, callBack);
@@ -91,10 +89,8 @@ public class CheckDocumentUserRight {
 						default:
 							callBack.execute(false);
 							break;
-				}	
-			
+				}			
 		}		
-
 	}
 	
 	
@@ -137,11 +133,12 @@ public class CheckDocumentUserRight {
 					
 				}   
 			
+			_logger.info("isCanEditDocument = "+toReturn);
 			return toReturn;
 	}
 	
 	
-	public static  void isCurrentUserHasApprovRight(DocumentCard card, final BooleanCallback result) {	
+	public static  void isCurrentUserHasApproveRight(DocumentCard card, final BooleanCallback result) {	
 		CheckCanApproval checker  = new CheckCanApproval();
 		checker.isCurrentUserHasRight(card, result);
 		
@@ -173,49 +170,59 @@ public class CheckDocumentUserRight {
 
 	public static void changeVisibleControls (final DocumentCard docCard) {
 
-		final boolean isBa = CheckDocumentUserRight.isHasBARole();
-		//boolean isAuthor =  CheckDocumentUserRight.isAuthorCurrentUser(docCard);
+		_logger.info("Check is has BA Role");
+		final boolean isBa = CheckDocumentUserRight.isHasBARole();				
+		_logger.info("BA Role="+isBa);
+		
+		_logger.info("Check is User BA or Author");
+		
+		final  boolean  isAuthor; 
+		if (docCard.getViewState() == EViewState.New) {
+			isAuthor = true;
+		}else  {
+			isAuthor=  CheckDocumentUserRight.isAuthorCurrentUser(docCard);	
+		}
+		
+		final  boolean  isUserBAorAuthor = isBa || isAuthor;
+		
+		//final  boolean  isUserBAorAuthor =(docCard.getViewState() == EViewState.New)?true:isBa || CheckDocumentUserRight.isAuthorCurrentUser(docCard);
+		_logger.info("isUserBAorAuthor = "+isUserBAorAuthor);	 						
 		
 		
-		final boolean isUsetBAorAuthor = CheckDocumentUserRight.isHasBARole() || CheckDocumentUserRight.isAuthorCurrentUser(docCard);
-		
-	 
+		_logger.info("changeVisibleControls:  isBa=" +isBa+ " isUsetBAorAuthor="+isUserBAorAuthor+ " status = "+docCard.getDocumentStatus() );
 			switch (docCard.getDocumentStatus() ) {
 			case Draft :
-				docCard.visibleButtons(new Boolean[]{isUsetBAorAuthor,true,true,false,false, false});						
+				docCard.visibleButtons(new Boolean[]{true,true,isAuthor,false,false, false,false,false});						
 				break;
 			case AtTheApproval:
 				
-					CheckDocumentUserRight.isCurrentUserHasApprovRight(docCard, new BooleanCallback() {						
+					CheckDocumentUserRight.isCurrentUserHasApproveRight(docCard, new BooleanCallback() {						
 						@Override
 						public void execute(Boolean value) {
-							docCard.visibleButtons(new Boolean[]{isUsetBAorAuthor || value,true,false,false,false, false});
+							docCard.visibleButtons(new Boolean[]{isUserBAorAuthor || value,true,false,false,false, false, true,true});
 						}
-					});					
-				
+					});									
 				break;
 			case Approval:
-				boolean isCommandDoc = docCard.getCorrespondentTypeRootCode() == ECorrespondentType.INSIDE_PRIKAZ_DOC;
-				docCard.visibleButtons(new Boolean[]{isUsetBAorAuthor,true,false,isUsetBAorAuthor && isCommandDoc,false, false});
+				boolean isCommandDoc = docCard.getCorrespondentType() == ECorrespondentType.INSIDE_PRIKAZ;
+				docCard.visibleButtons(new Boolean[]{isUserBAorAuthor,true,false,isUserBAorAuthor && isCommandDoc,false, false, false, false});
 				break;
 			case AtTheSigning:				
-				CheckDocumentUserRight.isCanSignatoryDoc(docCard, new BooleanCallback() {
-					
+				CheckDocumentUserRight.isCanSignatoryDoc(docCard, new BooleanCallback() {					
 					@Override
 					public void execute(Boolean value) {						
-						docCard.visibleButtons(new Boolean[]{value||isBa,true,false,false,value,value});
+						docCard.visibleButtons(new Boolean[]{value||isBa,true,false,false,value,value, false,false});
 					}
-				});				
-								
+				});												
 				return;				
 			case Signed:				
 			case Valid:				
 			case Revoked:
 			case Cancelled:
-				docCard.visibleButtons(new Boolean[]{isBa,true,false,false,false,false});
-				break;		
-					
+				docCard.visibleButtons(new Boolean[]{isBa,true,false,false,false,false, false,false});
+				break;							
 			default:
+				docCard.visibleButtons(new Boolean[]{true,true,true,false,false, false,false,false});
 				break;
 		}		
 	}

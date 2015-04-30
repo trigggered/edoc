@@ -5,6 +5,7 @@ package document.ui.client.resources.locales;
 
 
 
+
 /**
  * @author azhuk
  * Creation date: Nov 26, 2014
@@ -60,7 +61,7 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	
 	public static final String DOC_IN_WORK = "Документы в работе";
 	public static final String DOC_FOR_PUBLISH = "Документы к публикации";
-	public static final String ORDER_FOR_REFRESH = "Порядки к обновлению";
+	public static final String PROCEDURE_TO_UPDATE = "Порядки к обновлению";
 	public static final String BA_WORKSPACE =  "Рабочая область БА";
 	public static final String SEND_REMEMBER = "Напомнить";
 	public static final String SEND_TO_SIGN = "Отправить на подпись";
@@ -82,11 +83,15 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	
 	public static final String DOC_OUT_OF_ORDER = "Выведен из действия";
 	public static final String DOC_Entered_into_force = "Вступившие в силу";
-	public static final String DOC_RECIPIENTS = "Получатели документа";
+	public static final String DOC_EMP_APPROVALS = "Согласованты";
+	public static final String DOC_EMP_RECIPIENTS = "Получатели документа";
 	public static final String DOC_EMP_EXECUTERS = "Исполнители";
 	public static final String DOC_RELATIONS = "Связанные документы";
 	public static final String Q_FILE_DOWNLOAD =  "Загрузить файл: ";
 	public static final String APPROVALS = "Согласование";
+	public static final String APPROVE = "Согласовано";
+	public static final String NOT_APPROVE = "Не Согласовано";
+	
 	public static final String ADD_TO_FAVORIT = " добавлен в избранное";
 	public static final String DOC_TO_EXECUTE = "К исполнению";
 	public static final String DOC_TO_APPROVALS = "На согласование";
@@ -102,6 +107,9 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	public static final String DIC_DOC_STATUS = "Статусы документов";
 	public static final String DIC_RISC_ZONE = "Зоны рисков";
 	public static final String ALL_DOCS =  "Все документы";
+	public static final String ALL_DOCS_TO_EXECUTE =  "Документы к исполнению";
+	public static final String EXECUTE_DOCS =  "Исполненые документв";
+	
 	public static final String ALL_DOCS_IN_PERIOD = " Все документы за период ";
 	public static final String DOC_CARD =  "Карточка документа";
 	public static final String DIC_ORDER_TYPE = "Тип порядка";
@@ -115,7 +123,7 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	public static final String ENTER_DOC_ID =  "Введите  ИД документа:";
 	public static final String NOT_FOUND_DOC = "Документ не найден. ID = ";
 	public static final String DOC_SIGN = "Документ подписан";
-	public static final String Q_SIGN_DOC = "Подписать документ ЭЦП?";
+	public static final String Q_SIGN_DOC = "Подписать документ ?";
 	public static final String DOC_SENT_TO_SIGN = "Документ отправлен на подписание";
 	public static final String Q_SENT_DOC_TO_SIGN = "Отправить документ на подпись?";
 	public static final String NOT_CHOUSE_SIGN = "Не указан подписант";
@@ -146,8 +154,26 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	public static final String DOC_PUBLISHED = "Опубликованные";
 	public static final String DIC_FAV_GR_EMP = "Избранные группы сотрудников";
 	public static final String Dictionary = "Справочник";
-	public static final String Q_SEND_REMEMBER_BY_DOC_TO_APPROVAL = "Направить напомнание о согласовантам?";
+	public static final String Q_SEND_REMEMBER_BY_DOC_TO_APPROVAL = "Направить напоминание о согласовантам?";
 	public static final String SEND_REMEMBER_TO_APPROVAL = "Напомнить согласовантам";
-	public static final String ONLY_AUTHOR_CAN_SEND_REMEMBER = "Только автор в статусе \"На согласовании\" может отправить напоминание";		
+	public static final String ONLY_AUTHOR_CAN_SEND_REMEMBER = "Только автор в статусе \"На согласовании\" может отправить напоминание";
+	public static final String DOC_PROCEDURE =  "Порядок";
+	public static final String DicFinPolicies = "Учетная политика";
+	public static final String DicFinOperType = "Виды операций";
+	public static final String PRIKAZ = "Приказ ";
+	public static final String PROCEDURE = "Порядок ";
+	public static final String NOTIFICATION =  "Уведомление ";
+	public static final String ACCOUNT_MODEL = "Бухгалтерская модель ";
+	public static final String INPUT = "Входящий ";
+	public static final String OUTPUT = "Исходящий ";
+	public static final String BA_FIN_WORKSPACE = "Рабочая область БА ДФ";
+	public static final String ERROR_SING_INIT = "Ошибка инициализации ключа";
+	public static final String DocAllApproved =  "Документ согласован всеми согласовантами";
+	public static final String CLEAR = "Очистить";
+	public static final String CONTEXT_SEARCH = "По содержимому";
+	public static final String MY_DOC =  "Мои документы";
+	public static final String EXECUTE = "Выполнено";
+	public static final String FIN_CODES = "Коды для генерации кода БМ";
+	public static final String EXPORT2CSV = "Экспорт в CSV";		
 	
 }

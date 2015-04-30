@@ -76,7 +76,7 @@ public class DocumentsTreeInside extends DocumentsTreeInOut {
 		String id_dept_author = masterSelectedData.getAttribute("ID_DEP_OWNER");	
 		params.put("ID_DEP_OWNER", id_dept_author);
 		_logger.info("ID_DEP_OWNER="+id_dept_author);
-		return params;				
+		return params;			
 	}
 	
 	@Override

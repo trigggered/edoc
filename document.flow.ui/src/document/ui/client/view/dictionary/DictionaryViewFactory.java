@@ -12,8 +12,8 @@ public class DictionaryViewFactory {
 			case DocFormOfCorrespondence:		
 			case Productions:
 			case DocStatus:			
-			case DocScoupe:
-			case DocRisk:	
+			//case DocScoupe:
+			//case DocRisk:	
 			case SAPListOfDepartments:			
 				return new DictionaryTreeView(viewIdent);
 				

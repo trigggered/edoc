@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mdb.core.shared.data.Params;
 import mdb.core.shared.transformation.impl.ResultSetToJSONTransformation;
 import mdb.core.shared.transport.IRequestData;
-import mdb.core.shared.transport.Request;
-import mdb.core.shared.data.Params;
 import mdb.core.shared.transport.IRequestData.ExecuteType;
+import mdb.core.shared.transport.Request;
 import document.ui.client.commons.EDocStatus;
 import document.ui.server.communication.rpc.mdbgw.MdbRequester;
 import document.ui.server.mail.template.ITemplateBuiled;
@@ -38,15 +37,23 @@ public class FlowMsgBuilder {
 	private Properties 		_mailProp;
 	
 	
-	final String Subj_for_approval_new_vers = "Добавлена новая версия документа. ";
-	final String Subj_for_approval = "Запрос на согласование.";
-	final String Subj_for_sign = "Запрос на подписание.";	 
-	final String Subj_for_cancel_pub ="Отказано в публикации." ;
+	final String Subj_for_add_new_vers = "Добавлена новая версия документа. ";
+	final String Subj_for_approval_req = "Запрос на согласование.";
+	//final String Subj_for_approval = "Документ согласован.";
+	final String Subj_for_approval = "Cогласован.";
+	final String Subj_for_sign_req = "Запрос на подписание.";
+	final String Subj_for_cancel ="Отказано." ;
+	final String Subj_for_cancel_pub ="Отказано в публикации." ;	
 	final String Subj_for_cancel_sign = "Не подписано." ;
 	final String Subj_for_cancel_approval ="Не согласовано.";
 	final String Subj_for_doc_pub ="Документ опубликован.";
+	final String Subj_for_approve_from_user ="Получено согласование.";
+	final String Subj_for_not_approve_from_user ="НЕ получено согласование.";
+	final String Subj_for_executor = "К исполнению";
+	final String Subj_for_revoke = "Отозванный";
 	
-	final String Doc_Subject = "Тема документа: %s";
+	
+	//final String Doc_Subject = "Тема документа: %s";
 
 	ITemplateBuiled _templateBuiled = new VelocityBuilder(); 
 	
@@ -59,15 +66,20 @@ public class FlowMsgBuilder {
 	public Message  createMessage (EMailType mailType, long documentId, String infoMessage) {
 		Message   toReturn = new Message() ;
 		
-		HashMap<String, String> docCard =  DocDataHelper.getDocCard(documentId);					
-		docCard.put("infoMsg", infoMessage);
+		HashMap<String, String> docCard =  DocDataHelper.getDocCard(documentId);			
 		
+		HashMap<String, String>  infoFlow = DocDataHelper.getDocumentFlowInfo (documentId) ;
+		
+		if (infoFlow != null && infoFlow.size() > 0) {
+			docCard.put("deadline", infoFlow.get("DEADLINE"));
+		}
+		
+		docCard.put("infoMsg", infoMessage);				
 				
 		toReturn.setFrom((String) _mailProp.getProperty("addrFrom"));
 		
-		toReturn.setSubject(getdMailSubj(mailType, docCard)+" "+String.format(Doc_Subject, docCard.get("NAME") )  );
-		docCard.put("subject", toReturn.getSubject());
-		
+		toReturn.setSubject(getdMailSubj(mailType, docCard)+" "+docCard.get("CORR_TYPE_FULL")+": "+docCard.get("NAME") );
+		docCard.put("subject", toReturn.getSubject());		
 		
 		toReturn.setRecipients(getRecipientsAddr ( mailType,  documentId) );
 		toReturn.setBody(_templateBuiled.getMailBody(mailType, getBodyParameters (mailType, docCard) ));	
@@ -75,8 +87,7 @@ public class FlowMsgBuilder {
 		_logger.info("Addr from "+toReturn.getFrom());
 		_logger.info("Subject is :"+toReturn.getSubject());
 		_logger.info("Recipients is " + Arrays.toString(toReturn.getRecipients()));
-		_logger.info("Content is :"+toReturn.getBody());
-		
+		_logger.info("Content is :"+toReturn.getBody());		
 		
 		return toReturn;
 	}
@@ -89,7 +100,7 @@ public class FlowMsgBuilder {
 		 switch (mailType) {
 		 
 			case ToAcceptingNewVersion:								
-				toReturn.put("infoMsg", infoMessage!=null?Subj_for_approval_new_vers+":"+infoMessage:" ");
+				toReturn.put("infoMsg", infoMessage!=null?Subj_for_add_new_vers+":"+infoMessage:" ");
 				break;
 			default:					
 				toReturn.put("infoMsg", infoMessage!=null?"Комментарии: "+infoMessage:" ");
@@ -117,40 +128,51 @@ public class FlowMsgBuilder {
 		String toReturn = null;
 		switch (emailType) {
 			case ToAccepting:
-				toReturn = Subj_for_approval;				
+				toReturn = Subj_for_approval_req;				
 				break;
 			case ToSignatory:
-				toReturn = Subj_for_sign;
+				toReturn = Subj_for_sign_req;
 				break;
 			case ToRecipients:				
 				break;
 			case ToExecutor:
+				toReturn = Subj_for_executor;
 				break;
-			case CancelPublishEmailToAuthor:
+			case ToAuthorCancelPublish:
 				toReturn = Subj_for_cancel_pub;
 				break;
-			case CancelApprovalEmailToAuthor:
+			case ToAuthorCancel:
+				toReturn = Subj_for_cancel;
+				break;
+			case ToAuthorCancelApproval:
 				toReturn = Subj_for_cancel_approval;
 				break;
-			case CancelSignEmailToAuthor:
+			case ToAuthorCancelSign:
 				toReturn = Subj_for_cancel_sign;
 				break;	
 			case ToAcceptingNewVersion:
-				toReturn = Subj_for_approval_new_vers;
+				toReturn = Subj_for_add_new_vers;
 				break;
 			case DocumentPublished:
 				toReturn = Subj_for_doc_pub;
 			case ChangeDocStatus:
 				EDocStatus status =  EDocStatus.fromInt( Integer.parseInt(docCard.get("ID_STATUS")));
-				toReturn = status.toString();
+				//toReturn =  String.format("Документ переведен в статус: %s", status);
+				toReturn =  status.toString();
+				break;
+			case DocumentApproved:
+				//EDocStatus status =  EDocStatus.fromInt( Integer.parseInt(docCard.get("ID_STATUS")));
+				toReturn = Subj_for_approval;
 				break;
 			case ApproveCurentUser:
-				toReturn = "Согласовано ";
+				toReturn = Subj_for_approve_from_user;
 				break;
 			case NotApproveCurentUser:
-				toReturn = "Не Согласовано ";
+				toReturn = Subj_for_not_approve_from_user;
 				break;
-				
+			case RevokeDoc:
+				toReturn = Subj_for_revoke;
+				break;
 		}		
 		
 		return toReturn;		
@@ -208,21 +230,31 @@ public class FlowMsgBuilder {
 			case ToRecipients:
 				entittId = MdbEntityConst.E_MAIL_DOC_RECIPIENTS;
 				params.add("RECIPIENTS_TYPE", "0");
-				emailFldName ="E_MAILE";
+				emailFldName ="E_MAIL";
 				break;
 				
 			case ToExecutor:
 				entittId = MdbEntityConst.E_MAIL_DOC_RECIPIENTS;
 				params.add("RECIPIENTS_TYPE", "1");
-				emailFldName ="E_MAILE";
+				emailFldName ="E_MAIL";
 				break;
 				
-			case CancelPublishEmailToAuthor:
-			case CancelSignEmailToAuthor:
-			case CancelApprovalEmailToAuthor:
 			case DocumentPublished:
+				entittId = MdbEntityConst.E_MAIL_DOC_PUBLISHED;
+				params.add("RECIPIENTS_TYPE", "0");
+				emailFldName ="E_MAIL";				
+				break;
+			case RevokeDoc:
+				entittId = MdbEntityConst.E_MAIL_DOC_PUBLISHED;				
+				emailFldName ="E_MAIL";			
+				break;
+		
+			case ToAuthorCancelPublish:
+			case ToAuthorCancelSign:
+			case ToAuthorCancelApproval:			
 			case ApproveCurentUser:
 			case NotApproveCurentUser:
+			case DocumentApproved:
 			case ChangeDocStatus:
 				entittId = MdbEntityConst.DocCard;
 				emailFldName ="AUTHOR_E_MAILE";
@@ -230,7 +262,7 @@ public class FlowMsgBuilder {
 			}
 		
 			req= _mdbRequester.getNewRequest(entittId , ExecuteType.GetData, params );
-		
+			
 			Request response = _mdbRequester.call(req);
 			IRequestData data= response.get( String.valueOf(entittId)  );
 			
@@ -256,7 +288,4 @@ public class FlowMsgBuilder {
 			
 		return dsf;
 	}
-	
-	
-	
 }

@@ -22,6 +22,7 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
+import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.commons.checker.CheckCanApproval;
 import document.ui.client.commons.checker.CheckDocumentUserRight;
 import document.ui.client.resources.locales.Captions;
@@ -43,13 +44,16 @@ public class DataGridSection extends GridView implements IRemoteDataSave{
 	
 	
 	private int _selectedListEntityId;  
-	private DocumentCard _mainDoc;
-	private EDocumentDataSection _docAdditionalDataType;	
+	private DocumentCard _docCard;
+	private EDocumentDataSection _dataSectionType;	
 	private boolean _currentUserHasApprovRight = false;
 	
 	public DataGridSection (EDocumentDataSection docAdditionalDataType,  DocumentCard doc) {
-		_docAdditionalDataType = docAdditionalDataType;
-		switch(_docAdditionalDataType) {
+		_dataSectionType = docAdditionalDataType;
+		_docCard = doc;
+		
+		
+		switch(_dataSectionType) {
 		case Approval:
 			setMainEntityId(MdbEntityConst.ACCEPTING_EMP);
 			setCaption( Captions.APPROVALS);
@@ -59,15 +63,15 @@ public class DataGridSection extends GridView implements IRemoteDataSave{
 			addEditEvent(_showEditAcceptingEmpViewHandler);
 			 break;
 		case Recipients:
-			setMainEntityId(MdbEntityConst.RECIPIENTS_EMP);			
-			setCaption(Captions.DOC_RECIPIENTS);
+			setMainEntityId(MdbEntityConst.RECIPIENTS_EXECUTERS_EMP);			
+			setCaption(Captions.DOC_EMP_RECIPIENTS);
 			setImgCaption(Images.DOC_RECIPIENTS );
 			setIsMultiSelect(true);
 			getParams().add("RECIPIENTS_TYPE", "0");
 			addInsertEvent(_showInsertGrRecipientsViewHandler);
 			break;
 		case 	Executors:
-			setMainEntityId(MdbEntityConst.RECIPIENTS_EMP);
+			setMainEntityId(MdbEntityConst.RECIPIENTS_EXECUTERS_EMP);
 			setCaption(Captions.DOC_EMP_EXECUTERS);
 			setImgCaption(Images.DOC_EMP_EXECUTERS );
 			setIsMultiSelect(true);			
@@ -80,7 +84,12 @@ public class DataGridSection extends GridView implements IRemoteDataSave{
 			addInsertEvent(_showInsertDocViewHandler);
 			addEditEvent(DocumentCard.getShowEditViewHandler());
 			getParams().add("ID_REL_TYPE", "0");
-			_selectedListEntityId = MdbEntityConst.DOC_LIST;
+			if ( _docCard.getCorrespondentType() ==ECorrespondentType.ACCOUNT_MODEL) {
+				_selectedListEntityId = MdbEntityConst.FIN_DOC_LIST;
+			}
+			else {
+				_selectedListEntityId = MdbEntityConst.DOC_LIST;
+			}
 			break;
 		case Attachments:
 			setCreateMenuNavigator(false);
@@ -94,7 +103,7 @@ public class DataGridSection extends GridView implements IRemoteDataSave{
 		default:
 			break;			
 		}		
-		_mainDoc = doc;
+		
 	}		
 	
 	
@@ -118,7 +127,7 @@ public class DataGridSection extends GridView implements IRemoteDataSave{
 							return;
 						}
 						
-						newRecord.setAttribute("ID_DOC", _mainDoc.getDocumentId());			
+						newRecord.setAttribute("ID_DOC", _docCard.getDocumentId());			
 						newRecord.setAttribute("OFFICER_NUM", rec.getAttribute("OFFICER_NUM"));
 						newRecord.setAttribute("FULL_NAME", rec.getAttribute("FULL_NAME"));
 						 						
@@ -147,7 +156,7 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
 					for (Record rec : data) {
 						ListGridRecord newRecord = new ListGridRecord();										
 							
-						newRecord.setAttribute("ID_DOC", _mainDoc.getDocumentId());			
+						newRecord.setAttribute("ID_DOC", _docCard.getDocumentId());			
 						newRecord.setAttribute("VALUE_ID", rec.getAttribute("VALUE_ID"));
 						newRecord.setAttribute("ID_GR", rec.getAttribute("ID_GR"));
 						newRecord.setAttribute("NAME", rec.getAttribute("NAME"));
@@ -168,14 +177,29 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
 				
 				CheckCanApproval check = new CheckCanApproval(); 
 				
+				
 				check.isCan(getDocumentCard().getDocumentStatus(), getDocumentCard().getDocumentId(),
 						Integer.valueOf(selectedApprovUsrId).intValue(), new BooleanCallback() {
+					
 					
 					@Override
 					public void execute(Boolean value) {
 						if (value) {
 							record.setAttribute("ACCEPT_DTA", DateTimeHelper.getSysdate());
-							EditDialog.viewForEdit(getMainDataSource(), _grid, false);
+							EditDialog.viewForEdit(getMainDataSource(), _grid, false,new ICallbackEvent<Record>() {
+								
+								@Override
+								public void doWork(Record data) {
+									if (data != null) {										
+										
+										String isAccept = data.getAttribute("IS_ACCEPT");
+										
+										if (isAccept != null && isAccept.length() >0 ) {
+											getDocumentCard().setAprroveChange(true);										
+										}
+									}									
+								}
+							});
 						} else {
 							EditDialog.view(getMainDataSource(), _grid);	
 						}
@@ -200,8 +224,8 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
 					for (Record rec : data) {
 						Record newRecord = new Record();										
 							
-						newRecord.setAttribute("ID_MAIN_DOC", _mainDoc.getDocumentId());
-						newRecord.setAttribute("ID_DOC", _mainDoc.getDocumentId());
+						newRecord.setAttribute("ID_MAIN_DOC", _docCard.getDocumentId());
+						newRecord.setAttribute("ID_DOC", _docCard.getDocumentId());
 						newRecord.setAttribute("ID_CHILD_DOC", rec.getAttribute("ID_DOC"));
 						//newRecord.setAttribute("ID_REL_TYPE", 0);
 						newRecord.setAttribute("ID_REL_TYPE", getParams().paramByName("ID_REL_TYPE").getValue());
@@ -220,13 +244,13 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
 	@Override
 	public void prepareRequestData() {		
 		
-		_logger.info("################ Start prepareRequestData id for Grid Section: "+_docAdditionalDataType.toString()+" ######################");
-		_logger.info("Put parametr ID_DOC= "+String.valueOf(_mainDoc.getDocumentId()));
+		_logger.info("################ Start prepareRequestData id for Grid Section: "+_dataSectionType.toString()+" ######################");
+		_logger.info("Put parametr ID_DOC= "+String.valueOf(_docCard.getDocumentId()));
 		 getDataBinder().getDataProvider().getRequest().setPosition(2);
     	IRequestData entity = getDataBinder().getDataProvider().getRequest().add(new RequestEntity (getMainEntityId()));
     	
     	entity.getParams().putAll(getParams());
-    	entity.getParams().add("ID_DOC", String.valueOf(_mainDoc.getDocumentId()));
+    	entity.getParams().add("ID_DOC", String.valueOf(_docCard.getDocumentId()));
     	
     	entity.setExecuteType(ExecuteType.GetData);
     	super.prepareRequestData();
@@ -281,17 +305,17 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
 	}
 	
 	public DocumentCard getDocumentCard() {
-		return _mainDoc;
+		return _docCard;
 	}
 	
 
 	@Override
 	public void callEditEvent() {
-		if (_currentUserHasApprovRight && _docAdditionalDataType	== EDocumentDataSection.Approval ) {
+		if (_currentUserHasApprovRight && _dataSectionType	== EDocumentDataSection.Approval ) {
 	
 			_editHandler.onEdit(getSelectedRecord());
 		} 
-		else if (_docAdditionalDataType	== EDocumentDataSection.Attachments) {
+		else if (_dataSectionType	== EDocumentDataSection.Attachments) {
 			_editHandler.onEdit(getSelectedRecord());
 		}
 		else {
@@ -306,9 +330,9 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
 	public void setCanEdit(boolean value) {
 		super.setCanEdit(value);		
 		
-		if ( _docAdditionalDataType	== EDocumentDataSection.Approval) {			
+		if ( _dataSectionType	== EDocumentDataSection.Approval) {			
 			
-			CheckDocumentUserRight.isCurrentUserHasApprovRight(getDocumentCard(), new BooleanCallback() {
+			CheckDocumentUserRight.isCurrentUserHasApproveRight(getDocumentCard(), new BooleanCallback() {
 				
 				@Override
 				public void execute(Boolean value) {

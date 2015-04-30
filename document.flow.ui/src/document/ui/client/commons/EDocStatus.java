@@ -51,7 +51,8 @@ public enum EDocStatus {
 	}
 	
 	
-	public static EDocStatus fromInt(int value) {			
+	public static EDocStatus fromInt(int value) {
+		
 		switch (value ) {
 			case 0: return Unknown;
 			case 1: return Execution;		
@@ -73,7 +74,7 @@ public enum EDocStatus {
 	
 	public String toString() {			
 		switch (_value ) {
-			case 0: return "";
+			case 0: return "Unknown";
 			case 1: return "На исполнении";		
 			case 2: return "Отправлен ответ";
 			case 3: return "Отправлен ответ";

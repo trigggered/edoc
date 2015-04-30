@@ -85,7 +85,6 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 					@Override
 					public void execute(Boolean value) {
 						if (value) {
-							//DocumentActions.udateDocStatus(_card, EDocStatus.Approval);
 							FlowProccessing.forcedDocumentToStatus(_card.getDocumentId(), EDocStatus.Approval, refreshCallBack);
 						}
 						
@@ -106,7 +105,6 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 					@Override
 					public void execute(Boolean value) {
 						if (value) {
-							//DocumentActions.udateDocStatus(_card, EDocStatus.Cancelled);
 							FlowProccessing.forcedDocumentToStatus(_card.getDocumentId(), EDocStatus.Cancelled, refreshCallBack);
 						}
 						
@@ -146,7 +144,7 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 
 		});		
 		*/
-		
+		/*
 		item = childMenu.addItem(Captions.CHECK_SIGN, "", IMenuItem.ItemType.ToolButton,0);
 		item.setCommand(new ICommand<IMenuItem>() {						
 			@Override
@@ -164,7 +162,7 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 			}
 
 		});
-		
+		*/
 		
 		item = childMenu.addItem(Captions.DELETE_D0C, "", IMenuItem.ItemType.ToolButton,0);
 		item.setCommand(new ICommand<IMenuItem>() {						

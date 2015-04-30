@@ -23,11 +23,14 @@ import document.ui.client.view.dictionary.ent.MapListOfDepartments;
 import document.ui.client.view.doc.DocumentsOfDay;
 import document.ui.client.view.doc.DocumentsTreeInOut;
 import document.ui.client.view.doc.DocumentsTreeInside;
+import document.ui.client.view.doc.DocumentsTreeInsideFin;
 import document.ui.client.view.doc.HomeView;
 import document.ui.client.view.doc.MyDocuments;
 import document.ui.client.view.doc.card.DocumentCard;
 import document.ui.client.view.doc.search.Search;
+import document.ui.client.view.doc.search.SearchAccModelView;
 import document.ui.client.view.doc.search.SearchView;
+import document.ui.client.view.reports.ViewReport;
 import document.ui.shared.MdbEntityConst;
 
 public class ViewFactory {
@@ -63,9 +66,19 @@ public class ViewFactory {
 	  case CodeDocReserv:
 	  case DicBAGrEmp:  
 	  case DicGrEmp:
+	  case DicFinEntDevision:
+	  case DicFinPolicies:
+	  case DicFinOperType:
+	  case DicFinCodes:
 		  return DictionaryViewFactory.create(viewIdent);
 		  
-	   
+	  case ReportForBA:
+	  case ReportForAuthor:
+	  case ReportForAprovals:
+	  case ReportForSigners:
+	  case ReportForExecuters:
+		  return new ViewReport(viewIdent);
+		  
 	  case MapListOfDepartments:
 		  return new MapListOfDepartments();		  
 	  case Home:
@@ -76,6 +89,8 @@ public class ViewFactory {
 		  return new MyDocuments();
 	  case Search : 
 		  return new SearchView();		  
+	  case SearchAccModel : 
+		  return new SearchAccModelView();
 	  case SearchById:
 		  Search.searchDocById();
 		  return null;
@@ -84,19 +99,24 @@ public class ViewFactory {
 		  return new DocumentsTreeInOut(viewIdent);
 	  case	InsideDoc:		  
 		  return new DocumentsTreeInside(viewIdent);
-		  
+	  case  InsideFinDoc:  
+		  return new DocumentsTreeInsideFin(viewIdent);
 	  case BAWorkspace:
 		  return new BAWorkspace();
+	  case BAFinWorkspace:
+		  return new BAFinWorkspace();
 	  case  NewInDoc:
-		  return DocumentCard.newDocument(ECorrespondentType.INPUT_DOC);
+		  return DocumentCard.newDocument(ECorrespondentType.INPUT);
 	  case  NewOutDoc:		
-		  return DocumentCard.newDocument(ECorrespondentType.OUTPUT_DOC);		  
+		  return DocumentCard.newDocument(ECorrespondentType.OUTPUT);		  
 	  case  NewInsideCommandDoc:
-		  return DocumentCard.newDocument(ECorrespondentType.INSIDE_PRIKAZ_DOC);
+		  return DocumentCard.newDocument(ECorrespondentType.INSIDE_PRIKAZ);
 	  case  NewInsideNotificationDoc:
-		  return DocumentCard.newDocument(ECorrespondentType.INSIDE_NOTIFICATION_DOC);
+		  return DocumentCard.newDocument(ECorrespondentType.INSIDE_NOTIFICATION);
 	  case  NewInsideOrderDoc:
-		  return DocumentCard.newDocument(ECorrespondentType.INSIDE_PROCEDURE_DOC);
+		  return DocumentCard.newDocument(ECorrespondentType.INSIDE_PROCEDURE);
+	  case NewAccountModelDoc:
+		  return DocumentCard.newDocument(ECorrespondentType.ACCOUNT_MODEL);
 	  case	AssignRoles:
 		  return null;
 	  case RoleActions:
@@ -111,7 +131,8 @@ public class ViewFactory {
 		  
   }
   
-  public static void viewInitialize (EViewIdent viewIdent, final IDataView view) {
+
+public static void viewInitialize (EViewIdent viewIdent, final IDataView view) {
 	   
 	  _logger.info("Initialize view for "+viewIdent);
 	  switch (viewIdent) {
@@ -171,7 +192,24 @@ public class ViewFactory {
 			});
 		  break;	  		
 		/*Grid*/
+		case DicFinEntDevision:
+			view.setMainEntityId( MdbEntityConst.DicFinListOfDepartments);
+			view.setCaption(Captions.DEVISIONS);
+			break;	  		
+		case DicFinCodes:
+			view.setMainEntityId( MdbEntityConst.DicFinCodes);
+			view.setCaption(Captions.FIN_CODES);
+			break;
+		case DicFinPolicies:
+			view.setMainEntityId( MdbEntityConst.DicFinPolicies);
+			view.setCaption(Captions.DicFinPolicies);
+			break;	  		
+		case DicFinOperType:
+			view.setMainEntityId( MdbEntityConst.DicFinOperType);
+			view.setCaption(Captions.DicFinOperType);			
+			break;	  		
 		case DicDocTypeOfOrder:
+			
 			view.setMainEntityId( MdbEntityConst.DicDocTypeOfOrder);
 			view.setCaption(Captions.DIC_ORDER_TYPE);
 			break;			
@@ -300,7 +338,17 @@ public class ViewFactory {
 				
 				@Override
 				public void onEdit(Record record) {
-					SelectDialog.view(MdbEntityConst.DOC_LIST,true, new ICallbackEvent<Record[]>() {
+					int docList = MdbEntityConst.DOC_LIST;
+					
+					switch ( AppController.getInstance().getCurrentUser().getChooseApplicationID() )  {
+						case 1: docList =MdbEntityConst.DOC_LIST;
+							break;
+						case 2: docList =MdbEntityConst.FIN_DOC_LIST;
+							break;
+					}
+					
+					
+					SelectDialog.view(docList,true, new ICallbackEvent<Record[]>() {
 						
 						@Override
 						public void doWork(Record[] data) {
@@ -325,8 +373,7 @@ public class ViewFactory {
 								grView.getListGrid().getDataSource().addData(newRecord);					
 							}
 						}
-					});	 
-					
+					});					
 				}
 			});
 			break;		
@@ -350,7 +397,12 @@ public class ViewFactory {
 		case	InsideDoc:			
 			view.setCaption(Captions.ALL_DOCS);
 			view.setImgCaption(Images.ALL_DOCS);
-			break;		  
+			break;		 
+		case	InsideFinDoc:			
+			view.setCaption(Captions.ALL_DOCS);
+			view.setImgCaption(Images.ALL_DOCS);
+			break;			
+			
 		case 	AllDocs:
 			view.setCaption(Captions.ALL_DOCS_IN_PERIOD);
 			break;

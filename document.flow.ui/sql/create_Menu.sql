@@ -63,23 +63,7 @@ insert into mdb.app_menu (id_menu_parent, id_app, name)
   insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action, shortcut_key,visible)
   values (null, l_appId, 'Поиск', 'silk/find.png', 'Search', 'Ctrl+F', 1);  
   
-  
-  /*
-  insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action, SHORTCUT_KEY,visible)
-      values (l_menuId, l_appId, 'Расширенный поиск', 'silk/find.png', 'Search', 'Ctrl+F', 1);  
-      
-  insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
-   values (l_menuId, l_appId, 'Быстрый', '', 'Search') returning id_menu  into l_menuId;  
-  
-   insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action, SHORTCUT_KEY)
-     values (l_menuId, l_appId, 'По Ид документа', '', 'SearchById', 'Ctrl+O');
-      
-    insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action, SHORTCUT_KEY)
-      values (l_menuId, l_appId, 'По Коду документа', '', 'SearchByCode', NULL);  
-      
-    */
-     
-      insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)
   values (null, l_appId, 'Создать документ', '') returning id_menu  into l_menuId1;
     
     l_CREATE_DOC_menuId := l_menuId1;
@@ -94,8 +78,8 @@ insert into mdb.app_menu (id_menu_parent, id_app, name)
         insert into mdb.app_menu (id_menu_parent, id_app, name, action)
           values (l_menuId1, l_appId, 'Внутренняя корреспонденция', 	null) returning id_menu  into l_menuId1;
           */
-          insert into mdb.app_menu (id_menu_parent, id_app, name, action)
-          values (l_menuId1, l_appId, 'Приказ', 	'NewInsideCommandDoc') ;
+          insert into mdb.app_menu (id_menu_parent, id_app, name, action, visible)
+          values (l_menuId1, l_appId, 'Приказ', 	'NewInsideCommandDoc', 1) ;
           
           insert into mdb.app_menu (id_menu_parent, id_app, name, action)
           values (l_menuid1, l_appid, 'Порядок', 	'NewInsideOrderDoc') ;
@@ -111,7 +95,7 @@ insert into mdb.app_menu (id_menu_parent, id_app, name)
     values (l_menuId, l_appId, 'Избранные сотрудники', 'FavoritesEmp') ;
     
  insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
-     values (l_menuId, l_appId, 'Избрынные получатели - исполнители ','DicGrEmp');            
+     values (l_menuId, l_appId, 'Избранные получатели - исполнители ','DicGrEmp');            
   
 	
   
@@ -216,11 +200,8 @@ insert into mdb.app_menu (id_menu_parent, id_app, name)
     
   insert into mdb.app_menu (id_menu_parent, id_app, name,action)
     values (l_menuId2, l_appId,'Должности SAP', 'SAPJobs');     
-  
-  
-  
+      
   /*ORG UNIT*/
-
   /*  
   insert into mdb.app_menu (id_menu_parent, id_app, name, action)
     values (l_menuId, l_appId, 'Мапинг подразделений','MapListOfDepartments');   
@@ -236,10 +217,25 @@ insert into mdb.app_menu (id_menu_parent, id_app, name)
     values (l_menuId1, l_appId, 'Назначение ролей', 'AssignRoles'); 
   */
   
-  /*Отчеты*//*
+  /*Отчеты*/
   insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
-  values (null, l_appId, 'Отчеты',  'silk/printer.png', 'Reports') returning id_menu  into l_menuId;
-  */
+    values (null, l_appId, 'Отчеты',  'silk/printer.png', null) returning id_menu  into l_menuId;
+  
+  insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
+    values (l_menuId, l_appId, 'Отчет для БА',  'silk/printer.png', 'ReportForBA');
+  /*
+  insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
+   values (l_menuId, l_appId, 'Отчет для Автора',  null, 'ReportForAuthor');
+   
+   insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
+    values (l_menuId, l_appId, 'Отчет для Согласованта',  null, 'ReportForAprovals');
+   
+   insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
+    values (l_menuId, l_appId, 'Отчет для Подписанта',  null, 'ReportForSigners');
+   
+   insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
+    values (l_menuId, l_appId, 'Отчет для Исполнителя',  null, 'ReportForExecutesr');
+*/
 
 insert into mdb.app_menu (id_menu_parent, id_app, name)
     values (null, l_appId, 'Помощь') returning id_menu  into l_menuId;
@@ -254,8 +250,7 @@ select 1,1, sysdate,  id_menu
     from mdb.app_menu 
     where id_app = 1 and visible =1
     connect by prior id_menu = id_menu_parent 
-    start with id_menu_parent  is null 
-    
+    start with id_menu_parent  is null     
     order siblings by sort
 ;
 
@@ -278,5 +273,142 @@ select 3,1, sysdate,  id_menu
     order siblings by sort
     ;
     
+    /*#########################################################################*/
+    /*#########################################################################*/
+    
+    
+    l_appId :=2;
+      insert into mdb.app_module (id_app, name)
+         values (l_appId, 'Accounting model management');
+ 
+     /*Hot Menu*/
+    insert into mdb.app_menu (id_menu_parent, id_app, name, action, img_path)
+      values (null, l_appId, 'Home', 'Home', 'silk/cube_green.png') returning id_menu into l_menuId; 
+  
+ /*Документы*/ 
+insert into mdb.app_menu (id_menu_parent, id_app, name)
+  values (null, l_appId, 'Документы') returning id_menu  into l_menuId;
+  
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+  values (l_menuId, l_appId, 'Мои бух модели', 'MyDocs');
+  
+  
+  
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+  values (l_menuId, l_appId, 'Модели  дня', 'DocumentsOfDay'); 
+          
+  /*
+  insert into mdb.app_menu (id_menu_parent, id_app, name)
+  values (l_menuId, l_appId, 'Просмотр') returning id_menu  into l_menuId; 
+   */
+   insert into mdb.app_menu (id_menu_parent, id_app, name, action, visible)
+      values (l_menuId, l_appId, 'Входящая', 'InDoc', 0);             	
+
+      insert into mdb.app_menu (id_menu_parent, id_app, name, action,visible)
+        values (l_menuId, l_appId, 'Исходящая', 'OutDoc',0); 
+        /*
+        insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+          values (l_menuId, l_appId, 'Избранные документы', 	'FavoritesDoc'); 
+          */
+          
+        insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+          values (l_menuid, l_appid, 'Все  БМ', 	'InsideFinDoc'); 
+          /*
+          insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+            values (l_menuId, l_appId, 'На согласовании', 	'AcceptingProcess'); 
+          */
+  
+  /*Поиск*/
+  
+  insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action, shortcut_key,visible)
+  values (null, l_appId, 'Поиск', 'silk/find.png', 'SearchAccModel', 'Ctrl+F', 1);  
+  
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+  values (null, l_appId, 'Создать документ', '') returning id_menu  into l_menuId1;
+    
+    l_CREATE_DOC_menuId := l_menuId1;
+        
+          insert into mdb.app_menu (id_menu_parent, id_app, name, action, visible)
+          values (l_menuId1, l_appId, 'Бухгалтерская модель', 	'NewAccountModelDoc', 1) ;      
       
+
+ /*Справочники*/
+ insert into mdb.app_menu (id_menu_parent, id_app, name)
+  values (null, l_appId, 'Справочники') returning id_menu  into l_menuId;  
+    
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+    values (l_menuId, l_appId, 'Избранные сотрудники', 'FavoritesEmp') ;
+    
+ insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
+     values (l_menuId, l_appId, 'Избранные получатели - исполнители ','DicGrEmp');            
+  
+	
+  
+  /*Администрирование*/
+  insert into mdb.app_menu (id_menu_parent, id_app, name)
+    values (null, l_appId, 'Администрирование') returning id_menu  into l_menuId;
+  
+  l_ADMIN_menuId:=l_menuId;
+  
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)
+    values (l_menuId, l_appId, 'Рабочая область БА БМ','BAFinWorkspace');   
+    
+     /*Справочники*/
+ insert into mdb.app_menu (id_menu_parent, id_app, name)
+  values (l_menuId, l_appId, 'Справочники БА') returning id_menu  into l_menuId1;
+  
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
+     values (l_menuId1, l_appId, 'Коды для генерации кода БМ','DicFinCodes');   
+     
+  /*
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
+     values (l_menuId1, l_appId, 'Подразделения','DicFinEntDevision');   
+     */
+  insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
+     values (l_menuId1, l_appId, 'Учетная политика','DicFinPolicies');   
+     
+        
+    insert into mdb.app_menu (id_menu_parent, id_app, name, action)    
+     values (l_menuId1, l_appId, 'Виды операций','DicFinOperType');   
+
+/*Отчеты*/
+  insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
+    values (null, l_appId, 'Отчеты',  'silk/printer.png', null) returning id_menu  into l_menuId;
+  
+  insert into mdb.app_menu (id_menu_parent, id_app, name, img_path, action)
+    values (l_menuId, l_appId, 'Отчет для БА',  'silk/printer.png', 'ReportForBA');
+
+/*БМ Доступны только сотрудникам ГБ*/
+/*Бизнес администратор*/
+insert into DF.SEC_ROLE_ACTION (ID_ROLE,    ID_ACTION,      date_b,   ID )     
+select 1,1, sysdate,  id_menu
+    from mdb.app_menu 
+    where id_app = l_appId and visible =1
+    connect by prior id_menu = id_menu_parent 
+    start with id_menu_parent  is null     
+    order siblings by sort
+;
+
+/*Сотрудник ГБ*/
+insert into DF.SEC_ROLE_ACTION (ID_ROLE,    ID_ACTION,      date_b,   ID )     
+select 2,1, sysdate,  id_menu
+    from mdb.app_menu 
+    where id_app = l_appId and visible =1
+    connect by prior id_menu = id_menu_parent 
+    start with id_menu_parent  is null and  id_menu <>l_ADMIN_menuId
+    order siblings by sort
+;    
+
+
+/*Сотрудник рег. сети*/
+/*
+insert into DF.SEC_ROLE_ACTION (ID_ROLE,    ID_ACTION,      date_b,   ID )     
+select 3,1, sysdate,  id_menu
+    from mdb.app_menu 
+    where id_app = l_appId and visible =1
+    connect by prior id_menu = id_menu_parent 
+    start with id_menu_parent  is null and  id_menu not in (l_ADMIN_menuId, l_CREATE_DOC_menuId )
+    order siblings by sort
+    ;
+    */
 end;

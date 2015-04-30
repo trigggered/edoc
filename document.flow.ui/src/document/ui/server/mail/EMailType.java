@@ -9,9 +9,10 @@ public enum EMailType{
 	ToSignatory,
 	ToRecipients,
 	ToExecutor,
-	CancelPublishEmailToAuthor, 
-	CancelSignEmailToAuthor,
-	CancelApprovalEmailToAuthor,		
+	ToAuthorCancelPublish, 
+	ToAuthorCancelSign,
+	ToAuthorCancelApproval,
+	ToAuthorCancel,
 	ToAcceptingNewVersion,
 	
 	DocumentApproved,
@@ -19,7 +20,9 @@ public enum EMailType{
 	DocumentPublished, 
 	
 	ApproveCurentUser,
-	NotApproveCurentUser, 
-	ChangeDocStatus 
+	NotApproveCurentUser,
+	ChangeDocStatus,
+	RevokeDoc
+	
 	
 }
