@@ -7,9 +7,15 @@ import com.smartgwt.client.data.Record;
 
 import document.ui.client.resources.locales.Captions;
 import mdb.core.ui.client.command.ICommand;
+import mdb.core.ui.client.data.IDataNavigator;
+import mdb.core.ui.client.data.IDataSource;
 import mdb.core.ui.client.events.ICallbackEvent;
 import mdb.core.ui.client.view.components.menu.IMenu;
+import mdb.core.ui.client.view.components.menu.IMenuContainer;
 import mdb.core.ui.client.view.components.menu.IMenuItem;
+import mdb.core.ui.client.view.components.menu.data.MenuDataNavigator;
+import mdb.core.ui.client.view.components.menu.data.MenuDataPaging;
+import mdb.core.ui.client.view.data.IDataView;
 import mdb.core.ui.client.view.data.IListDataView;
 import mdb.core.ui.client.view.data.grid.GridView;
 import mdb.core.ui.client.view.dialogs.SelectDialog;
@@ -22,35 +28,37 @@ import mdb.core.ui.client.view.dialogs.select.MultiStepSelectDialog;
  */
 public class EmpSelectDlg extends MultiStepSelectDialog{
 	
-	
-	class EmpSelectedGrid  extends GridView {
-		/* (non-Javadoc)
-		 * @see mdb.core.ui.client.view.data.AListView#createMenu()
+	class MenuFiltered extends MenuDataNavigator {
+		
+		/**
+		 * @param name
+		 * @param dataSource
+		 * @param view
 		 */
+		public MenuFiltered(String name, IDataSource dataSource, IDataView view) {
+			super(name, dataSource, view);
+		}
+
+		protected void createDefaultButtons() {
+			setShowCaption(false);
+			setShowHint(true);			
+			createButton(IDataNavigator.Buttons.dataFilter);						
+		}	
+	}
+
+	class EmpSelectedGrid  extends GridView {
+
 		@Override
-		protected void createMenu() {			
-			super.createMenu();
+		protected void bindMenuDataNavigator(int entityId) { 		
 			
-			class  MenuFile extends mdb.core.ui.client.view.components.menu.Menu {
-				public MenuFile() {
-					super("MenuFile");
+			 IMenuContainer container =  getMenuContainer();
+			 IDataSource ds = getDataSource(entityId);				
 					
-					IMenuItem item = addItem(Captions.DIC_FAV_GR_EMP, "", IMenuItem.ItemType.Menu,0);
-					IMenu childMenu = new mdb.core.ui.client.view.components.menu.Menu("Child menu for 'File'");
-					item.setChildMenu(childMenu);
 					
-					item = childMenu.addItem(Captions.Dictionary, "", IMenuItem.ItemType.ToolButton,0);
-					item.setCommand(new ICommand<IMenuItem>() {
-						
-						@Override
-						public void execute(IMenuItem sender) {
-							EmpFromGrSelectDlg.view(true,getSelf().getCallbackEvent());							
-						}
-					});
-				}				
-			}			
-			getMenuContainer().bind(new MenuFile());
-		} 
+			IMenu menuNavigation = new MenuFiltered("MenuDataNavigator", ds,this);
+			menuNavigation.setPosition(1);
+			container.bind(menuNavigation);											
+		}
 	}
 	
 	/**

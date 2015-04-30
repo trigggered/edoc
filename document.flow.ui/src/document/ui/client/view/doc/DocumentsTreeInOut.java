@@ -19,6 +19,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.commons.EViewIdent;
+import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.ViewFactory;
 import document.ui.client.view.doc.card.DocumentCard;
 import document.ui.shared.MdbEntityConst;
@@ -40,10 +41,8 @@ public class DocumentsTreeInOut extends MasterTreeDetailGridView{
 		}
 		@Override
 		protected int getEntityIdForFilters() {
-			return MdbEntityConst.DocSearch;
-		}
-		
-		
+			return MdbEntityConst.DOC_LIST;
+		}		
 	}
 
 	//Дерево в разбивке по "Типу документа"
@@ -119,7 +118,7 @@ public class DocumentsTreeInOut extends MasterTreeDetailGridView{
 				}
 			});
 			
-			item = addItem("Обновить","Обновить", IMenuItem.ItemType.ToolButton, 5);
+			item = addItem( Captions.REFRESH,Captions.REFRESH, IMenuItem.ItemType.ToolButton, 5);
 			
 			AMenuData.initPropertyMenuItem(item, IMenuButtons.Buttons.dataRefresh );
 			item.setCommand(new ICommand<IMenuItem>() {				
@@ -156,13 +155,16 @@ public class DocumentsTreeInOut extends MasterTreeDetailGridView{
 		ViewFactory.viewInitialize(viewIdent, this);
 		switch (_viewIdent) {
 		  case InDoc:
-			  _corrTypeCode= ECorrespondentType.INPUT_DOC;				  
+			  _corrTypeCode= ECorrespondentType.INPUT;				  
 			  break;
 		  case	OutDoc:
-			  _corrTypeCode= ECorrespondentType.OUTPUT_DOC;
+			  _corrTypeCode= ECorrespondentType.OUTPUT;
 			  break;
 		  case	InsideDoc:
-			  _corrTypeCode= ECorrespondentType.INSIDE_PRIKAZ_DOC;
+			  _corrTypeCode= ECorrespondentType.INSIDE_PRIKAZ;
+			  break;
+		  case	InsideFinDoc:
+			  _corrTypeCode= ECorrespondentType.ACCOUNT_MODEL;
 			  break;		  
 		  case 	AllDocs:
 			  _corrTypeCode= ECorrespondentType.UNKNOWN;

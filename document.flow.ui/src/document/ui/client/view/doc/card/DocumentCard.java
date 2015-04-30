@@ -15,6 +15,7 @@ import mdb.core.ui.client.events.IDataEditHandler;
 import mdb.core.ui.client.view.IView;
 import mdb.core.ui.client.view.data.DataView;
 import mdb.core.ui.client.view.data.IDataView;
+import mdb.core.ui.client.view.data.grid.GridView;
 import mdb.core.ui.client.view.dialogs.message.Dialogs;
 
 import com.google.gwt.user.client.Window;
@@ -89,9 +90,8 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	
 	
 	protected TabSet _mainTabSet;	
-	protected EDocStatus _currentStatus;
 	private long _documentId;	
-	private ECorrespondentType _correspondentTypeRootCode;
+	private ECorrespondentType _correspondentType;
 
 	private DataFieldsSection _docMainFields;
 	private EViewState _viewState;
@@ -109,22 +109,23 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	protected Button _btnSave;
 	protected Button _btnSign;
 	protected Button _btnCancelSign;
+
+	private boolean _approveChange;
 	
 	
 	public DocumentCard() {
-		super(EViewPanelType.VLayout);		
-		//ObjectElement o = Document.get().createObjectElement();
-		//o.setCId(DEBUG_ID_PREFIX);						
+		super(EViewPanelType.VLayout);	
+						
 	}
 	
 	
 	public DocumentCard(ECorrespondentType correspondentType) {
 		super(EViewPanelType.VLayout);
-		_correspondentTypeRootCode = correspondentType;		
+		_correspondentType = correspondentType;
 	}	
 	
 
-	protected DataGridSection createDocDataSection(EDocumentDataSection value) {		
+	protected DataGridSection createDataSection(EDocumentDataSection value) {		
 		DataGridSection docData = new DataGridSection(value, this);
 		_hmDataSections.put(value, docData);
 		Tab tab = new Tab();
@@ -155,12 +156,14 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 		/*Основные параметры*/
 		Tab tabDocField = new Tab();
 		tabDocField.setTitle(Captions.DOC_MAIN_FLD);
-		_hmDataSections = new HashMap<EDocumentDataSection, IDataView>();
+		
+		
 		_docMainFields = new DataFieldsSection(this);
 		_docMainFields.setHeight100();
-		_docMainFields.setWidth100();
-		
+		_docMainFields.setWidth100();		
+		_hmDataSections = new HashMap<EDocumentDataSection, IDataView>();
 		_hmDataSections.put(EDocumentDataSection.MainFields, _docMainFields);
+		
 		 Layout layFields 	= new HLayout();
 		
 		_layMainDocFields 	= new HLayout();
@@ -236,13 +239,13 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 		mainLayout.addMembers(_mainTabSet, rightLayout);
 		Layout buttomsL =  createBottomLayout();
 		viewPanel.addMembers(mainLayout, buttomsL);				
-		createDocAddData();
-		createDocumentParamsTab();		
+		createFieldSections();
+		createGridSections();		
 	}
 	
-	protected abstract void createDocumentParamsTab();	
+	protected abstract void createGridSections();	
 	
-	protected abstract DataFieldsSection createDocAddData();
+	protected abstract void createFieldSections();
 	
 	protected DocumentCard getSelf() {
 		return this;
@@ -341,7 +344,12 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 				
 			}
 		}) ;
-	      
+	      /*
+	      Layout hLALayout = new HLayout();
+	      LinkItem lblLink = new LinkItem(getLinkToDocument());
+	      hLALayout.addMember(lblLink);	      
+	      btnlayout.addMembers(hLALayout, _btnSave, _btnClose, _btnSendToApprove,_btnSendToSigne,_btnSign, _btnCancelSign);
+	      */
 	      btnlayout.addMembers(_btnSave, _btnClose, _btnSendToApprove,_btnSendToSigne,_btnSign, _btnCancelSign);
 	      visibleButtons(new Boolean[]{ false,false,false,false,false,false});
 	      return btnlayout;
@@ -370,7 +378,6 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 			public void execute(Boolean value) {
 				if (value) {
 					simpleSave(false);
-					//close();
 				}
 				
 			}
@@ -396,38 +403,43 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 
 	@Override
 	public void bindDataComponents() {		
+	_logger.info("call bindDataComponents");
 	
 		if (_viewState == EViewState.New) {
 			IDataSource ds = getDataSource(Integer.valueOf(NEW_DOCID_GEN));			
 			
 			Record[] recs = ds.getRecords();
 		    String docId =recs[0].getAttribute("ID_DOC"); 	   	    		    	
-			setDocumentId(Long.parseLong(docId ));
-			_currentStatus =EDocStatus.Draft;
-			
-			getOwnerWindow().setTitle(getCaption());
-			
-			visibleButtons(new Boolean[]{true,true,true,false,false, false});			
-		}
-		else {			
-			CheckDocumentUserRight.changeVisibleControls(this);
-		}
+			setDocumentId(Long.parseLong(docId ));									
+			_logger.info("call bindDataComponents doc_id ="+getDocumentId());			
+			getOwnerWindow().setTitle(getCaption());										
+		}		
 		
-		enableEditState(CheckDocumentUserRight.isCanEditDocument(this));
-		hideWaitingPopup();		
+		CheckDocumentUserRight.changeVisibleControls(this);
+		enableEditState(CheckDocumentUserRight.isCanEditDocument(this));			
 	}
 	
-	private void hideWaitingPopup() {
-		//_waitPopup.hide();
-	}
 	
 	@Override
 	public void bindDataComponentsAfterChange() {
-
 		getDataBinder().getDataProvider().getRequest().clear();		
-		saveAttachments();				
+		saveAttachments();
+		checkChangeApprove();
 	}
 	
+	/**
+	 * 
+	 */
+	private void checkChangeApprove() {
+			if (_approveChange) {			
+				
+				FlowProccessing.sendApproveResult (getDocumentId());
+				_approveChange=false;
+			}
+		
+	}
+
+
 	/**
 	 * @param isCan
 	 */
@@ -440,10 +452,9 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 
 
 	@Override
-	protected void createMenu() {		    		        
+	protected void createMenu() {    		        
         
-        getMenuContainer().bind(new MenuFile(this));
-        
+        getMenuContainer().bind(new MenuFile(this));        
         
         if ( CheckDocumentUserRight.isHasBARole() ) {
         	getMenuContainer().bind(new MenuBAAction(this));
@@ -454,7 +465,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	
 	@Override	
 	public String getCaption() {
-		return getCorrespondentTypeRootCode().getCaption() + getDocumentId();		
+		return getCorrespondentType().getCaption() + getDocumentId();		
 	}
 
 	@Override
@@ -468,7 +479,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	    	IRequestData entity = getDataBinder().getDataProvider().getRequest().add(new RequestEntity (NEW_DOCID_GEN ));
 	    	entity.setRequestFieldsDescription(false);
 		} else  {
-		_logger.info("Reqyesr data for exists document");
+		_logger.info("Request data for exists document");
 			getDataBinder().getDataProvider().getRequest().setPosition(100);
 		}
 		prepareRequestData(_docMainFields, _docAttachmentsList);		 
@@ -504,7 +515,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 								AppController.getInstance().getMainView().openViewInTab(doc);
 							} 					
 						} else {
-							SC.say(Captions.ERROR, Captions.NOT_FOUND_DOC +documentId  );
+							Dialogs.ShowMessage(Captions.ERROR, Captions.NOT_FOUND_DOC +documentId  );
 						}
 			}
 		});		
@@ -543,15 +554,15 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	/**
 	 * @return the _correspondentTypeRootCode
 	 */
-	public ECorrespondentType getCorrespondentTypeRootCode() {
-		return _correspondentTypeRootCode;
+	public ECorrespondentType getCorrespondentType() {
+		return _correspondentType;
 	}
 
 	/**
 	 * @param _correspondentTypeRootCode._correspondentTypeRootCode the _correspondentTypeRootCode to set
 	 */
-	public void setCorrespondentTypeRootCode(ECorrespondentType value) {
-		this._correspondentTypeRootCode = value;
+	public void setCorrespondentType(ECorrespondentType value) {
+		this._correspondentType = value;
 	}		
 	
 	
@@ -588,9 +599,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 									loseChange();
 									closeWnd();
 								}
-						}													
-															
-							
+						}		
 				}
 				
 			}, dialog);				
@@ -627,8 +636,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 		if (!isValidate() ) {
 			SC.warn(Captions.ERROR_VALIDATION ,Captions.ERROR_REQUIRED );
 			return; //false;
-		}
-		
+		}		
 		if ( isHaseChanges() ) {			
 
 			SC.ask(Captions.Q_SAVE_CHANGES , new BooleanCallback() {				
@@ -684,6 +692,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	
 	private void callAfterSaveAction() {
 		_logger.info("AfterSaveAction = "+_afterSaveAction);
+			
 		switch (_afterSaveAction) {
 		case Refresh:
 				SC.say(Captions.DOC_SAVE_CORRECT, new BooleanCallback() {
@@ -696,7 +705,6 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 				});
 			break;
 		case Close:
-			hideWaitingPopup();
 			closeWnd();
 			break;
 		default:
@@ -747,6 +755,10 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	public void prepareSavedData() {
 		_docMainFields.prepareSavedData();		
 		_docAttachmentsList.prepareSavedData();
+		
+		if(_approveChange) {
+			
+		}
 	}
 
 	/* (non-Javadoc)
@@ -774,7 +786,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 		_docMainFields.setFieldValue("ID_STATUS",String.valueOf(value.getValue()) );
 	}
 	
-	
+			
 	public EDocStatus getDocumentStatus() {		
 		String idStatus = _docMainFields.getFieldValue("ID_STATUS");
 		if (idStatus!= null) {		
@@ -793,7 +805,10 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	}
 	
 	public String getLinkToDocument() {		
-		String lnkToDoc =  Window.Location.getProtocol()+"//"+Window.Location.getHost()+"/document.flow.ui/index.html?DocumentCard="+getDocumentId();
+		
+		String lnkToDoc =  Window.Location.getProtocol()+"//"+Window.Location.getHost()+"/document.flow.ui/index.html?"
+						+"AppId="+AppController.getInstance().getCurrentUser().getChooseApplicationID()
+						+"&DocumentCard="+getDocumentId();
 		//String lnkToDoc =  Window.Location.getHref()+"index.html?DocumentCard="+getDocumentId();
 		_logger.info("Link to Document = "+ lnkToDoc);		
 		return lnkToDoc;
@@ -803,5 +818,21 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 		return _mainTabSet;
 	}
 
+
+	/**
+	 * @param b
+	 */
+	public void setAprroveChange(boolean value) {
+		_approveChange =value;		
+	}
+	
+	
+	public  static void openSelectedCards(GridView view) {
+		Record[] records =view.getListGrid().getSelectedRecords();
+		for (Record rec : records) {							
+			DocumentCard.OpenById(rec.getAttribute("ID_DOC"), 
+					ECorrespondentType.fromString(rec.getAttribute("CORR_TYPE")));
+		}	
+	}
 
 }

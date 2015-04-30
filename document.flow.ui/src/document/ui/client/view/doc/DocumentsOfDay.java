@@ -29,6 +29,8 @@ import com.smartgwt.client.widgets.layout.SectionStackSection;
 
 
 
+
+import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.doc.card.DocumentCard;
 import document.ui.shared.MdbEntityConst;
@@ -76,9 +78,9 @@ public class DocumentsOfDay extends DataView{
 		
 		
 		SectionStackSection sectionOutOfDoc = new SectionStackSection( Captions.DOC_OUT_OF_ORDER);
-		sectionOutOfDoc.setExpanded(false);
+		sectionOutOfDoc.setExpanded(true);
 		
-		
+				
 		Layout l2 = new Layout();
 		l2.addMember(_listOfGrids.getDataComponent(MdbEntityConst.OUT_OF_DOC));
 		sectionOutOfDoc.addItem(l2);
@@ -178,7 +180,10 @@ public class DocumentsOfDay extends DataView{
 
 	@Override
 	protected void createComponents() {
-		_listOfGrids = new ListOfGrids(MdbEntityConst.DOC_PUBLISHED, MdbEntityConst.ENTERING_IN_FORCE,MdbEntityConst.OUT_OF_DOC);
+		_listOfGrids = new ListOfGrids(
+					MdbEntityConst.DOC_PUBLISHED, 
+					MdbEntityConst.ENTERING_IN_FORCE,
+					MdbEntityConst.OUT_OF_DOC);
 		super.createComponents();
 		setSingleInstance(true);
 	}
@@ -190,6 +195,8 @@ public class DocumentsOfDay extends DataView{
 		params.put("DTA_B", dtaB);		
 		params.put("DTA_E", dtaE);
 		params.put("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()));
+		params.put("CORR_ROOT_CODE", ECorrespondentType.getRootCodeCorrespondentType());			
+		
 		_listOfGrids.prepareRequestData(params);		
 	}
 

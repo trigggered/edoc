@@ -4,18 +4,25 @@
 package document.ui.client.view.doc;
 
 
+import java.util.logging.Logger;
+
 import mdb.core.ui.client.app.AppController;
+import mdb.core.ui.client.command.ICommand;
 import mdb.core.ui.client.data.bind.DataBindException;
 import mdb.core.ui.client.view.components.menu.IMenuContainer;
+import mdb.core.ui.client.view.components.menu.IMenuItem;
 import mdb.core.ui.client.view.data.DataView;
 import mdb.core.ui.client.view.data.IDataView;
 import mdb.core.ui.client.view.data.grid.GridView;
 
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.SelectionAppearance;
+import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
+import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.commons.EViewIdent;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.ViewFactory;
@@ -28,6 +35,8 @@ import document.ui.shared.MdbEntityConst;
  * Мои документы
  */
 public class MyDocuments extends DataView{
+	
+	private static final Logger _logger = Logger.getLogger(MyDocuments.class.getName());
 	
 	public class SimpleGrid extends GridView {
 		 public SimpleGrid (int entityId) {
@@ -45,17 +54,66 @@ public class MyDocuments extends DataView{
 			 
 		 }
 	}
+	
+	private class MenuForExecuters extends mdb.core.ui.client.view.components.menu.Menu {
+
+		public MenuForExecuters() {
+			super("MenuForExecuters");
+			
+			IMenuItem item = addItem(Captions.OPEN_CARD, "", IMenuItem.ItemType.ToolButton,0);
+			item.setCommand(new ICommand<IMenuItem>() {						
+				@Override
+				public void execute(IMenuItem sender) {					
+					DocumentCard.openSelectedCards(_grForExecution);																					
+				}
+			});	
+			
+			item = addItem(Captions.EXECUTE, "", IMenuItem.ItemType.ToolButton,0);
+			item.setCommand(new ICommand<IMenuItem>() {						
+				@Override
+				public void execute(IMenuItem sender) {
+					Record rec =  _grForExecution.getListGrid().getSelectedRecord();
+						if ( rec!= null) { 
+								rec.setAttribute("EXEC_ST", 1);
+								_grForExecution.getListGrid().updateData(rec);
+								_grForExecution.callEditEvent();	
+						 }		
+						else {
+							_logger.info("Record is null");
+						}
+				}
+			});
+			
+			item = addItem(Captions.ALL_DOCS_TO_EXECUTE, "", IMenuItem.ItemType.ToolButton,0);
+			item.setCommand(new ICommand<IMenuItem>() {						
+				@Override
+				public void execute(IMenuItem sender) {					
+					_grForExecution.getParams().add("EXEC_ST", "0");
+					_grForExecution.callRequestData();
+				}
+			});
+			
+			item = addItem(Captions.EXECUTE_DOCS, "", IMenuItem.ItemType.ToolButton,0);
+			item.setCommand(new ICommand<IMenuItem>() {						
+				@Override
+				public void execute(IMenuItem sender) {					
+					_grForExecution.getParams().add("EXEC_ST", "1");
+					_grForExecution.callRequestData();
+				}
+			});			
+		}	
+	}	
 		
 	GridView _grForExecution;
 	GridView _grForSigning;
-	GridView _grForApproval; 
+	GridView _grForApproval;	
+	GridView _grCreatingDoc;
 	
 	IDataView _grFavoritesDoc;
-	GridView _grCreatingDoc;
 	
 	
 	public MyDocuments() {
-		setCaption("Мои документы");
+		setCaption(Captions.MY_DOC);
 		getParams().add("OFFICER_NUM",String.valueOf( AppController.getInstance().getCurrentUser().getId()));
 	}
 
@@ -70,9 +128,15 @@ public class MyDocuments extends DataView{
 		tabs.setHeight100();
 		
 		Tab tabForExecution = new Tab(Captions.DOC_TO_EXECUTE );
-		_grForExecution = new SimpleGrid(MdbEntityConst.MY_DOC_EXEC_INFORM);		
+		_grForExecution = new GridView(MdbEntityConst.MY_DOC_EXEC_INFORM);		
+		_grForExecution.setCreateMenuNavigator(false);
+		_grForExecution.setAutoSave(true);
+		_grForExecution.getListGrid().setSelectionType(SelectionStyle.SIMPLE);
+		_grForExecution.getListGrid().setSelectionAppearance(SelectionAppearance.CHECKBOX);
+		
+		_grForExecution.getMenuContainer().bind(new MenuForExecuters());
 		_grForExecution.setWidth100();
-		_grForExecution.addEditEvent(DocumentCard.getShowEditViewHandler());
+		//_grForExecution.addEditEvent(DocumentCard.getShowEditViewHandler());
 		
 		tabForExecution.setPane(_grForExecution);
 		tabs.addTab(tabForExecution);					
@@ -144,6 +208,7 @@ public class MyDocuments extends DataView{
 		getParams().add("CURRENT_USER", currentUser);
 		
 		getParams().add("OFFICER_NUM", currentUser);
+		getParams().add("CORR_ROOT_CODE", ECorrespondentType.getRootCodeCorrespondentType());
 		
 		_grForExecution.getParams().copyFrom(getParams());
 		_grForExecution.getParams().add("RECIPIENTS_TYPE", "1");

@@ -25,7 +25,6 @@ import document.ui.client.communication.rpc.flow.DocumentFlowService;
 import document.ui.client.communication.rpc.flow.DocumentFlowServiceAsync;
 import document.ui.client.flow.IFlowProcessing;
 import document.ui.client.resources.locales.Captions;
-import document.ui.client.tools.SignControlWrapper;
 import document.ui.client.view.doc.card.DocumentCard;
 import document.ui.client.view.doc.card.section.EDocumentDataSection;
 
@@ -40,6 +39,7 @@ public class FlowProccessing implements IFlowProcessing {
 	
 	
 	private static  DocumentFlowServiceAsync _asyncFlowService = GWT.create(DocumentFlowService.class);
+	//private static  MailingServiceAsync	   _asyncMailService = GWT.create(MailingService.class);
 	
 	private DocumentCard _docCard;
 	
@@ -50,7 +50,7 @@ public class FlowProccessing implements IFlowProcessing {
 	
 	public  EDocStatus getDocumentNextPossibleStatus(ECorrespondentType corrType, EDocStatus currentStatus) {
 		
-		if ( corrType == ECorrespondentType.INSIDE_PRIKAZ_DOC) {
+		if ( corrType == ECorrespondentType.INSIDE_PRIKAZ) {
 		
 				switch (currentStatus) {
 					case Draft :
@@ -92,7 +92,7 @@ public class FlowProccessing implements IFlowProcessing {
 			return;
 		}
 		
-		final EDocStatus nextPossibleStatus = getDocumentNextPossibleStatus(_docCard.getCorrespondentTypeRootCode(), currentStatus);
+		final EDocStatus nextPossibleStatus = getDocumentNextPossibleStatus(_docCard.getCorrespondentType(), currentStatus);
 		
 		String askMsg  = null;
 		 ICommand<Boolean> command = null;
@@ -215,20 +215,19 @@ public class FlowProccessing implements IFlowProcessing {
 	protected boolean sign() {
 		
 		
-		if ( SignControlWrapper.getSignControl().initialize()  ) 
+		if(true)
+		//if ( SignControlWrapper.getSignControl().initialize()  ) 
 		{	
 			_logger.info("Sign control activated successfully");
 
-			int userId = AppController.getInstance().getCurrentUser().getId();
-			
+			int userId = AppController.getInstance().getCurrentUser().getId();			
 						
 			
-			
+			/*
 			if ( !SignControlWrapper.getSignControl().CheckLoginUserIdKeyOwner( userId ) ){
-				SC.warn(Captions.ERROR,  Captions.USERID_NOT_EQUALS_KEY_ID );
-				
+				SC.warn(Captions.ERROR,  Captions.USERID_NOT_EQUALS_KEY_ID );				
 				return false;
-			}
+			}*/
 			
 			
 			GridView  view =  (GridView) _docCard.getDataSections().get(EDocumentDataSection.Attachments);
@@ -239,7 +238,8 @@ public class FlowProccessing implements IFlowProcessing {
 				//String  sign = SignAppletWrapper.sign(data);
 				//String  sign = SignXWrapper.sign( data );
 				_logger.info("Try sign data:"+data);
-				String  sign = SignControlWrapper.getSignControl().sign(data);
+				//String  sign = SignControlWrapper.getSignControl().sign(data);
+				String  sign = "";
 				rec.setAttribute("SIGN_DATA", sign);
 				rec.setAttribute("SIGN_ID", userId);		
 			
@@ -250,7 +250,7 @@ public class FlowProccessing implements IFlowProcessing {
 			//_docCard.saveCard();
 			return true;
 		} else {
-			SC.warn("Ошибка инициализации ключа");
+			Dialogs.ShowMessage("Error", Captions.ERROR_SING_INIT);
 			return false;
 		}
 	}
@@ -282,25 +282,13 @@ public class FlowProccessing implements IFlowProcessing {
 	
 	public  static void publishDoc( final int documentId, final String infoMsg, final int initialId, final ICommand<Boolean> callBack) {
 		
-		_asyncFlowService.sendToTheNextStage(documentId, infoMsg , 
+		_asyncFlowService.publishDoc(documentId, infoMsg , 
 				 AppController.getInstance().getCurrentUser().getId(),
 				new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
-				callBack.execute(true);				
-				
-					_asyncFlowService.sendPublishedInfoMsg(documentId,infoMsg, initialId,  new AsyncCallback<Void>() {						
-						@Override
-						public void onSuccess(Void result) {						
-							
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							
-						}
-					});
+				callBack.execute(true);											
 			}
 			
 			@Override
@@ -315,14 +303,18 @@ public class FlowProccessing implements IFlowProcessing {
 	}
 	
 	
-	public static void sendRemember(final long documentId) {
+	public static void sendRemember(final long documentId, EDocStatus status) {
 		
+		_logger.info("sendRemember for id_doc="+documentId+" id_status = "+status.getValue() );
+
 		int userId = AppController.getInstance().getCurrentUser().getId();
-		_asyncFlowService.sendRemember(documentId, null, userId, new AsyncCallback<Void>() {
+		
+		_asyncFlowService.sendRemember(documentId, String.valueOf((status.getValue()))
+				, userId, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
-				SC.say(Captions.SEND_REMEMBER_BY_DOC +documentId);
+				Dialogs.ShowMessage(Captions.SEND_REMEMBER_BY_DOC +documentId);				
 				
 			}
 			
@@ -330,7 +322,8 @@ public class FlowProccessing implements IFlowProcessing {
 			public void onFailure(Throwable caught) {
 				_logger.severe(caught.getMessage());
 			}
-		}); 		
+		});
+		
 	}
 	
 	/**
@@ -376,10 +369,8 @@ public class FlowProccessing implements IFlowProcessing {
 		InputTextDialog textDlg = new InputTextDialog("Сообщение об отказе для документа:" +docId, new IDoubleValuesCallbackEvent<Boolean, String>() {			
 			@Override
 			public void execute(Boolean isOkClick, String resultTextInfo) {
-				if (isOkClick ) {
-					
-					_asyncFlowService.cancelProcess(docId, resultTextInfo,  AppController.getInstance().getCurrentUser().getId(),callBack);																				
-					
+				if (isOkClick ) {					
+					_asyncFlowService.cancelProcess(docId, resultTextInfo,  AppController.getInstance().getCurrentUser().getId(),callBack);
 				} 			
 			}
 		}); 					
@@ -390,9 +381,31 @@ public class FlowProccessing implements IFlowProcessing {
 	public static void forcedDocumentToStatus(final long docId, final EDocStatus newStatus,  final AsyncCallback<Void> callBack) {
 		
 		_asyncFlowService.forcedDocumentToStatus(docId, null,  AppController.getInstance().getCurrentUser().getId(), 
-				newStatus.getValue(), callBack);																			
-		
+				newStatus.getValue(), callBack);
+	}
+
+
+	/**
+	 * @param b
+	 * @param documentId
+	 */
+	public static void sendApproveResult(long documentId) {	 
 				
+		_asyncFlowService.sendApproveResult (documentId, null, 
+				AppController.getInstance().getCurrentUser().getId(), new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						_logger.info("Message about approve from userId= "+AppController.getInstance().getCurrentUser().getId()  +"is sending" );
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						_logger.severe(caught.getMessage());
+						
+					}
+				});
+		
 	}
 	
 }

@@ -41,6 +41,11 @@ public enum EViewIdent {
 	DicBAGrEmp,
 	DicGrEmp,
 	
+	DicFinEntDevision,
+	DicFinPolicies,
+	DicFinOperType,
+	DicFinCodes,
+	
 	/*Security*/		
 	RoleActions,
 	AssignRoles,
@@ -57,6 +62,7 @@ public enum EViewIdent {
 	InDoc,
 	OutDoc,		
 	InsideDoc,
+	InsideFinDoc,
 	NewInDoc,
 	NewOutDoc,		
 	BAWorkspace, 
@@ -76,5 +82,17 @@ public enum EViewIdent {
 	NoMailingEmp, 
 	ApprovalAssists,
 	CodeDocReserv,
-	UserGuide
+	UserGuide,
+	
+	ReportForBA,
+	ReportForAuthor,
+	ReportForAprovals,
+	ReportForSigners,
+	ReportForExecuters,
+	
+	/*Account model*/
+	NewAccountModelDoc, 
+	BAFinWorkspace, 
+	SearchAccModel	
+	
 }

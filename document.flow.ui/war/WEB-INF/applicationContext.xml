@@ -8,9 +8,12 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
     
  <beans:bean id="customAuthListener" class="document.ui.server.auth.CustomAuthListener"/>
          
+ <beans:bean id="customWebAuthenticationDetailsSource"
+	class="document.ui.server.auth.CustomWebAuthenticationDetailsSource"/>
+ 
  <beans:bean id="userDetailsContextMapper"
 	class="document.ui.server.auth.ldap.AttributesLDAPUserDetailsContextMapper"/>
-
+	
     <!-- LDAP server details --> 
    <authentication-manager>
      <authentication-provider ref="adAuthenticationProvider" />
@@ -31,7 +34,8 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
     <http auto-config="true" pattern="/**">
         <!-- Login pages -->
 
-         <form-login default-target-url="/index.html"            		
+         <form-login default-target-url="/index.html"
+         			authentication-details-source-ref="customWebAuthenticationDetailsSource"            		
             		login-page="/pages/loginPage.jsp"            		 
             		login-processing-url="/login"
             		authentication-failure-url="/pages/loginPage.jsp?auth=fail"/>         

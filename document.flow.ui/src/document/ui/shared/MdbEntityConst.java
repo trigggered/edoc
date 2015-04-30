@@ -13,16 +13,19 @@ public class MdbEntityConst {
 	
 	public final static int MAIN_MENU_ID = 5291;
 	
-	public final static int ENTITY_FLDS_DESCR =1275; 
-	
+	public final static int ENTITY_FLDS_DESCR =1275;
 
 	public final static int ACCEPTING_EMP 	= 5094;
 	
-	public final static int RECIPIENTS_EMP 	= 5039;
+	public final static int RECIPIENTS_EXECUTERS_EMP 	= 5039;
+	public final static int RECIPIENTS_EMP 	= 5453;
+	public final static int EXECUTERS_EMP 	= 5456;
+	
 	public final static int DOC_RELATIONS 	= 5040;
 	
 	public final static int EMP_LIST 			= 5029;
 	public final static int DOC_LIST 			= 5096;
+	public final static int FIN_DOC_LIST 		= 5528;
 	public final static int DOC_ATTACH_LIST 	= 5098;
 	
 	public final static int FAVORITES_DOC 	= 5127;
@@ -31,7 +34,7 @@ public class MdbEntityConst {
 	/*Dictionary*/
 	public final static int DicDocStatus = 5028;
 	//public final static int DicDocTypeOfOrder = 5060;
-	public final static int DicListOfDepartments = 5030;
+	public final static int DicListOfDepartments = 5510;
 	public final static int MapListOfDepartments = 5066;
 	public final static int SAPListOfEmployee = 5062;
 	public final static int SAPListOfDepartments=5063;
@@ -47,8 +50,12 @@ public class MdbEntityConst {
 	public final static int AssignRoles= 5034;
 	public final static int RoleActions = 5036;
 	public final static int DocFormOfCorrespondence = 5025;
-	public final static int DocScoupe = 5032;	
-	public final static int DocRisk = 5059;
+	//public final static int DocScoupe = 5032;	
+	//public final static int DocRisk = 5059;
+	
+	public final static int DocScoupe = 5508;	
+	public final static int DocRisk = 5509;
+	
 	public final static int DicDocTypeOfOrder = 5148;
 	public final static int DicSignatories = 5089;
 	public final static int DicSignatoriesAssist = 5288;
@@ -56,8 +63,7 @@ public class MdbEntityConst {
 	
 	public final static int DelegationHow= 5349;
 	public final static int DelegationTo= 5350;
-	/*end Dictionary*/
-	
+	/*end Dictionary*/	
 	
 	/*Doc list*/
 	public final static int ENTERING_IN_FORCE=5053;
@@ -68,9 +74,7 @@ public class MdbEntityConst {
 	
 	public final static int tree_init_dev_cortype_status = 5071;//разбивка по "Инициатор подразделение->тип->статус"
 	public final static int tree_cortype_status_init_dev = 5072;//разбивка по "Тип->статус->Инициатору подразделения"
-	public final static int tree_status_init_dev_cortype = 5073;//разбивка по "Статус->Инициатору подразделения->тип"
-	
-	public final static int DocSearch = 5096;
+	public final static int tree_status_init_dev_cortype = 5073;//разбивка по "Статус->Инициатору подразделения->тип"		
 	
 	/*end doc list*/
 	
@@ -79,7 +83,7 @@ public class MdbEntityConst {
 	public final static int MY_DOC_EXEC_INFORM=5106;	
 	public final static int MY_DOC_FOR_APPROVAL=5108;
 	public final static int MY_DOC_FOR_SIGNING=5128;
-	public final static int  MY_CREATING_DOC = 5268;
+	public final static int MY_CREATING_DOC = 5268;
 	
 	public final static int CheckDocExist = 5102;
 	public final static int CheckCanSignatoryDoc = 5292;
@@ -87,11 +91,11 @@ public class MdbEntityConst {
 	public final static int CheckCanApprovDoc = 5351;
 	public final static int DocCard = 5038;
 	public final static int CANCEL_CHANGE_DOC = 5109; 
-	public final static int DocOrderCard= 5041;	
+	public final static int DocProcedureCard= 5041;	
 	/*end doc card */
 	
 	public final static int BAWorkspace=5168; //:Документы в работе
-	public final static int OrderOnUpdatedDay=5228; //Порядки к обновлению
+	public final static int ProcedureToUpdatedDay=5228; //Порядки к обновлению
 
 
 	public static final int DocToPublish = 5248;
@@ -112,7 +116,27 @@ public class MdbEntityConst {
 	public static final int DOC_PUBLISHED = 5409;
 	
 	public static final int DIC_FAV_GR_EMP = 5429;
-	public static final int DIC_FAV_EMP =5430;		
+	public static final int DIC_FAV_EMP =5430;
+
+	public static final int E_MAIL_DOC_PUBLISHED = 5448;
+	
+	public static final int REPORT_FOR_BA = 5450;
+	public static final int REPORT_FOR_Author=0;
+	public static final int REPORT_FOR_Aprovals = 0;
+	public static final int REPORT_FOR_Signers = 0;
+	public static final int REPORT_FOR_Executers = 0;
+
+	public static final int DicFinPolicies = 5470;
+	public static final int DicFinOperType = 5469;
+	public static final int DicFinListOfDepartments = 5471;
+
+	public static final int DocAccountModelCard = 5488;
+	
+	
+	public static final int fin_opert_status = 5512;
+	public static final int fin_status_opert = 5513;
+
+	public static final int DicFinCodes = 5548;
 	
 }
 

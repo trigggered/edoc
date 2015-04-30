@@ -4,14 +4,10 @@
 package document.ui.server.communication.rpc.flow;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.print.Doc;
-
-import mdb.core.shared.transformation.impl.ResultSetToJSONTransformation;
-import mdb.core.shared.transport.IRequestData;
+import mdb.core.shared.transformation.impl.JSONTransformation;
 import mdb.core.shared.transport.IRequestData.ExecuteType;
 import mdb.core.shared.transport.Request;
 import mdb.core.shared.transport.RequestEntity;
@@ -20,12 +16,12 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import document.ui.client.commons.EDocStatus;
 import document.ui.client.communication.rpc.flow.DocumentFlowService;
-import document.ui.server.communication.rpc.mail.MailingServiceImp;
+import document.ui.client.resources.locales.Captions;
+import document.ui.server.communication.rpc.mail.MailingServiceImpl;
 import document.ui.server.communication.rpc.mdbgw.MdbRequester;
 import document.ui.server.mail.EMailType;
 import document.ui.server.utils.DocDataHelper;
 import document.ui.shared.MdbEntityConst;
-import mdb.core.shared.transformation.impl.JSONTransformation;
 /**
  * @author azhuk
  * Creation date: Aug 14, 2014
@@ -78,7 +74,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 			DocumentFlowServiceImpl.class.getName());	
 	
 	
-	MailingServiceImp _mailingService = new MailingServiceImp();	
+	MailingServiceImpl _mailingService = new MailingServiceImpl();	
 	
 	MdbRequester _mdbRequester = new MdbRequester();
 	
@@ -99,15 +95,16 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	
 	
 	@Override
-	public void sendRemember(long documentId, String infoMessage,  int initiatorId) {
-		callActionFlowProcess(ACTTION_CHANGE_PROCESS_DEADLINE, documentId, infoMessage, initiatorId, null);
+	public void sendRemember(long documentId, final String infoMessage,  int initiatorId) {
+
+		callActionFlowProcess(ACTTION_CHANGE_PROCESS_DEADLINE, documentId, infoMessage, initiatorId, 
+				new HashMap<String, String>(){{
+			        put("ID_STATUS",infoMessage);
+			    }});	
 		callStageAction(documentId, null);
 	}
 	
-	@Override
-	public void sendPublishedInfoMsg(long documentId, String infoMessage,  int initiatorId) {		
-		_mailingService.sendInfoMessageTo(EMailType.DocumentPublished , documentId, null);
-	}
+	
 	
 	
 	@Override
@@ -123,21 +120,19 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	 */
 	private void callStageAction(long documentId, String infoMessage) {
 
-		HashMap<String, String>  info = DocDataHelper.getDocumentFlowInfo (documentId) ;
+		HashMap<String, String>  flowInfo = DocDataHelper.getDocumentFlowInfo (documentId) ;
+
+		HashMap<String, String>  docCard = DocDataHelper.getDocCard(documentId);
 		
-		if (info== null ) {
+		EDocStatus status = EDocStatus.fromInt(Integer.parseInt(docCard.get("ID_STATUS")));
+		
+		if (flowInfo== null ) {
 		 return ;		 
 		}
 		
-		EFlowStage stage = EFlowStage.fromInt(Integer.parseInt(info.get("ID_FLOW_STAGE")));
+		EFlowStage stage = EFlowStage.fromInt(Integer.parseInt(flowInfo.get("ID_FLOW_STAGE")));
 		
-		String procDeadline = info.get("DEADLINE");
-		/*
-		String author = info.get("EMP_AUTHOR");
-		String docTypeName = info.get("CORR_TYPE_FULL");;
-		String docName = info.get("NAME");;
-		String description = info.get("INFO_MSG");		
-		*/
+
 		
 		switch ( stage   ) {
 		case Approval:
@@ -151,7 +146,6 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		default:
 			break;
 		}				
-
 		
 	}
 
@@ -172,34 +166,19 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	@Override
 	public void cancelProcess(long documentId, String infoMessage,  int initiatorId) {
 		
-		EFlowStage stage = EFlowStage.Unknown;
+		callActionFlowProcess(ACTTION_CANCEL_PROCESS, documentId, infoMessage,initiatorId, null);
+
 		
-		final HashMap<String, String>	  flowInfo = DocDataHelper.getDocumentFlowInfo (documentId) ;
-		
-		
-		if (flowInfo != null ) {
-		
-			callActionFlowProcess(ACTTION_CANCEL_PROCESS, documentId, infoMessage,initiatorId, new HashMap<String, String>(){{
-		        put("ID_FLOW", flowInfo.get("ID_FLOW"));
-		    }});	
-							
+		final HashMap<String, String>	  flowInfo = DocDataHelper.getDocumentFlowInfo (documentId) ;									
 			
-			
-		 stage = EFlowStage.fromInt(Integer.parseInt(flowInfo.get("ID_FLOW_STAGE")));
-			//String procDeadline = info.get("DEADLINE"); 
-		 String author = flowInfo.get("EMP_AUTHOR");
-		 String docTypeName = flowInfo.get("CORR_TYPE_FULL");;
-		 String docName = flowInfo.get("NAME");;
-			
-			_mailingService.sendCancelMessageToAuthor(stage, documentId, author, docTypeName, docName, infoMessage);
-		}					
+		if ( flowInfo != null && flowInfo.size()>0) {
+			EFlowStage stage = EFlowStage.fromInt(Integer.parseInt(flowInfo.get("ID_FLOW_STAGE")));
+			_mailingService.sendCancelMessageToAuthor(stage, documentId,  infoMessage);				
+		}
 		else {
-			_logger.severe(String.format("Not found flow for documen ID =%s",documentId ));
-			 return ;
-		}							
-		
-		
-		
+			_mailingService.sendInfoMessageTo(EMailType.ToAuthorCancelPublish, documentId, infoMessage);
+		}
+			
 	}
 
 	/* (non-Javadoc)
@@ -213,8 +192,12 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		callActionFlowProcess(ACTTION_END_ALL_PROCESS, documentId, infoMessage,initiatorId, new HashMap<String, String>(){{
 	        put("ID_STATUS",String.valueOf(toStatus));
 	    }});	
-			
-			_mailingService.sendInfoMessageTo(EMailType.ChangeDocStatus,documentId,infoMessage);		
+			 if (EDocStatus.fromInt(toStatus) == EDocStatus.Revoked) {
+				 _mailingService.sendInfoMessageTo(EMailType.RevokeDoc,documentId,infoMessage);
+			 }
+			 else {
+				 _mailingService.sendInfoMessageTo(EMailType.ChangeDocStatus,documentId,infoMessage);
+			 }
 	}	
 	
 	private void callActionFlowProcess(int actionId, long documentId, String infoMessage,
@@ -228,15 +211,11 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		
 		mapParams.put("ID_DOC", String.valueOf(documentId) );
 		mapParams.put("INFOMSG", infoMessage);
-		mapParams.put("INITIATOR_ID", String.valueOf(initiatorId));	
+		mapParams.put("INITIATOR_ID", String.valueOf(initiatorId));				 
 		
-		 
+		String  jsonParamsStr= JSONTransformation.map2json(mapParams);		
 		
-		String  jsonParamsStr= JSONTransformation.map2json(mapParams);
-		
-		
-		_logger.info(String.format("Run process actionId =%s with params %s ",initiatorId,  jsonParamsStr));
-		 
+		_logger.info(String.format("Run process actionId =%s with params %s ",actionId,  jsonParamsStr));		 
 				 
 		RequestEntity reqEntity = new RequestEntity (MdbEntityConst.FLOW_ENTITY_ID);
 		reqEntity.setExecuteType(ExecuteType.ExecAction);
@@ -247,6 +226,56 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		
 		_mdbRequester.call(req);												
 		
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see document.ui.client.communication.rpc.flow.DocumentFlowService#sendApproveResult(boolean, long, java.lang.String, int)
+	 */
+	@Override
+	public void sendApproveResult(long documentId, String infoMessage,  int initiatorId) {
+		Map<String, String> mapDoc = DocDataHelper.getDocCard(documentId);
+		
+		Map<String, String> mapApproveResult = DocDataHelper.getDocAproveCurrentUser(documentId, initiatorId);
+		
+		if (mapApproveResult == null || mapApproveResult.size() == 0) {
+			return;
+		}
+		
+		  Boolean result =mapApproveResult.get("IS_ACCEPT").equals("1")?true:false;
+		  infoMessage = mapApproveResult.get("FULL_NAME") + "\n"+mapApproveResult.get("NOTE");
+				
+		_mailingService.sendInfoMessageTo(result?EMailType.ApproveCurentUser:EMailType.NotApproveCurentUser, documentId, infoMessage);
+		
+		EDocStatus status  =  EDocStatus.fromInt(Integer.parseInt( mapDoc.get("ID_STATUS")));
+		switch (status) {
+			case Draft:
+				//_mailingService.sendInfoMessageTo(EMailType.DocumentApproved, documentId, infoMessage);
+				break;
+			case Approval:
+				_mailingService.sendInfoMessageTo(EMailType.DocumentApproved, documentId, Captions.DocAllApproved);
+				break;
+				
+			default:
+				break;
+		}	 			 
+		 
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see document.ui.client.communication.rpc.flow.DocumentFlowService#publishDoc(int, java.lang.String, int)
+	 */
+	@Override
+	public boolean publishDoc(int documentId, String infoMessage, int initiatorId) {
+		callActionFlowProcess(ACTION_SEND_DOC_TO_NEXT_STAGE, documentId, infoMessage, initiatorId, null);
+		_mailingService.sendInfoMessageTo(EMailType.DocumentPublished , documentId, null);
+		
+		_mailingService.sendInfoMessageTo(EMailType.ToExecutor, documentId, "К исполнению");
+		
+		return true;
 	}
 
 }

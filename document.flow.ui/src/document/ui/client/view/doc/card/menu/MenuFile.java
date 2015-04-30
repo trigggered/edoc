@@ -7,7 +7,6 @@ package document.ui.client.view.doc.card.menu;
 import com.smartgwt.client.util.BooleanCallback;
 
 import mdb.core.shared.utils.Clipboard;
-import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.command.ICommand;
 import mdb.core.ui.client.view.components.menu.IMenu;
 import mdb.core.ui.client.view.components.menu.IMenuItem;
@@ -39,6 +38,15 @@ public class MenuFile extends mdb.core.ui.client.view.components.menu.Menu  {
 		IMenuItem item = addItem(Captions.ACTIONS, "", IMenuItem.ItemType.Menu,0);
 		IMenu childMenu = new mdb.core.ui.client.view.components.menu.Menu("Child menu for 'File'");
 		item.setChildMenu(childMenu);	
+		
+		
+		item = childMenu.addItem(Captions.PRINT, "", IMenuItem.ItemType.ToolButton,0);
+		item.setCommand(new ICommand<IMenuItem>() {						
+			@Override
+			public void execute(IMenuItem sender) {
+				_card.print();
+			}
+		});
 		
 		
 		item = childMenu.addItem(Captions.SHOW_DOC_LNK, "", IMenuItem.ItemType.ToolButton,0);
@@ -104,7 +112,10 @@ public class MenuFile extends mdb.core.ui.client.view.components.menu.Menu  {
 							@Override
 							public void execute(Boolean value) {
 								if (value) {
-									FlowProccessing.sendRemember(_card.getDocumentId() );
+
+									FlowProccessing.sendRemember(_card.getDocumentId(), 
+											_card.getDocumentStatus() );
+
 								}							
 							}
 						});

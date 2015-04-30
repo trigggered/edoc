@@ -5,6 +5,7 @@ package document.ui.server.utils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,6 +58,28 @@ public class DocDataHelper {
 		
 		MdbRequester  mdbRequester = new MdbRequester();
 		Request	req= mdbRequester.getNewRequest(MdbEntityConst.DocCard, ExecuteType.GetData, params );
+		Request response = mdbRequester.call(req);
+		IRequestData data= response.get( entityId   );		
+		
+		List<HashMap<String, String>> lstMap = ResultSetToJSONTransformation.deserialise(data.getData() );
+		
+		return lstMap.size() > 0 ? lstMap.get(0): null;
+	}
+
+	/**
+	 * @param documentId
+	 * @param initiatorId
+	 * @return
+	 */
+	public static Map<String, String> getDocAproveCurrentUser(long documentId,
+			int initiatorId) {
+		String entityId = String.valueOf(MdbEntityConst.ACCEPTING_EMP);
+		Params params = new Params();
+		params.add("ID_DOC", String.valueOf(documentId)) ;
+		params.add("OFFICER_NUM", String.valueOf(initiatorId)) ;
+		
+		MdbRequester  mdbRequester = new MdbRequester();
+		Request	req= mdbRequester.getNewRequest(MdbEntityConst.ACCEPTING_EMP, ExecuteType.GetData, params );
 		Request response = mdbRequester.call(req);
 		IRequestData data= response.get( entityId   );		
 		

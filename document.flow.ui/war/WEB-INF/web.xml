@@ -9,9 +9,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<!-- TODO: Optionally add a <welcome-file-list> tag to display a welcome file. -->
 	
 	<!-- Filters -->
-  	
- 
-    
+   
+   
 	<filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -26,6 +25,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener> 
+  
   
 <!-- Servlets --> 
   
@@ -60,6 +60,17 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <servlet-mapping>
     <servlet-name>flowServlet</servlet-name>
     <url-pattern>/DocumentsUI/flow</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+    <servlet-name>mailServlet</servlet-name>
+    <servlet-class>document.ui.server.communication.rpc.mail.MailingServiceImpl</servlet-class>
+  </servlet> 	
+  
+  <servlet-mapping>
+    <servlet-name>mailServlet</servlet-name>
+    <url-pattern>/DocumentsUI/mail</url-pattern>
   </servlet-mapping>
   
   

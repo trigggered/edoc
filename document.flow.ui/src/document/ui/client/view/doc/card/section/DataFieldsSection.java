@@ -22,8 +22,8 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
-import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.commons.EDocStatus;
+import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.doc.card.DocumentCard;
 import document.ui.shared.MdbEntityConst;
 
@@ -118,11 +118,12 @@ public class DataFieldsSection extends DataView implements IRemoteDataSave{
 		@Override
 		public void setCanEdit(boolean value) {
 			super.setCanEdit(value);
-			_dataForm.setCanEdit(value);
+			_dataForm.setCanEdit(value);								
 			/*
 			for (FormItem item  : _dataForm.getFields()) {
 				item.setCanEdit(value);
-			}*/			
+				//item.setDisabled(value);
+			}*/					
 		}		
 	};
 	
@@ -130,11 +131,11 @@ public class DataFieldsSection extends DataView implements IRemoteDataSave{
 		
 		
 	private DynamicFieldsSection _editDialog;
-	private DocumentCard _mainDocCard;
+	private DocumentCard _docCard;
 	
 		
 	public DataFieldsSection(DocumentCard mainDocCard) {
-		_mainDocCard = mainDocCard;			
+		_docCard = mainDocCard;			
 		setMainEntityId(MdbEntityConst.DocCard);
 	}	
 	
@@ -188,19 +189,21 @@ public class DataFieldsSection extends DataView implements IRemoteDataSave{
 		_logger.info("################ Start prepareRequestData  for Fields Section ######################");
 		getDataBinder().getDataProvider().getRequest().setPosition(1);
 		IRequestData re = getDataBinder().getDataProvider().getRequest().add(new RequestEntity(getMainEntityId()));
-		long docId = _mainDocCard.getDocumentId();
+		long docId = _docCard.getDocumentId();
 		_logger.info("Put parameter: ID_DOC= "+docId);
-		re.getParams().add("ID_DOC",  String.valueOf(_mainDocCard.getDocumentId()));	
-		re.getParams().add("CORRT_ROOT_CODE", _mainDocCard.getCorrespondentTypeRootCode().toString());
+		re.getParams().add("ID_DOC",  String.valueOf(_docCard.getDocumentId()));	
+		re.getParams().add("CORRT_ROOT_CODE", _docCard.getCorrespondentType().toString());
 		
 		if (_viewNn == -1) {
 		
-			switch (_mainDocCard.getCorrespondentTypeRootCode()) {
-						case INSIDE_PRIKAZ_DOC: 	_viewNn = 3;
+			switch (_docCard.getCorrespondentType()) {
+						case INSIDE_PRIKAZ: 		_viewNn = 3;
 							break;
-						case INSIDE_PROCEDURE_DOC : 	_viewNn = 4;
+						case INSIDE_PROCEDURE : 	_viewNn = 4;
 							break;
-						case INSIDE_NOTIFICATION_DOC: _viewNn = 5;
+						case INSIDE_NOTIFICATION: 	_viewNn = 5;
+							break;
+						case ACCOUNT_MODEL: 		_viewNn = 6;
 							break;
 						default:
 							_viewNn =1;
@@ -222,37 +225,33 @@ public class DataFieldsSection extends DataView implements IRemoteDataSave{
 		_editDialog.setDataSource(ds);
 		
 		
-		switch (_mainDocCard.getViewState())  {
+		switch (_docCard.getViewState())  {
 			case  New:
 				
-				Record newRecord = new Record();
+				Record newRecord = new Record();				
+				newRecord.setAttribute("ID_CORR", _docCard.getCorrespondentType().getValue());
+				newRecord.setAttribute("ID_STATUS", EDocStatus.Draft.getValue());
 				
-				//if (getMainEntityId() == MAIN_ENTITY_ID) {
-									
-						switch (_mainDocCard.getCorrespondentTypeRootCode()) {
-							case INPUT_DOC:
-							case OUTPUT_DOC:
+						switch (_docCard.getCorrespondentType()) {
+							case INPUT:
+							case OUTPUT:
 								newRecord.setAttribute("ID_STATUS", 1);
 								break;
-							case INSIDE_PRIKAZ_DOC:
-								newRecord.setAttribute("ID_STATUS", EDocStatus.Draft.getValue());
-								newRecord.setAttribute("ID_CORR", ECorrespondentType.INSIDE_PRIKAZ_DOC.getValue());
+							case INSIDE_PRIKAZ:							
 								break;
-							case INSIDE_PROCEDURE_DOC:
-								newRecord.setAttribute("ID_CORR", ECorrespondentType.INSIDE_PROCEDURE_DOC.getValue());
-								newRecord.setAttribute("ID_STATUS", EDocStatus.Draft.getValue());								
-								newRecord.setAttribute("CORR_TYPE_FULL", "Порядок");
+							case INSIDE_PROCEDURE:		
+								newRecord.setAttribute("CORR_TYPE_FULL", Captions.DOC_PROCEDURE);
 								newRecord.setAttribute("ORD_VERSION", 1);
 								newRecord.setAttribute("ORD_LEVEL", 3);
 								//newRecord.setAttribute("DATE_SH_UPD", DateTimeHelper.addMonths(DateTimeHelper.getSysdate(), 35));
-								
-								
 								break;
-							case INSIDE_NOTIFICATION_DOC:
-								newRecord.setAttribute("ID_STATUS", EDocStatus.Draft.getValue());
-								newRecord.setAttribute("ID_CORR", ECorrespondentType.INSIDE_NOTIFICATION_DOC.getValue());
+							case INSIDE_NOTIFICATION:																//
+								break;
+							case ACCOUNT_MODEL:
+								newRecord.setAttribute("ID_DEP_OWNER", 11);
 								break;
 						case UNKNOWN:
+							
 							break;
 						default:
 							break;
@@ -263,7 +262,7 @@ public class DataFieldsSection extends DataView implements IRemoteDataSave{
 						//newRecord.setAttribute("DATE_EFFECTIVE", DateTimeHelper.getSysdate());
 						
 						
-						newRecord.setAttribute("ID_DOC", _mainDocCard.getDocumentId());
+						newRecord.setAttribute("ID_DOC", _docCard.getDocumentId());
 						newRecord.setAttribute("DATE_IN", DateTimeHelper.getSysdate() );						
 						newRecord.setAttribute("DATE_EFFECTIVE", DateTimeHelper.getSysdate() );
 						
@@ -277,14 +276,6 @@ public class DataFieldsSection extends DataView implements IRemoteDataSave{
 						
 						newRecord.setAttribute("IS_CLOSED", 0);
 						newRecord.setAttribute("ID_INFO_TYPE", 1);
-						
-						
-						
-				/*}
-				else if (getMainEntityId() != MAIN_ENTITY_ID) {
-					newRecord.setAttribute("ORD_VERSION", 1);
-				}*/
-				
 				
 				_editDialog.getDataForm().editNewRecord(newRecord);			
 				
@@ -337,7 +328,7 @@ public class DataFieldsSection extends DataView implements IRemoteDataSave{
 		if (item != null) {
 			Object val = item.getValue();
 			if (val == null) {
-				item.setValue(_mainDocCard.getDocumentId());
+				item.setValue(_docCard.getDocumentId());
 			}
 		}
 		

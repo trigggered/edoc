@@ -13,9 +13,12 @@ import mdb.core.ui.client.view.dialogs.edit.EditDialog;
 import mdb.core.ui.client.view.dialogs.select.MultiStepSelectDialog;
 
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.grid.ListGrid;
 
 import document.ui.client.commons.EViewIdent;
+import document.ui.client.commons.checker.CheckDocumentUserRight;
 import document.ui.client.resources.locales.Captions;
 import document.ui.shared.MdbEntityConst;
 
@@ -78,25 +81,46 @@ public class DicFavEmployeeGr extends MasterDetailGridView {
 	protected void createComponents() {
 		super.createComponents();
 		setSingleInstance(true);		
+		final boolean isBa = CheckDocumentUserRight.isHasBARole();
 		
-		if (_viewIdent == EViewIdent.DicGrEmp){
-			getParams().add("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()) );
-		}
-		
+		getMaster().getParams( ).add("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()) );
+		getMaster().getParams( ).add("IS_BA", isBa?"1":"");				
+		//getParams().add("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()) );
 		
 		getMaster().addInsertEvent(new IDataEditHandler() {
 			
 			@Override
-			public void onEdit(Record record) {
-				
-				Record initRecord =  null;
-			
-				if (_viewIdent == EViewIdent.DicBAGrEmp ) {
-					initRecord =  new Record();					
+			public void onEdit(Record record) {				
+				Record initRecord =  new Record();								
+				if (_viewIdent == EViewIdent.DicGrEmp ) {					
 					initRecord.setAttribute("OWN_OFFICER_NUM", 
-							AppController.getInstance().getCurrentUser().getId());					
-				}		
+							AppController.getInstance().getCurrentUser().getId());
+					initRecord.setAttribute("OWNER_NAME",AppController.getInstance().getCurrentUser().getName());
+				}
+				else {
+					initRecord.setAttribute("OWNER_NAME","Всем");
+				}
 				EditDialog.viewForNewRecord(getMaster().getMainDataSource(), initRecord,null);					
+			}
+		});
+		
+		
+		getMaster().addDeleteEvent(new IDataEditHandler() {
+			
+			@Override
+			public void onEdit(Record record) {
+			
+				if (isBa) {
+					deleteMaster();
+				}else {
+					int id = AppController.getInstance().getCurrentUser().getId();
+					String ownerId = record.getAttribute("OWN_OFFICER_NUM");
+					
+					if (ownerId!= null && ownerId.equals(String.valueOf(id) )) {
+						deleteMaster();
+					}
+				
+				}
 			}
 		});
 		
@@ -107,8 +131,7 @@ public class DicFavEmployeeGr extends MasterDetailGridView {
 			public void onEdit(Record record) {
 				
 				if (_viewIdent == EViewIdent.DicGrEmp &&  
-						getSelectedRecord().getAttributeAsInt(getRelationField()) ==1 ) {					
-					
+						getSelectedRecord().getAttributeAsInt(getRelationField()) ==1 ) {									
 					return;
 				}
 				
@@ -136,6 +159,29 @@ public class DicFavEmployeeGr extends MasterDetailGridView {
 		});			
 	}
 	
+	
+	
+	public void deleteMaster() {	
+		
+		if (getMaster().isSelectedRecord()) {		
+			
+			
+			
+			
+			SC.ask( Captions.Q_DELETE_REC, new BooleanCallback() {
+				
+				@Override
+				public void execute(Boolean value) {
+					if (value) {									 						 						
+						for  (Record rec : getMaster().getSelectedRecords()) {
+							getMaster().removeRecord(rec);
+							getMaster().callAfterDeleteEvent();
+						}								
+					}				
+				}
+			});				
+		}		
+	}
 	
 	
 	@Override

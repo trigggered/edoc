@@ -53,6 +53,11 @@
 	        
 	        <label for="password" >Пароль</label>
 	        <input id="password" name="j_password" type="password"  class="form-control" placeholder="Password" required autocomplete="off">
+	        
+	        <select id="app_id"  name="app_id"  class="form-control" data-style="btn-primary">
+			    <option value=1>Нормативные документы</option>
+			    <option value=2>Бухгалтерские модели</option>			    
+  			</select>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
     </form>

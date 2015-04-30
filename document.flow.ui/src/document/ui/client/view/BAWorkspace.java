@@ -4,6 +4,7 @@
 package document.ui.client.view;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ import mdb.core.ui.client.view.components.menu.IMenuButtons;
 import mdb.core.ui.client.view.components.menu.IMenuItem;
 import mdb.core.ui.client.view.components.menu.data.AMenuData;
 import mdb.core.ui.client.view.data.DataView;
+import mdb.core.ui.client.view.data.IDataView;
 import mdb.core.ui.client.view.data.grid.GridView;
 import mdb.core.ui.client.view.dialogs.input.InputTextDialog;
 import mdb.core.ui.client.view.dialogs.message.Dialogs;
@@ -33,6 +35,7 @@ import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
 import document.ui.client.commons.ECorrespondentType;
+import document.ui.client.commons.EDocStatus;
 import document.ui.client.commons.EFlowStage;
 import document.ui.client.commons.checker.CheckGenerateDocCode;
 import document.ui.client.flow.impl.FlowProccessing;
@@ -50,11 +53,16 @@ public class BAWorkspace extends DataView {
 	private static final Logger _logger = Logger.getLogger(BAWorkspace.class
 			.getName());
 	
+	enum EDataSection {
+		DocsInWork,
+		DocsToPublish,
+		ProcedureToUpdatedDay,
+		DocsPublished
+	}
+	
 	TabSet 		_mainTabSet;
-	GridView 	_grDocsInWork;
-	GridView 	_grDocsToPublish;
-	GridView 	_grOrderOnUpdatedDay;
-	GridView 	_grDocsPublished;
+	
+	protected HashMap<EDataSection , GridView> _hmDataSection;
 	
 	protected Date _dateB;
 	protected Date _dateE;
@@ -106,7 +114,8 @@ public class BAWorkspace extends DataView {
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
 				public void execute(IMenuItem sender) {
-					openSelectedCards(_grDocsInWork);																					
+					
+					DocumentCard.openSelectedCards(_hmDataSection.get(EDataSection.DocsInWork));																					
 				}
 
 			});	
@@ -136,8 +145,9 @@ public class BAWorkspace extends DataView {
 			item.setImg(AMenuData.getButtonInitialiser().get(IMenuButtons.Buttons.dataCancel).getImg());
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
-				public void execute(IMenuItem sender) {						
-					cancel(_grDocsInWork);			
+				public void execute(IMenuItem sender) {
+					
+					cancel(_hmDataSection.get(EDataSection.DocsInWork));			
 				}								
 			});
 			
@@ -146,7 +156,7 @@ public class BAWorkspace extends DataView {
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
 				public void execute(IMenuItem sender) {						
-					deleteProcess(_grDocsInWork);			
+					deleteProcess(_hmDataSection.get(EDataSection.DocsInWork));			
 				}
 											
 			});		
@@ -172,7 +182,7 @@ public class BAWorkspace extends DataView {
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
 				public void execute(IMenuItem sender) {
-					openSelectedCards(_grDocsToPublish);																					
+					DocumentCard.openSelectedCards(_hmDataSection.get(EDataSection.DocsToPublish) );																					
 				}
 
 			});
@@ -181,7 +191,7 @@ public class BAWorkspace extends DataView {
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
 				public void execute(IMenuItem sender) {						
-					publishingDoc(_grDocsToPublish);			
+					publishingDoc(_hmDataSection.get(EDataSection.DocsToPublish) );			
 				}
 				
 			});		
@@ -190,8 +200,9 @@ public class BAWorkspace extends DataView {
 			item.setImg(AMenuData.getButtonInitialiser().get(IMenuButtons.Buttons.dataCancel).getImg());
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
-				public void execute(IMenuItem sender) {						
-					cancel(_grDocsToPublish);		
+				public void execute(IMenuItem sender) {
+					
+					cancel(_hmDataSection.get(EDataSection.DocsToPublish));		
 				}
 				
 			});																			
@@ -204,60 +215,66 @@ public class BAWorkspace extends DataView {
 		setSingleInstance(true);							
 	}
 	
+	protected GridView  createDataSection (EDataSection edataSection,  int entityId) {
+		GridView dataSection = new GridView(entityId);
+		dataSection.setCreateMenuNavigator(false);
+		dataSection.getListGrid().setSelectionType(SelectionStyle.SIMPLE);
+		dataSection.getListGrid().setSelectionAppearance(SelectionAppearance.CHECKBOX);				
+		dataSection.setAutoSave(true);
+		_hmDataSection.put(edataSection, dataSection);
+		return dataSection;
+		
+	}
+	
 	@Override
 	protected void createComponents() {
 		super.createComponents();	
+		_hmDataSection = new HashMap<EDataSection , GridView>(); 
+		
 		_mainTabSet = new TabSet();
 		_mainTabSet.setWidth100();
 		_mainTabSet.setHeight100();
 		/*Основные параметры*/
+		
 		Tab tabDocsOnDay = new Tab();
 		tabDocsOnDay.setTitle(Captions.DOC_IN_WORK);
-		_grDocsInWork = new GridView(MdbEntityConst.BAWorkspace);
-		_grDocsInWork.setCreateMenuNavigator(false);
-		_grDocsInWork.getListGrid().setSelectionType(SelectionStyle.SIMPLE);
-		_grDocsInWork.getListGrid().setSelectionAppearance(SelectionAppearance.CHECKBOX);
-		_grDocsInWork.getMenuContainer().bind(new MenuDocInFlow());		
-		_grDocsInWork.setAutoSave(true);		
+		GridView view = createDataSection(EDataSection.DocsInWork,  MdbEntityConst.BAWorkspace);
+		view.getMenuContainer().bind(new MenuDocInFlow());
+		tabDocsOnDay.setPane(view);
 
-		tabDocsOnDay.setPane(_grDocsInWork);
 		_mainTabSet.addTab(tabDocsOnDay);
 		
 		
-		Tab tabDocsToPublish = new Tab(Captions.DOC_FOR_PUBLISH);		
-		_grDocsToPublish = new GridView(MdbEntityConst.DocToPublish);
-		_grDocsToPublish.setCreateMenuNavigator(false);
-		_grDocsToPublish.getListGrid().setSelectionType(SelectionStyle.SIMPLE);
-		_grDocsToPublish.getListGrid().setSelectionAppearance(SelectionAppearance.CHECKBOX);
-		_grDocsToPublish.getMenuContainer().bind(new MenuDocToPublish());			
-		tabDocsToPublish.setPane(_grDocsToPublish);
-		_mainTabSet.addTab(tabDocsToPublish);
+		Tab tabDocsToPublish = new Tab(Captions.DOC_FOR_PUBLISH);	
+		view = createDataSection(EDataSection.DocsToPublish,MdbEntityConst.DocToPublish);
+		view.getMenuContainer().bind(new MenuDocToPublish());
+		tabDocsToPublish.setPane(view);		
+		_mainTabSet.addTab(tabDocsToPublish);		
 		
 		
-		
-		Tab tabOrderInUpdatedDay = new Tab();
-		tabOrderInUpdatedDay.setTitle(Captions.ORDER_FOR_REFRESH);
-		_grOrderOnUpdatedDay = new GridView(MdbEntityConst.OrderOnUpdatedDay);
-		_grOrderOnUpdatedDay.setCreateMenuNavigator(false);
-		_grOrderOnUpdatedDay.addViewEvent(DocumentCard.getShowEditViewHandler());
-		_grOrderOnUpdatedDay.addEditEvent(DocumentCard.getShowEditViewHandler());				
-		tabOrderInUpdatedDay.setPane(_grOrderOnUpdatedDay);
-		_mainTabSet.addTab(tabOrderInUpdatedDay);
-		
+		createSectionForProcedure();		
 		
 		Tab tabDocInForce = new Tab();
 		tabDocInForce.setTitle(Captions.DOC_PUBLISHED);
-		_grDocsPublished = new GridView(MdbEntityConst.DOC_PUBLISHED);
-		_grDocsPublished.setCreateMenuNavigator(false);
-		_grDocsPublished.addViewEvent(DocumentCard.getShowEditViewHandler());
-		_grDocsPublished.addEditEvent(DocumentCard.getShowEditViewHandler());				
-		tabDocInForce.setPane(_grDocsPublished);
+		tabDocInForce.setPane(createDataSection(EDataSection.DocsPublished, MdbEntityConst.DOC_PUBLISHED));
 		_mainTabSet.addTab(tabDocInForce);			
-
 		
 		
 		getViewPanel().addMember(_mainTabSet);
 	}
+
+	/**
+	 * 
+	 */
+	protected
+	void createSectionForProcedure() {
+		Tab tabOrderInUpdatedDay = new Tab();
+		tabOrderInUpdatedDay.setTitle(Captions.PROCEDURE_TO_UPDATE);
+		tabOrderInUpdatedDay.setPane(createDataSection(EDataSection.ProcedureToUpdatedDay,  MdbEntityConst.ProcedureToUpdatedDay));
+		_mainTabSet.addTab(tabOrderInUpdatedDay);
+	}
+	
+
 	
 	@Override
 	public String getCaption() {
@@ -301,19 +318,26 @@ public class BAWorkspace extends DataView {
 		_logger.info("DateB:"+DateTimeHelper.format(_dateB));
 		_logger.info("DateE:"+DateTimeHelper.format(_dateE));
 		
-		_grDocsInWork.getParams().add("dateFrom",DateTimeHelper.format(_dateB));
-		_grDocsInWork.getParams().add("dateTo",DateTimeHelper.format(_dateE) );
+		for ( IDataView dataView : _hmDataSection.values()) {
+			
+			dataView.getParams().add("DTA_B",DateTimeHelper.format(_dateB));
+			dataView.getParams().add("DTA_E",DateTimeHelper.format(_dateE) );
+			dataView.getParams().add("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()));
+			getParams().add("CORR_ROOT_CODE", ECorrespondentType.getRootCodeCorrespondentType());
+		}
+			
 		
-		_grDocsPublished.getParams().add("DTA_B", DateTimeHelper.format(new Date()) );
-		_grDocsPublished.getParams().add("DTA_E", DateTimeHelper.format(new Date()) );
-		_grDocsPublished.getParams().add("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()));
-		
-		prepareRequestData(_grDocsInWork, _grOrderOnUpdatedDay, _grDocsToPublish,_grDocsPublished);
+		IDataView [] arr = _hmDataSection.values().toArray(new IDataView[_hmDataSection.values().size()]);
+		prepareRequestData(arr);		
+
 	}
 
 	@Override
-	public void putRequestToQueue()  {
-		putRequestToQueue(_grDocsInWork, _grOrderOnUpdatedDay, _grDocsToPublish, _grDocsPublished);
+	public void putRequestToQueue()  {		
+		
+		IDataView [] arr = _hmDataSection.values().toArray(new IDataView[_hmDataSection.values().size()]);
+		putRequestToQueue(arr);			 
+		
 	}
 
 
@@ -327,24 +351,19 @@ public class BAWorkspace extends DataView {
 	
 	
 	
-	private void openSelectedCards(GridView view) {
-		Record[] records =view.getListGrid().getSelectedRecords();
-		for (Record rec : records) {							
-			DocumentCard.OpenById(rec.getAttribute("ID_DOC"), 
-					ECorrespondentType.fromString(rec.getAttribute("CORR_TYPE")));
-		}	
-	}
+	
 	
 	private void sendRemember() {
-		Record[] records =_grDocsInWork.getListGrid().getSelectedRecords();
+		Record[] records =_hmDataSection.get(EDataSection.DocsInWork).getListGrid().getSelectedRecords();
 		if ( records.length == 0) {
 			Dialogs.ShowMessage(Captions.NOT_CHOUSE_DOC);			
 			return;
 		}
 		
-		for (final Record rec : records) {			
-			final String docid = rec.getAttribute("ID_DOC");
-			FlowProccessing.sendRemember(Integer.parseInt(docid));	
+		for (final Record rec : records) {						
+		
+			FlowProccessing.sendRemember(Integer.parseInt(rec.getAttribute("ID_DOC")) , 
+						EDocStatus.fromInt(Integer.parseInt( rec.getAttribute("ID_STATUS"))));	
 		}				
 	}
 	
@@ -384,7 +403,8 @@ public class BAWorkspace extends DataView {
 	
 	private void sendForSignature () {
 		
-		Record[] records =_grDocsInWork.getListGrid().getSelectedRecords();
+		GridView  view = _hmDataSection.get(EDataSection.DocsInWork);
+		Record[] records =view.getListGrid().getSelectedRecords();
 		if ( records.length == 0) {
 			Dialogs.ShowMessage(Captions.NOT_CHOUSE_DOC);
 			return;
@@ -396,7 +416,7 @@ public class BAWorkspace extends DataView {
 			
 			if ( EFlowStage.fromInt( Integer.parseInt(flowStage) ) ==  EFlowStage.InitSigne) {				
 				
-				generateCodeDoc(_grDocsInWork, new ICallbackEvent<String>() {
+				generateCodeDoc(view, new ICallbackEvent<String>() {
 					
 					@Override
 					public void doWork(String data) {
@@ -428,7 +448,8 @@ public class BAWorkspace extends DataView {
 		params.add("id_doc", documentId);
 		params.add("CODE", docCode);
 		
-		SimpleMdbDataRequester.callAction( _grDocsInWork.getMainEntityId(), 3057, params, new ICallbackEvent<Record[]>() {
+		
+		SimpleMdbDataRequester.callAction( _hmDataSection.get(EDataSection.DocsInWork).getMainEntityId(), 3057, params, new ICallbackEvent<Record[]>() {
 			
 			@Override
 			public void doWork(Record[] data) {
@@ -460,9 +481,7 @@ public class BAWorkspace extends DataView {
 						_checkGenerateDocCode.generate(idDoc, new ICallbackEvent<String>() {
 							
 							@Override
-							public void doWork(String data) {							
-								
-								
+							public void doWork(String data) {																					
 								InputTextDialog textDlg = new InputTextDialog(Captions.CODE_DOC_GENERATE ,
 										Captions.CODE_DOC ,data, new IDoubleValuesCallbackEvent<Boolean, String>() {			
 									@Override
@@ -516,7 +535,7 @@ public class BAWorkspace extends DataView {
 																			@Override
 																			public void execute(Boolean value) {
 																				if (value) {
-																					SC.say(Captions.DOC_ID +idDoc +Captions.PUBLISHED );
+																					Dialogs.ShowMessage(Captions.DOC_ID +" " +idDoc + " "+Captions.PUBLISHED );																					
 																					callRequestData();
 																				}
 																			}
@@ -531,7 +550,7 @@ public class BAWorkspace extends DataView {
 						
 						
 						
-						if ( ECorrespondentType.fromInt( Integer.valueOf(docType).intValue() ) != ECorrespondentType.INSIDE_PRIKAZ_DOC) {
+						if ( ECorrespondentType.fromInt( Integer.valueOf(docType).intValue() ) != ECorrespondentType.INSIDE_PRIKAZ) {
 							generateCodeDoc(rec, new ICallbackEvent<String>() {
 								
 								@Override

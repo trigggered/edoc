@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import document.ui.client.communication.rpc.MyAuthService;
+import document.ui.server.auth.CustomWebAuthenticationDetails;
 import document.ui.server.auth.ldap.ExtUserDetails;
 import document.ui.server.communication.rpc.mdbgw.MdbRequester;
 import document.ui.shared.DebugMode;
@@ -60,7 +61,13 @@ public class MyAuthServiceImpl extends RemoteServiceImpl implements MyAuthServic
 	        		
 	        		toReturn.setName( (String) userDetail.getAttribute("cn"));	
 	        		toReturn.setMail( (String) userDetail.getAttribute("mail"));
-	        		toReturn.setLoginName( authentication.getName());    			        		        			        	   	
+	        		toReturn.setLoginName( authentication.getName());
+	        		
+	        		CustomWebAuthenticationDetails detail = (CustomWebAuthenticationDetails)authentication.getDetails();
+	        		_logger.info("Application ID  :" +detail.getAppId());
+	        		
+	        		
+	        		toReturn.setChooseApplicationID(Integer.parseInt(detail.getAppId()) );
 	        	
 	        	}
 	        }
@@ -80,6 +87,7 @@ public class MyAuthServiceImpl extends RemoteServiceImpl implements MyAuthServic
 			toReturn = new AuthUser();
 			toReturn.setId(90730);
 			toReturn.getRoles().add("1");
+			toReturn.setChooseApplicationID(2);
 		} else {		
 		
 			_logger.info("RetrieveUserInfo");

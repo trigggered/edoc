@@ -4,14 +4,12 @@
 package document.ui.server.communication.rpc.mail;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 import mdb.core.shared.configuration.PropertyLoader;
-import mdb.core.shared.data.Params;
 import mdb.core.shared.gw.MailGatewayClientBuilder;
 import mdb.core.shared.gw.RemoteServiceClientType;
 import mdb.core.shared.gw.mail.IMailGatewayServiceRemote;
@@ -19,7 +17,10 @@ import mdb.core.shared.transformation.impl.ResultSetToJSONTransformation;
 import mdb.core.shared.transport.IRequestData;
 import mdb.core.shared.transport.IRequestData.ExecuteType;
 import mdb.core.shared.transport.Request;
-import document.ui.client.commons.EDocStatus;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+import document.ui.client.communication.rpc.mail.MailingService;
 import document.ui.server.communication.rpc.flow.DocumentFlowServiceImpl.EFlowStage;
 import document.ui.server.communication.rpc.mdbgw.MdbRequester;
 import document.ui.server.mail.EMailType;
@@ -33,10 +34,15 @@ import document.ui.shared.MdbEntityConst;
  * Creation date: Oct 1, 2014
  *
  */
-public class MailingServiceImp  {
+public class MailingServiceImpl  extends RemoteServiceServlet implements MailingService {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static final Logger _logger = Logger
-			.getLogger(MailingServiceImp.class.getName());		
+			.getLogger(MailingServiceImpl.class.getName());		
 	
 	private static final String PROPERTIES_FILE = "MailTemplate.properties";
 
@@ -48,7 +54,7 @@ public class MailingServiceImp  {
 	
 	FlowMsgBuilder _floMsgBuilder;
 	
-	public MailingServiceImp()  {
+	public MailingServiceImpl()  {
 		_logger.info("Try load Properties file "); 
 		_mailProp = PropertyLoader.loadProperties(PROPERTIES_FILE, this.getClass());
 		if ( _mailProp != null) {  
@@ -69,20 +75,19 @@ public class MailingServiceImp  {
 	
 
 	
-	public void sendCancelMessageToAuthor(EFlowStage stage, long documentId,
-			 String author, String docTypeName,String docName, String description) {
+	public void sendCancelMessageToAuthor(EFlowStage stage, long documentId, String description) {
 				
-		EMailType etype =  EMailType.CancelPublishEmailToAuthor;
+		EMailType etype =  EMailType.ToAuthorCancel;
 		
 		switch (stage ) {
 		case Unknown:
-			etype =  EMailType.CancelPublishEmailToAuthor;
+			etype =  EMailType.ToAuthorCancel;
 		case Approval:
-			etype =  EMailType.CancelApprovalEmailToAuthor;
+			etype =  EMailType.ToAuthorCancelApproval;
 			break;
 		case Signe:
 		case InitSigne:
-			etype =  EMailType.CancelSignEmailToAuthor;					
+			etype =  EMailType.ToAuthorCancelSign;					
 			break;		
 		}
 		
@@ -121,6 +126,10 @@ public class MailingServiceImp  {
 		}		
 	}
 
-
+/*
+	public void sendApproveMsgResult (boolean result, long documentId, String infoMessage,  int initiatorId) {
+		
+		sendInfoMessageTo(result?EMailType.ApproveCurentUser:EMailType.NotApproveCurentUser, documentId, infoMessage);
+	}*/
 	
 }

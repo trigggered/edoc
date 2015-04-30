@@ -17,17 +17,19 @@ public class DocumentCardFactory {
 	public static DocumentCard create(ECorrespondentType  correspondenType) {
 		DocumentCard toReturn = null;
 		switch (correspondenType) {
-		case INPUT_DOC:
-		case OUTPUT_DOC:
+		case INPUT:
+		case OUTPUT:
 			//toReturn =  new DocumentCard(correspondenType);
 			break;
-		case INSIDE_PRIKAZ_DOC:
-		case INSIDE_NOTIFICATION_DOC:	
+		case INSIDE_PRIKAZ:
+		case INSIDE_NOTIFICATION:	
 			toReturn= new InsideDocumentCard(correspondenType) ;
 			break;
-		case INSIDE_PROCEDURE_DOC:
-			toReturn= new InsideOrderDocumentCard(correspondenType) ;
+		case INSIDE_PROCEDURE:
+			toReturn= new InsideProcedureDocumentCard(correspondenType) ;
 			break;
+		case ACCOUNT_MODEL:
+			toReturn= new AccountModelDocumentCard(correspondenType) ;
 		default:
 			break;			
 		}			

@@ -14,10 +14,11 @@ public class InputSearchCriteriaView extends DynamicFieldsView{
 	
 	
 	private int _searchActionId;	
-
+	private int _searchEntityId;
 	
-	public InputSearchCriteriaView(int searchActionId) {		
+	public InputSearchCriteriaView(int searchEntityId, int searchActionId) {		
 		_searchActionId = searchActionId;	
+		_searchEntityId = searchEntityId;
 		setMainEntityId(MdbEntityConst.ENTITY_FLDS_DESCR);
 	}	
 	
@@ -30,7 +31,7 @@ public class InputSearchCriteriaView extends DynamicFieldsView{
 
 	protected Params createParamsReq() {
 		Params params = new Params();
-		params.add("ID_DENTITY", String.valueOf(MdbEntityConst.DocSearch));
+		params.add("ID_DENTITY", String.valueOf(_searchEntityId));
 		params.add("ID_DENTITY_ACTION", "8" );
 		params.add("ID_EXT_METHOD",String.valueOf( getActionId()) );
 		return params;
