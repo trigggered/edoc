@@ -159,6 +159,8 @@ public class ViewReport extends GridView {
 				public void execute(IMenuItem sender) {					
 					String data = ExportHelper.exportCSV(getListGrid()).toString();
 					Dialogs.ShowMessage(data);	
+					String data = ExportHelper.exportCSV(getListGrid()).toString();
+				Dialogs.ShowMessage(data);	
 				}
 
 			});	
