@@ -18,6 +18,7 @@ import mdb.core.ui.client.view.components.menu.data.AMenuData;
 import mdb.core.ui.client.view.data.grid.GridView;
 import mdb.core.ui.client.view.data.grid.ListOfGrids;
 import mdb.core.ui.client.view.data.grid.ListOfGrids.EmbeddedGrid;
+import mdb.core.ui.client.view.dialogs.message.Dialogs;
 import mdb.core.ui.client.view.utils.DateTimeHelper;
 
 import com.smartgwt.client.data.DataSource;
@@ -156,7 +157,8 @@ public class ViewReport extends GridView {
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
 				public void execute(IMenuItem sender) {					
-					String data = ExportHelper.exportCSV(getListGrid()).toString();					 										
+					String data = ExportHelper.exportCSV(getListGrid()).toString();
+					Dialogs.ShowMessage(data);	
 				}
 
 			});	
