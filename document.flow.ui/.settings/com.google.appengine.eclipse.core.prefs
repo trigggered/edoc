@@ -11,4 +11,4 @@ mySqlHostName=localhost
 mySqlIsConfigured=true
 mySqlJdbcJar=/home/azhuk/my workspaces/lib/mysql-connector-java-5.0.8-bin.jar
 mySqlPort=3306
-validationExclusions=src/document/ui/server/auth/ldap/MyLdapAuthenticationProvider.java|src/document/ui/server/auth/ad/ActiveDirectoryLdapAuthenticationProvider.java|src/document/ui/server/auth/ad/MyActiveDirectoryLdapAuthenticationProvider.java|src/document/ui/server/auth/ldap/AttributesLDAPUserDetailsContextMapper.java|src/document/ui/server/auth/ldap/ExtUserDetails.java
+validationExclusions=src/document/ui/server/auth/ldap/MyLdapAuthenticationProvider.java|src/document/ui/server/auth/ad/ActiveDirectoryLdapAuthenticationProvider.java|src/document/ui/server/auth/ad/MyActiveDirectoryLdapAuthenticationProvider.java|src/document/ui/server/auth/ldap/AttributesLDAPUserDetailsContextMapper.java|src/document/ui/server/auth/ldap/ExtUserDetails.java|src/document/ui/server/communication/rpc/export/Export2FileServiceImpl.java

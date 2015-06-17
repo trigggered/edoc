@@ -9,6 +9,7 @@ import mdb.core.ui.client.app.AppController;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 
+import document.ui.client.commons.ECorrespondentType;
 import document.ui.shared.DebugMode;
 
 /**
@@ -34,7 +35,8 @@ public class EdocAppController extends AppController {
 	 */
 	public void initialAppContext() {
 		if ( getCurrentUser()!= null) {
-			getAppContext().setValue("CURRENT_USER", String.valueOf( getCurrentUser().getId() ));
+			getAppContext().setValue("CURRENT_USER", String.valueOf( getCurrentUser().getId() ));						
+			getAppContext().setValue("CORR_ROOT_CODE", String.valueOf( ECorrespondentType.getRootCodeCorrespondentType() ));
 		}
 	}
 

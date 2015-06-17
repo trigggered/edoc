@@ -40,9 +40,7 @@ public class FileDownloadServlet  extends HttpServlet{
 private static final long serialVersionUID = 1L;
 	private static final Logger _logger = Logger
 			.getLogger(FileDownloadServlet.class.getName());
-	
-
-	
+		
 	MdbRequester _mdbRequester = new MdbRequester(); 
 	
 	protected void doGet( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException

@@ -3,6 +3,8 @@
  */
 package document.ui.client.view.reports;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,6 +23,8 @@ import mdb.core.ui.client.view.data.grid.ListOfGrids.EmbeddedGrid;
 import mdb.core.ui.client.view.dialogs.message.Dialogs;
 import mdb.core.ui.client.view.utils.DateTimeHelper;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.Canvas;
@@ -157,18 +161,25 @@ public class ViewReport extends GridView {
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
 				public void execute(IMenuItem sender) {					
-					String data = ExportHelper.exportCSV(getListGrid()).toString();
-					Dialogs.ShowMessage(data);	
-					String data = ExportHelper.exportCSV(getListGrid()).toString();
-				Dialogs.ShowMessage(data);	
+					export();
 				}
-
-			});	
-			
+			});				
 		}
 	}
 	
+	private void export () {
+		String data = ExportHelper.exportCSV(getListGrid()).toString();		
+		//data = com.google.gwt.http.client.URL.encode(data);			
+		//_logger.info(data);
+		String url = GWT.getModuleBaseURL() + "CSVdownload?CSVData=" +data;						
+		
+		url = com.google.gwt.http.client.URL.encode(url);
+		_logger.info(url);
+		Window.open( url, "_blank", "");			
+		
+	}
 	
+
 	@Override
 	protected void createMenu () {
 		super.createMenu();
@@ -302,8 +313,8 @@ public class ViewReport extends GridView {
 	protected void createComponents() {
 		super.createComponents();		
 		getListGrid().setDrawAheadRatio(4);  
-		  getListGrid().setCanExpandRecords(true);  
-		  getListGrid().setAutoFetchData(true);		  
+		  //getListGrid().setCanExpandRecords(true);  
+		  //getListGrid().setAutoFetchData(true);		  
 	}
 	
 }

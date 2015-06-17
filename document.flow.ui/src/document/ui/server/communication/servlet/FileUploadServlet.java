@@ -23,7 +23,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.gson.Gson;
 
-import document.ui.server.communication.rpc.flow.DocumentFlowServiceImpl;
 import document.ui.server.communication.rpc.mail.MailingServiceImpl;
 import document.ui.server.communication.rpc.mdbgw.MdbGatewayServiceImpl;
 import document.ui.server.fileupload.MemoryFileItemFactory;

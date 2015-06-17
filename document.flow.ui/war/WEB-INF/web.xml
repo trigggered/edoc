@@ -27,7 +27,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </listener> 
   
   
+  
 <!-- Servlets --> 
+
+
   
   <servlet>
     <servlet-name>MdbGatewayServiceImpl</servlet-name>
@@ -89,6 +92,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <url-pattern>/DocumentsUI/upload</url-pattern>
   </servlet-mapping>
   
+  
+  
   	<servlet>
     	<servlet-name>FileDownloadServlet</servlet-name>
     	<servlet-class>document.ui.server.communication.servlet.FileDownloadServlet</servlet-class>
@@ -97,6 +102,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
     	<servlet-name>FileDownloadServlet</servlet-name>
     	<url-pattern>/DocumentsUI/download</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+    	<servlet-name>CSVDownloadServlet</servlet-name>
+    	<servlet-class>document.ui.server.communication.servlet.CSVDownloadServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+    	<servlet-name>CSVDownloadServlet</servlet-name>
+    	<url-pattern>/DocumentsUI/CSVdownload</url-pattern>
 	</servlet-mapping>
 
 	
