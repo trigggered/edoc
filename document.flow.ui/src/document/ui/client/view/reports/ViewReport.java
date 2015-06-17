@@ -157,10 +157,7 @@ public class ViewReport extends GridView {
 			item.setCommand(new ICommand<IMenuItem>() {						
 				@Override
 				public void execute(IMenuItem sender) {					
-					String data = ExportHelper.exportCSV(getListGrid()).toString();
-					Dialogs.ShowMessage(data);	
-					String data = ExportHelper.exportCSV(getListGrid()).toString();
-				Dialogs.ShowMessage(data);	
+					export();
 				}
 
 			});	
@@ -168,6 +165,10 @@ public class ViewReport extends GridView {
 		}
 	}
 	
+	private void export () {
+		String data = ExportHelper.exportCSV(getListGrid()).toString();
+		Dialogs.ShowMessage(data);		
+	}
 	
 	@Override
 	protected void createMenu () {
