@@ -75,6 +75,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	protected Layout _layAddDocFields;
 	protected FlowProccessing _flowProccess;	
 	
+	
 	private static IDataEditHandler _showEditViewHandler = new IDataEditHandler() {
 		
 		@Override
@@ -110,7 +111,8 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	protected Button _btnSign;
 	protected Button _btnCancelSign;
 
-	private boolean _approveChange;
+	private boolean _fApproveChange;
+	protected boolean _fAddNewRequster = false;
 	
 	
 	public DocumentCard() {
@@ -425,18 +427,28 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 		getDataBinder().getDataProvider().getRequest().clear();		
 		saveAttachments();
 		checkChangeApprove();
+		checkChangeRequesterList();
 	}
 	
 	/**
 	 * 
 	 */
 	private void checkChangeApprove() {
-			if (_approveChange) {			
+			if (_fApproveChange) {			
 				
 				FlowProccessing.sendApproveResult (getDocumentId());
-				_approveChange=false;
+				_fApproveChange=false;
 			}
 		
+	}
+	
+	private void checkChangeRequesterList() {
+		
+		if (getDocumentStatus() != EDocStatus.Draft && _fAddNewRequster) {
+		
+			FlowProccessing.sendMsg2NewApprovals (getDocumentId());
+			_fAddNewRequster = false;
+		}
 	}
 
 
@@ -756,7 +768,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 		_docMainFields.prepareSavedData();		
 		_docAttachmentsList.prepareSavedData();
 		
-		if(_approveChange) {
+		if(_fApproveChange) {
 			
 		}
 	}
@@ -823,7 +835,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	 * @param b
 	 */
 	public void setAprroveChange(boolean value) {
-		_approveChange =value;		
+		_fApproveChange =value;		
 	}
 	
 	
@@ -833,6 +845,14 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 			DocumentCard.OpenById(rec.getAttribute("ID_DOC"), 
 					ECorrespondentType.fromString(rec.getAttribute("CORR_TYPE")));
 		}	
+	}
+
+
+	/**
+	 * @param b
+	 */
+	public void setAddRequester(boolean value) {		
+		_fAddNewRequster = value;		
 	}
 
 }

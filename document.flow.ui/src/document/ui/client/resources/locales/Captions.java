@@ -174,6 +174,7 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	public static final String MY_DOC =  "Мои документы";
 	public static final String EXECUTE = "Выполнено";
 	public static final String FIN_CODES = "Коды для генерации кода БМ";
-	public static final String EXPORT2CSV = "Экспорт в CSV";		
+	public static final String EXPORT2CSV = "Экспорт в CSV";
+	public static final String REQ_APPROVAL = "Запросить согласование";		
 	
 }

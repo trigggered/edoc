@@ -3,6 +3,7 @@
  */
 package document.ui.client.communication.rpc.flow;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -29,4 +30,9 @@ public interface DocumentFlowService extends RemoteService{
 	void sendApproveResult(long documentId, String infoMessage, int initiatorId);
 
 	boolean publishDoc(int documentId, String infoMsg, int id);
+
+	void sendMsg2NewApprovals(long documentId, String infoMessage,
+			int initiatorId);
+	
+	
 }

@@ -66,6 +66,24 @@ public class DocDataHelper {
 		return lstMap.size() > 0 ? lstMap.get(0): null;
 	}
 
+	public static  HashMap<String, String> getEmployeeData(long initiatorId)  {
+		
+		String entityId = String.valueOf(MdbEntityConst.EmpById);
+		Params params = new Params();
+		params.add("OFFICER_NUM", String.valueOf(initiatorId)) ;
+		
+		MdbRequester  mdbRequester = new MdbRequester();
+		
+		Request	req= mdbRequester.getNewRequest(MdbEntityConst.EmpById, ExecuteType.GetData, params );
+		
+		Request response = mdbRequester.call(req);
+		IRequestData data= response.get( entityId   );		
+		
+		List<HashMap<String, String>> lstMap = ResultSetToJSONTransformation.deserialise(data.getData() );
+		
+		return lstMap.size() > 0 ? lstMap.get(0): null;
+	}
+	
 	/**
 	 * @param documentId
 	 * @param initiatorId

@@ -16,7 +16,8 @@ public interface DocumentFlowServiceAsync {
 			AsyncCallback<Boolean> callback);
 
 	void sendRemember(long documentId, String infoMessage,  int initiatorId, AsyncCallback<Void> callback);
-
+	
+	
 	void cancelProcess(long documentId, String infoMessage, int initiatorId,
 			AsyncCallback<Void> callback);
 
@@ -30,6 +31,7 @@ public interface DocumentFlowServiceAsync {
 
 	void publishDoc(int documentId, String infoMsg, int id,
 			AsyncCallback<Boolean> asyncCallback);
-
+	
+	void sendMsg2NewApprovals(long documentId, String infoMessage,  int initiatorId, AsyncCallback<Void> callback);
 	
 }

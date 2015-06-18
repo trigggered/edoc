@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import mdb.core.shared.transport.IRequestData;
 import mdb.core.shared.transport.IRequestData.ExecuteType;
 import mdb.core.shared.transport.RequestEntity;
+import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.communication.IRemoteDataSave;
 import mdb.core.ui.client.events.ICallbackEvent;
 import mdb.core.ui.client.events.IDataEditHandler;
@@ -125,17 +126,18 @@ public class DataGridSection extends GridView implements IRemoteDataSave{
 						Record[] filteringRec =  _grid.getDataSource().applyFilter(_grid.getRecords(), criteria);
 						if (filteringRec != null && filteringRec.length > 0) {
 							return;
-						}
+						}						
 						
 						newRecord.setAttribute("ID_DOC", _docCard.getDocumentId());			
 						newRecord.setAttribute("OFFICER_NUM", rec.getAttribute("OFFICER_NUM"));
 						newRecord.setAttribute("FULL_NAME", rec.getAttribute("FULL_NAME"));
+						newRecord.setAttribute("REQUESTER_OFFICER_NUM", AppController.getInstance().getCurrentUser().getId());
 						 						
 						int orderNo = _grid.getRecordList().toArray().length;
 							
-						newRecord.setAttribute("ORDER_NO", orderNo++ );
+						//newRecord.setAttribute("ORDER_NO", orderNo++ );
 						_grid.addData(newRecord);
-												
+						_docCard.setAddRequester(true);						
 					}					
 				}
 			});	 	 

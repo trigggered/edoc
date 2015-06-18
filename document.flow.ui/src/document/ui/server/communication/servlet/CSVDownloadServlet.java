@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import mdb.core.shared.auth.IUserInfo;
 import mdb.core.shared.exceptions.SessionExpiredException;
 import document.ui.server.auth.SessionValidateChecker;
 
@@ -28,33 +28,32 @@ public class CSVDownloadServlet   extends HttpServlet {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1L;	
 	private static final Logger _logger = Logger
 			.getLogger(CSVDownloadServlet.class.getCanonicalName());
 	
+	private final static String SPLIT ="="; 
+	
 	protected void doGet( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException
     {
-		IUserInfo userInfo = null;
 		try {
-			userInfo = SessionValidateChecker.checkSessionValid();
+			SessionValidateChecker.checkSessionValid();
 		} catch (SessionExpiredException e) {
 			_logger.severe(e.getMessage());
 			return;
 		}
+
 		
 		_logger.info("Query string=" +req.getQueryString());
-		String decodeStr = URLDecoder.decode(req.getQueryString(),"UTF-8");
-		//String decodeStr = URLDecoder.decode(req.getQueryString(),"WINDOWS-1251");		
+		String decodeStr = URLDecoder.decode(req.getQueryString(),StandardCharsets.UTF_8.toString());
+		String[] parameters = decodeStr.split(SPLIT);		
 
-		String[] parameters = decodeStr.split("=");		
 		String data = parameters[1];				
 		
 		
         int BUFFER = 1024 * 100;
         resp.setContentType( "application/octet-stream" );
-        resp.setCharacterEncoding("UTF-8");
-        //resp.setCharacterEncoding("WINDOWS-1251");        
+        resp.setCharacterEncoding(StandardCharsets.UTF_8.toString());
         
         ServletOutputStream outputStream = resp.getOutputStream();
         String fileName = "export.csv";

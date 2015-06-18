@@ -63,25 +63,32 @@ public class FlowMsgBuilder {
 	}
 	
 	
-	public Message  createMessage (EMailType mailType, long documentId, String infoMessage) {
+	public Message  createMessage (int initiatorId, EMailType mailType, long documentId, String infoMessage) {
 		Message   toReturn = new Message() ;
 		
 		HashMap<String, String> docCard =  DocDataHelper.getDocCard(documentId);			
 		
 		HashMap<String, String>  infoFlow = DocDataHelper.getDocumentFlowInfo (documentId) ;
 		
+		HashMap<String, String>   emp =  DocDataHelper.getEmployeeData (initiatorId);
+		
 		if (infoFlow != null && infoFlow.size() > 0) {
 			docCard.put("deadline", infoFlow.get("DEADLINE"));
 		}
 		
-		docCard.put("infoMsg", infoMessage);				
+		
+		docCard.put("infoMsg", infoMessage);			
+		docCard.put("InitiatorName", emp.get("FULL_NAME") );
+		docCard.put("initiatorId", String.valueOf(initiatorId) );
+		
+		
 				
 		toReturn.setFrom((String) _mailProp.getProperty("addrFrom"));
 		
-		toReturn.setSubject(getdMailSubj(mailType, docCard)+" "+docCard.get("CORR_TYPE_FULL")+": "+docCard.get("NAME") );
+		toReturn.setSubject(getMailSubj(mailType, docCard)+" "+docCard.get("CORR_TYPE_FULL")+": "+docCard.get("NAME") );
 		docCard.put("subject", toReturn.getSubject());		
 		
-		toReturn.setRecipients(getRecipientsAddr ( mailType,  documentId) );
+		toReturn.setRecipients(getRecipientsAddr ( mailType,  documentId, docCard) );
 		toReturn.setBody(_templateBuiled.getMailBody(mailType, getBodyParameters (mailType, docCard) ));	
 		
 		_logger.info("Addr from "+toReturn.getFrom());
@@ -101,6 +108,11 @@ public class FlowMsgBuilder {
 		 
 			case ToAcceptingNewVersion:								
 				toReturn.put("infoMsg", infoMessage!=null?Subj_for_add_new_vers+":"+infoMessage:" ");
+				break;
+				
+			case ReqApprovalFromUser:
+				toReturn.put("infoMsg", "Запрос на согласование от: " +docCard.get("InitiatorName")+"\n"
+								+"Комментарий: "+infoMessage);
 				break;
 			default:					
 				toReturn.put("infoMsg", infoMessage!=null?"Комментарии: "+infoMessage:" ");
@@ -123,11 +135,12 @@ public class FlowMsgBuilder {
 
 	
 	
-	private String getdMailSubj(EMailType emailType,HashMap<String, String> docCard) {
+	private String getMailSubj(EMailType emailType,HashMap<String, String> docCard) {
 		
 		String toReturn = null;
 		switch (emailType) {
 			case ToAccepting:
+			case ReqApprovalFromUser:
 				toReturn = Subj_for_approval_req;				
 				break;
 			case ToSignatory:
@@ -173,6 +186,13 @@ public class FlowMsgBuilder {
 			case RevokeDoc:
 				toReturn = Subj_for_revoke;
 				break;
+		case DocumentSigned:
+			break;
+		default:
+			break;			
+				
+				
+				
 		}		
 		
 		return toReturn;		
@@ -196,7 +216,7 @@ public class FlowMsgBuilder {
 	}
 	
 	
-	private String[]  getRecipientsAddr ( EMailType emailType, long documentId) {
+	private String[]  getRecipientsAddr ( EMailType emailType, long documentId, HashMap<String, String> docCard ) {
 		List<String> toReturn = new ArrayList<String>();		 
 		Request req = null;		 
 		Params params = new Params();
@@ -205,21 +225,29 @@ public class FlowMsgBuilder {
 		
 		String emailFldName = null;
 		String isSendInfoFldName = null;
-		String comareValue = null;
+		String compareValue = null;
 		
 		switch (emailType) {
 			case ToAccepting:
 				entittId = MdbEntityConst.ACCEPTING_EMP;							
 				emailFldName ="E_MAILE";
 				isSendInfoFldName ="IS_ACCEPT";
-				comareValue="0";
+				compareValue="0";
+				break;
+				
+			case ReqApprovalFromUser:
+				entittId = MdbEntityConst.ACCEPTING_EMP;							
+				emailFldName ="E_MAILE";
+				isSendInfoFldName ="REQUESTER_OFFICER_NUM";				
+				compareValue=docCard.get("initiatorId");
+				
 				break;
 				
 			case ToAcceptingNewVersion:
 				entittId = MdbEntityConst.ACCEPTING_EMP;						
 				emailFldName ="E_MAILE";
 				isSendInfoFldName ="GET_INF_NEW_VER";
-				comareValue="1";
+				compareValue="1";
 				break;
 				
 			case ToSignatory:
@@ -259,6 +287,12 @@ public class FlowMsgBuilder {
 				entittId = MdbEntityConst.DocCard;
 				emailFldName ="AUTHOR_E_MAILE";
 				break;
+		case DocumentSigned:
+			break;
+		case ToAuthorCancel:
+			break;
+		default:
+			break;
 			}
 		
 			req= _mdbRequester.getNewRequest(entittId , ExecuteType.GetData, params );
@@ -273,7 +307,7 @@ public class FlowMsgBuilder {
 				for (HashMap<String, String> map : lstMap) {
 					if (isSendInfoFldName != null) {						
 						String val =  map.get(isSendInfoFldName);						
-						if (val ==null || val.length() == 0 || val.equalsIgnoreCase(comareValue)) {
+						if (val ==null || val.length() == 0 || val.equalsIgnoreCase(compareValue)) {
 							toReturn.add(map.get(emailFldName));
 						}						
 					}

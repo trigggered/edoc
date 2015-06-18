@@ -163,7 +163,7 @@ public class FileUploadServlet extends HttpServlet {
 	 
 	 private void sendInfoMsgAboutNewVersion (long documentId, String attachmentName ) {
 		 MailingServiceImpl maling = new MailingServiceImpl();		 		
-		  maling.sendInfoMessageTo(EMailType.ToAcceptingNewVersion, documentId, attachmentName);			 			
+		  maling.sendInfoMessageTo(0,EMailType.ToAcceptingNewVersion, documentId, attachmentName);			 			
 		 
 	 }
 

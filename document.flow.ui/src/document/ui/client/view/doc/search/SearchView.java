@@ -1,5 +1,6 @@
 package document.ui.client.view.doc.search;
 
+import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.data.bind.DataBindException;
 import mdb.core.ui.client.data.impl.ViewDataConverter;
 import mdb.core.ui.client.view.components.menu.IMenuContainer;
@@ -77,7 +78,10 @@ public class SearchView extends DataView{
 	
 		//tabSet.addTab(tabSearch);
 		tabSet.addTab(tabAdvSearch);
-		tabSet.addTab(tabContextSearch);
+		if ( AppController.getInstance().getCurrentUser().getChooseApplicationID() == 1) {
+		
+			tabSet.addTab(tabContextSearch);
+		}
 		
 		_searchResult = new SearchResult();
 		_searchResult.setMainEntityId( getSearchResultEntityId());

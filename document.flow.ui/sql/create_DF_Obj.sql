@@ -114,7 +114,8 @@ CREATE OR REPLACE VIEW DF.V_ENT_EMPLOYEE AS
        B.GJOB_NAME,
        B.JOB,       
        B.JOB_NAME,
-       A.E_MAILE      
+       A.E_MAILE,
+       a.dep sap_dep
 
 FROM  
       DF.v_sap_hr_officer A,
@@ -658,8 +659,10 @@ CREATE OR REPLACE FORCE  VIEW "DF"."V_DOC_CARD_FIN" AS
   
   O.ID_FIN_OPERT, 
   O.NAME OPER_NAME,
+  O.CODE  FIN_CODE,
   DC.ID_DEP_CUSTOMER, 
   D.TITLE DEP_CUSTOMER_TITLE
+  
 FROM DF.DOC_CARD_FIN DC,     
   
       DF.DIC_FIN_POLICIES P,

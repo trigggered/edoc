@@ -87,7 +87,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		
 		callActionFlowProcess(ACTION_SEND_DOC_TO_NEXT_STAGE, documentId, infoMessage, initiatorId, null);		
 		
-		callStageAction (documentId, infoMessage);		
+		callStageAction (initiatorId, documentId, infoMessage);		
 		
 		return true;
 	}
@@ -101,7 +101,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 				new HashMap<String, String>(){{
 			        put("ID_STATUS",infoMessage);
 			    }});	
-		callStageAction(documentId, null);
+		callStageAction(initiatorId,documentId, null);
 	}
 	
 	
@@ -110,7 +110,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	@Override
 	public void sendApproveCurrentUserInfoMsg(long documentId, boolean approved , String infoMessage,
 			String  initName ) {		
-		_mailingService.sendInfoMessageTo(approved?EMailType.ApproveCurentUser:EMailType.NotApproveCurentUser
+		_mailingService.sendInfoMessageTo(0, approved?EMailType.ApproveCurentUser:EMailType.NotApproveCurentUser
 			, documentId, infoMessage);
 	}
 	
@@ -118,7 +118,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	/**
 	 * @param documentId
 	 */
-	private void callStageAction(long documentId, String infoMessage) {
+	private void callStageAction( int initiatorId, long documentId, String infoMessage) {
 
 		HashMap<String, String>  flowInfo = DocDataHelper.getDocumentFlowInfo (documentId) ;
 
@@ -136,12 +136,12 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		
 		switch ( stage   ) {
 		case Approval:
-			_mailingService.sendInfoMessageTo(EMailType.ToAccepting , documentId, infoMessage);			
+			_mailingService.sendInfoMessageTo(initiatorId, EMailType.ToAccepting , documentId, infoMessage);			
 			break;
 		case  InitSigne:
 			break;
 		case Signe:
-			_mailingService.sendInfoMessageTo(EMailType.ToSignatory, documentId, infoMessage);			
+			_mailingService.sendInfoMessageTo(initiatorId, EMailType.ToSignatory, documentId, infoMessage);			
 			break;
 		default:
 			break;
@@ -173,10 +173,10 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 			
 		if ( flowInfo != null && flowInfo.size()>0) {
 			EFlowStage stage = EFlowStage.fromInt(Integer.parseInt(flowInfo.get("ID_FLOW_STAGE")));
-			_mailingService.sendCancelMessageToAuthor(stage, documentId,  infoMessage);				
+			_mailingService.sendCancelMessageToAuthor(initiatorId, stage, documentId,  infoMessage);				
 		}
 		else {
-			_mailingService.sendInfoMessageTo(EMailType.ToAuthorCancelPublish, documentId, infoMessage);
+			_mailingService.sendInfoMessageTo(initiatorId, EMailType.ToAuthorCancelPublish, documentId, infoMessage);
 		}
 			
 	}
@@ -193,10 +193,10 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	        put("ID_STATUS",String.valueOf(toStatus));
 	    }});	
 			 if (EDocStatus.fromInt(toStatus) == EDocStatus.Revoked) {
-				 _mailingService.sendInfoMessageTo(EMailType.RevokeDoc,documentId,infoMessage);
+				 _mailingService.sendInfoMessageTo(initiatorId, EMailType.RevokeDoc,documentId,infoMessage);
 			 }
 			 else {
-				 _mailingService.sendInfoMessageTo(EMailType.ChangeDocStatus,documentId,infoMessage);
+				 _mailingService.sendInfoMessageTo(initiatorId, EMailType.ChangeDocStatus,documentId,infoMessage);
 			 }
 	}	
 	
@@ -246,7 +246,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		  Boolean result =mapApproveResult.get("IS_ACCEPT").equals("1")?true:false;
 		  infoMessage = mapApproveResult.get("FULL_NAME") + "\n"+mapApproveResult.get("NOTE");
 				
-		_mailingService.sendInfoMessageTo(result?EMailType.ApproveCurentUser:EMailType.NotApproveCurentUser, documentId, infoMessage);
+		_mailingService.sendInfoMessageTo(initiatorId, result?EMailType.ApproveCurentUser:EMailType.NotApproveCurentUser, documentId, infoMessage);
 		
 		EDocStatus status  =  EDocStatus.fromInt(Integer.parseInt( mapDoc.get("ID_STATUS")));
 		switch (status) {
@@ -254,7 +254,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 				//_mailingService.sendInfoMessageTo(EMailType.DocumentApproved, documentId, infoMessage);
 				break;
 			case Approval:
-				_mailingService.sendInfoMessageTo(EMailType.DocumentApproved, documentId, Captions.DocAllApproved);
+				_mailingService.sendInfoMessageTo(initiatorId, EMailType.DocumentApproved, documentId, Captions.DocAllApproved);
 				break;
 				
 			default:
@@ -271,11 +271,23 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	@Override
 	public boolean publishDoc(int documentId, String infoMessage, int initiatorId) {
 		callActionFlowProcess(ACTION_SEND_DOC_TO_NEXT_STAGE, documentId, infoMessage, initiatorId, null);
-		_mailingService.sendInfoMessageTo(EMailType.DocumentPublished , documentId, null);
+		_mailingService.sendInfoMessageTo(initiatorId, EMailType.DocumentPublished , documentId, null);
 		
-		_mailingService.sendInfoMessageTo(EMailType.ToExecutor, documentId, "К исполнению");
+		_mailingService.sendInfoMessageTo(initiatorId, EMailType.ToExecutor, documentId, "К исполнению");
 		
 		return true;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see document.ui.client.communication.rpc.flow.DocumentFlowService#sendMsg2NewApprovals(long, java.lang.String, int)
+	 */
+	@Override
+	public void sendMsg2NewApprovals(long documentId, String infoMessage,
+			int initiatorId) {
+		
+		_mailingService.sendInfoMessageTo(initiatorId,EMailType.ReqApprovalFromUser, documentId, infoMessage);		
 	}
 
 }

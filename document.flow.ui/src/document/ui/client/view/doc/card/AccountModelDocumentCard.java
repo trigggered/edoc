@@ -43,6 +43,10 @@ public class AccountModelDocumentCard extends InsideDocumentCard {
 		super.createFieldSections();		
 	}
 	
+	protected int getViewnnForCancelChangeDoc() {
+		return 4;
+	}
+	
 	@Override
 	public void prepareSavedData() {
 		super.prepareSavedData();
