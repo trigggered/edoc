@@ -192,26 +192,26 @@ public class CheckDocumentUserRight {
 		_logger.info("changeVisibleControls:  isBa=" +isBa+ " isUsetBAorAuthor="+isUserBAorAuthor+ " status = "+docCard.getDocumentStatus() );
 			switch (docCard.getDocumentStatus() ) {
 			case Draft :
-				docCard.visibleButtons(new Boolean[]{true,true,isAuthor,false,false, false,false,false});						
+				docCard.visibleButtons(new Boolean[]{true,true,isAuthor,false,false, false,false,false,false});						
 				break;
 			case AtTheApproval:
 				
 					CheckDocumentUserRight.isCurrentUserHasApproveRight(docCard, new BooleanCallback() {						
 						@Override
 						public void execute(Boolean value) {
-							docCard.visibleButtons(new Boolean[]{isUserBAorAuthor || value,true,false,false,false, false, true,true});
+							docCard.visibleButtons(new Boolean[]{isUserBAorAuthor || value,true,false,false,false, false, true,true,true});
 						}
 					});									
 				break;
 			case Approval:
 				boolean isCommandDoc = docCard.getCorrespondentType() == ECorrespondentType.INSIDE_PRIKAZ;
-				docCard.visibleButtons(new Boolean[]{isUserBAorAuthor,true,false,isUserBAorAuthor && isCommandDoc,false, false, false, false});
+				docCard.visibleButtons(new Boolean[]{isUserBAorAuthor,true,false,isUserBAorAuthor && isCommandDoc,false, false, false, false,false});
 				break;
 			case AtTheSigning:				
 				CheckDocumentUserRight.isCanSignatoryDoc(docCard, new BooleanCallback() {					
 					@Override
 					public void execute(Boolean value) {						
-						docCard.visibleButtons(new Boolean[]{value||isBa,true,false,false,value,value, false,false});
+						docCard.visibleButtons(new Boolean[]{value||isBa,true,false,false,value,value, false,false,false});
 					}
 				});												
 				return;				
@@ -219,10 +219,10 @@ public class CheckDocumentUserRight {
 			case Valid:				
 			case Revoked:
 			case Cancelled:
-				docCard.visibleButtons(new Boolean[]{isBa,true,false,false,false,false, false,false});
+				docCard.visibleButtons(new Boolean[]{isBa,true,false,false,false,false, false,false,false});
 				break;							
 			default:
-				docCard.visibleButtons(new Boolean[]{true,true,true,false,false, false,false,false});
+				docCard.visibleButtons(new Boolean[]{true,true,true,false,false, false,false,false,false});
 				break;
 		}		
 	}

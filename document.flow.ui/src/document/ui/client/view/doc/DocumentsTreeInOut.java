@@ -147,7 +147,7 @@ public class DocumentsTreeInOut extends MasterTreeDetailGridView{
 	}
 	
 	protected int getDetailedEntityId() {
-		return MdbEntityConst.DocsList;
+		return MdbEntityConst.DocsListForTree;
 	}
 	
 	private void initialize (EViewIdent viewIdent) {
@@ -232,18 +232,18 @@ public class DocumentsTreeInOut extends MasterTreeDetailGridView{
 			String statusId = masterSelectedData.getAttribute("ID_STATUS");
 			String corrCode = masterSelectedData.getAttribute("CORR_CODE");
 				
-		if (corrCode!=null && !corrCode.isEmpty() && statusId != null && !statusId.isEmpty()) {
-			HashMap<String,String> params = new HashMap<String,String>();
-			params.put("dateFrom",DateTimeHelper.format(_dateB));
-			params.put("dateTo",DateTimeHelper.format(_dateE) );
-			params.put("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()));
-			
-			params.put("CORR_TYPE" , corrCode);
-			params.put("ID_STATUS", statusId);
-			
-			_logger.info("CORR_TYPE="+corrCode+"\n dateFrom="+_dateB+"\n dateTo="+_dateE+"\n ID_STATUS="+statusId);
-			return params;	
-			}
+				if (corrCode!=null && !corrCode.isEmpty() && statusId != null && !statusId.isEmpty()) {
+					HashMap<String,String> params = new HashMap<String,String>();
+					params.put("dateFrom",DateTimeHelper.format(_dateB));
+					params.put("dateTo",DateTimeHelper.format(_dateE) );
+					params.put("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()));
+					
+					params.put("CORR_TYPE" , corrCode);
+					params.put("ID_STATUS", statusId);
+					
+					_logger.info("CORR_TYPE="+corrCode+"\n dateFrom="+_dateB+"\n dateTo="+_dateE+"\n ID_STATUS="+statusId);
+					return params;	
+				}
 		}
 		return null; 
 	}

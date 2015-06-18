@@ -67,15 +67,15 @@ public class MailingServiceImpl  extends RemoteServiceServlet implements Mailing
 	}
 	
 
-	public  void sendInfoMessageTo(EMailType mailType, long documentId, String infoMessage) {	
+	public  void sendInfoMessageTo(int initiatorId, EMailType mailType, long documentId, String infoMessage) {	
 		
-		Message msg = _floMsgBuilder.createMessage(mailType, documentId, infoMessage);
+		Message msg = _floMsgBuilder.createMessage(initiatorId, mailType, documentId, infoMessage);
 		sendMessage(msg);				
 	}
 	
 
 	
-	public void sendCancelMessageToAuthor(EFlowStage stage, long documentId, String description) {
+	public void sendCancelMessageToAuthor(int initiatorId, EFlowStage stage, long documentId, String description) {
 				
 		EMailType etype =  EMailType.ToAuthorCancel;
 		
@@ -91,7 +91,7 @@ public class MailingServiceImpl  extends RemoteServiceServlet implements Mailing
 			break;		
 		}
 		
-		sendInfoMessageTo( etype, documentId, description);						
+		sendInfoMessageTo(initiatorId,  etype, documentId, description);						
 		
 	}	
 	

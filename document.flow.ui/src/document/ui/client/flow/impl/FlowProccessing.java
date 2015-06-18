@@ -407,5 +407,36 @@ public class FlowProccessing implements IFlowProcessing {
 				});
 		
 	}
+
+
+	/**
+	 * @param documentId
+	 */
+	public static void sendMsg2NewApprovals(final long documentId) {
+		InputTextDialog textDlg = new InputTextDialog("Запрос на согласовние по документу " +documentId, 
+				new IDoubleValuesCallbackEvent<Boolean, String>() {			
+			@Override
+			public void execute(Boolean isOkClick, String resultTextInfo) {
+				if (isOkClick ) {					
+					
+					_asyncFlowService.sendMsg2NewApprovals(documentId, resultTextInfo,  
+							AppController.getInstance().getCurrentUser().getId(), new AsyncCallback<Void>() {
+								
+								@Override
+								public void onSuccess(Void result) {	
+									_logger.info("Send nsg success");
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									_logger.severe(caught.getMessage());	
+								}
+							});
+				} 			
+			}
+		});					
+		textDlg.view();	
+		
+	}
 	
 }

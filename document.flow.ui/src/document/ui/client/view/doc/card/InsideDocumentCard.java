@@ -30,6 +30,7 @@ public  class InsideDocumentCard extends DocumentCard{
 	
 	Button _btnApprove;	
 	Button _btnNotApprove;	
+	Button _btnReqApproval;
 	
 	public InsideDocumentCard() {
 	}
@@ -54,11 +55,13 @@ public  class InsideDocumentCard extends DocumentCard{
 	
 		DataFieldsSection  docCancelChangeFields = new DataFieldsSection(this);		
 		docCancelChangeFields.setMainEntityId(MdbEntityConst.CANCEL_CHANGE_DOC);
-		docCancelChangeFields.setViewNn(3);
-		_layAddDocFields.addMember(docCancelChangeFields);
-		
+		docCancelChangeFields.setViewNn(getViewnnForCancelChangeDoc());
+		_layAddDocFields.addMember(docCancelChangeFields);		
 		_hmDataSections.put(EDocumentDataSection.CancelChangeFields,docCancelChangeFields);		
-		
+	}
+	
+	protected int getViewnnForCancelChangeDoc() {
+		return 3;
 	}
 
 	
@@ -97,10 +100,28 @@ public  class InsideDocumentCard extends DocumentCard{
 				//docData.callEditEvent();
 				approve(false);
 			}			
-		}); 		  
+		}); 	
 		  
-		 btnlayout.addMembers(_btnApprove, _btnNotApprove);
+		  _btnReqApproval  = new Button();
+		  _btnReqApproval.setVisible(false);
+		  _btnReqApproval.setTitle(Captions.REQ_APPROVAL);
+		  _btnReqApproval.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {		
+			@Override
+			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {	
+				requestApproval();
+			}						
+		}); 	
+		  
+		 btnlayout.addMembers(_btnApprove, _btnNotApprove, _btnReqApproval);
 		return btnlayout ;
+	}
+	
+	
+	private void requestApproval() {
+		
+		IDataView approvalsSection =  getDataSections().get(EDocumentDataSection.Approval);
+		approvalsSection.callInsertEvent();
+		
 	}
 	
 	
@@ -129,6 +150,7 @@ public  class InsideDocumentCard extends DocumentCard{
 		if (visibles.length >6 ) {
 		_btnApprove.setVisible(visibles[6]);
 		_btnNotApprove.setVisible(visibles[7]);
+		_btnReqApproval.setVisible(visibles[8]);
 		}
 	}
 

@@ -68,7 +68,7 @@ public class MdbEntityConst {
 	/*Doc list*/
 	public final static int ENTERING_IN_FORCE=5053;
 	public final static int OUT_OF_DOC =5054;
-	public final static int DocsList = 5052;
+	public final static int DocsListForTree = 5052;
 	public final static int tree_corrtype_status = 5057;//Дерево в разбивке по "Типу документа"
 	public final static int tree_status_corrtype = 5058;//Дерево в разбивке по "Статусу документа"
 	
@@ -137,6 +137,6 @@ public class MdbEntityConst {
 	public static final int fin_status_opert = 5513;
 
 	public static final int DicFinCodes = 5548;
-	
+	public static final int EmpById =5568;
 }
 

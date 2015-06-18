@@ -1,4 +1,7 @@
 
+alter table DF.DOC_EMP_ACCEPTING
+  add (REQUESTER_OFFICER_NUM NUMBER);
+  
 alter table DF.DOC_FLOW
  add (DATE_S DATE  );
  

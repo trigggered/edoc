@@ -42,7 +42,11 @@ public class VelocityBuilder implements ITemplateBuiled{
         _ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         _ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         _ve.setProperty("input.encoding", CharEncoding.UTF_8);
-        _ve.setProperty("output.encoding", CharEncoding.UTF_8);                
+        _ve.setProperty("output.encoding", CharEncoding.UTF_8);               
+        
+        _ve.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
+        _ve.setProperty("runtime.log.logsystem.log4j.category", "velocity");
+        _ve.setProperty("runtime.log.logsystem.log4j.logger", "velocity");
         
         _ve.init();        	
 	}

@@ -19,8 +19,9 @@ public enum EMailType{
 	DocumentSigned,
 	DocumentPublished, 
 	
-	ApproveCurentUser,
+	ApproveCurentUser,	
 	NotApproveCurentUser,
+	ReqApprovalFromUser,
 	ChangeDocStatus,
 	RevokeDoc
 	
