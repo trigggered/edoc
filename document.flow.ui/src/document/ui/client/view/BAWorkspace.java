@@ -254,10 +254,10 @@ public class BAWorkspace extends DataView {
 		
 		createSectionForProcedure();		
 		
-		Tab tabDocInForce = new Tab();
-		tabDocInForce.setTitle(Captions.DOC_PUBLISHED);
-		tabDocInForce.setPane(createDataSection(EDataSection.DocsPublished, MdbEntityConst.DOC_PUBLISHED));
-		_mainTabSet.addTab(tabDocInForce);			
+		Tab tabDocPublished = new Tab();
+		tabDocPublished.setTitle(Captions.DOC_PUBLISHED);
+		tabDocPublished.setPane(createDataSection(EDataSection.DocsPublished, MdbEntityConst.DOC_PUBLISHED));
+		_mainTabSet.addTab(tabDocPublished);			
 		
 		
 		getViewPanel().addMember(_mainTabSet);
@@ -318,18 +318,18 @@ public class BAWorkspace extends DataView {
 		_logger.info("DateB:"+DateTimeHelper.format(_dateB));
 		_logger.info("DateE:"+DateTimeHelper.format(_dateE));
 		
+		getParams().add("DTA_B",DateTimeHelper.format(_dateB));
+		getParams().add("DTA_E",DateTimeHelper.format(_dateE) );
+		getParams().add("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()));
+		getParams().add("CORR_ROOT_CODE", ECorrespondentType.getRootCodeCorrespondentType());
+		
+		
 		for ( IDataView dataView : _hmDataSection.values()) {
-			
-			dataView.getParams().add("DTA_B",DateTimeHelper.format(_dateB));
-			dataView.getParams().add("DTA_E",DateTimeHelper.format(_dateE) );
-			dataView.getParams().add("CURRENT_USER", String.valueOf(AppController.getInstance().getCurrentUser().getId()));
-			getParams().add("CORR_ROOT_CODE", ECorrespondentType.getRootCodeCorrespondentType());
-		}
-			
+			dataView.getParams().putAll(getParams());			
+		}			
 		
 		IDataView [] arr = _hmDataSection.values().toArray(new IDataView[_hmDataSection.values().size()]);
-		prepareRequestData(arr);		
-
+		prepareRequestData(arr);
 	}
 
 	@Override

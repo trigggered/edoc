@@ -5,8 +5,6 @@ package document.ui.client.view;
 
 import java.util.logging.Logger;
 
-import mdb.core.ui.client.view.data.IDataView;
-import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.resources.locales.Captions;
 
 /**
@@ -17,16 +15,7 @@ import document.ui.client.resources.locales.Captions;
 public class BAFinWorkspace extends BAWorkspace {
 	private static final Logger _logger = Logger.getLogger(BAFinWorkspace.class
 			.getName());
-	
-	@Override
-	public void prepareRequestData() {				
 
-		for ( IDataView dataView : _hmDataSection.values()) {			
-			dataView.getParams().add("corr_type",ECorrespondentType.ACCOUNT_MODEL.toString());			
-		}
-		
-		super.prepareRequestData();
-	}
 	
 	@Override
 	protected void createSectionForProcedure() {
