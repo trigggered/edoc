@@ -1,3 +1,26 @@
+SELECT * FROM 
+(
+select id_doc, officer_num from 
+ (
+ select  EA.*, 
+ --LAG(A.ORDER_NO, 1, 0) OVER (ORDER BY ORDER_NO) AS PREV_ORDER_NO,
+ LAG(EA.IS_ACCEPT,1,1) OVER (ORDER BY EA.ORDER_NO) AS PREV_ACCEPT_RESULT
+ 
+ from DF.DOC_EMP_ACCEPTING EA
+ where  EA.ORDER_NO IS NOT NULL
+  AND EA.ID_DOC = 5077
+ )
+ where prev_accept_result = 1
+ 
+ union all
+ 
+ select EA.id_doc, EA.officer_num 
+ from DF.DOC_EMP_ACCEPTING EA
+ where  EA.ORDER_NO IS NULL
+  AND EA.Id_doc = 5077
+) ;
+
+
 /*/*Dorg.apache.coyote.http11.Http11Protocol.MAX_HEADER_SIZE=7340032" */*/
 declare
  l_appId number;

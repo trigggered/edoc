@@ -136,6 +136,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		
 		switch ( stage   ) {
 		case Approval:
+			
 			_mailingService.sendInfoMessageTo(initiatorId, EMailType.ToAccepting , documentId, infoMessage);			
 			break;
 		case  InitSigne:

@@ -133,8 +133,7 @@ public class DataGridSection extends GridView implements IRemoteDataSave{
 						newRecord.setAttribute("FULL_NAME", rec.getAttribute("FULL_NAME"));
 						newRecord.setAttribute("REQUESTER_OFFICER_NUM", AppController.getInstance().getCurrentUser().getId());
 						 						
-						int orderNo = _grid.getRecordList().toArray().length;
-							
+						//int orderNo = _grid.getRecordList().toArray().length;							
 						//newRecord.setAttribute("ORDER_NO", orderNo++ );
 						_grid.addData(newRecord);
 						_docCard.setAddRequester(true);						
@@ -259,14 +258,12 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
     	_logger.info("################# End prepareRequestData  #####################");
 	}
 
-	public void visibleButtons(Boolean[] visibles) {
-		
-	}
-	
+
+/*	
 	@Override
 	public void createMenu() {				 	
 	}		
-
+*/
 	/* (non-Javadoc)
 	 * @see mdb.core.ui.client.communication.IRemoteDataSave#isValidate()
 	 */
@@ -301,10 +298,7 @@ private  IDataEditHandler _showInsertGrRecipientsViewHandler = new IDataEditHand
 	public void save() {
 	}
 	
-	@Override
-	protected void bindMenuDataNavigator() {
-		super.bindMenuDataNavigator();		
-	}
+	
 	
 	public DocumentCard getDocumentCard() {
 		return _docCard;
