@@ -372,7 +372,7 @@ create or replace view df.v_tree_corrtype_status as
     ,T.NAME  CORR_TYPE_FULL
     ,T.CODE CORR_TYPE
     ,DC.ID_STATUS
-    --,DC.STATUS
+
     ,FS.NAME_STAGE
     ,F.INITIATOR 
     --,E.FULL_NAME INITIATOR_NAME
@@ -385,14 +385,15 @@ create or replace view df.v_tree_corrtype_status as
     ,F.DATE_OUT
     ,DECODE(F.COMPLETED, 0, ' В процессе', 1, 'Завершен', 2, 'Завершен не удачно', 3, 'Отменен БА') COMPLETED,
      F.COMPLETED  ID_COMPLETED,
-    F.INFO_MSG
+    F.INFO_MSG,
+    T.ROOT_CODE CORR_ROOT_CODE
   
 FROM  DF.DOC_FLOW F,
             DF.DOC_FLOW_STAGE FS,
             DF.V_ENT_EMPLOYEE E,
             DF.DOC_CARD DC,
-            DF.DOC_DIC_CORR_TYPE T
-            
+            --DF.DOC_DIC_CORR_TYPE T
+            DF.V_CORRESPONDENCE_TYPE_TREE T
 WHERE FS.ID_FLOW_STAGE = F.ID_FLOW_STAGE
       AND DC.ID_CORR = T.ID_CORR
 
