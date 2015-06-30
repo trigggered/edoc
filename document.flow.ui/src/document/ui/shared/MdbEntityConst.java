@@ -14,8 +14,9 @@ public class MdbEntityConst {
 	public final static int MAIN_MENU_ID = 5291;
 	
 	public final static int ENTITY_FLDS_DESCR =1275;
+	public final static int ACCEPTING_EMP_LIST 	= 5094;
 
-	public final static int ACCEPTING_EMP 	= 5094;
+	public final static int ORDERED_ACCEPTING_EMP_LIST 	= 5588;
 	
 	public final static int RECIPIENTS_EXECUTERS_EMP 	= 5039;
 	public final static int RECIPIENTS_EMP 	= 5453;

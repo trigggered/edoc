@@ -32,7 +32,7 @@ public enum EDocStatus {
 	
 	Draft(4), 
 	AtTheApproval(5), 
-	Approval(6), 
+	Approved(6), 
 	AtTheSigning(7), 
 	Signed(8), 
 	Valid(9),
@@ -60,7 +60,7 @@ public enum EDocStatus {
 			case 3: return Archive;
 			case 4: return Draft;			
 			case 5: return AtTheApproval;
-			case 6: return Approval;
+			case 6: return Approved;
 			case 7: return AtTheSigning;
 			case 8: return Signed;
 			case 9: return Valid;

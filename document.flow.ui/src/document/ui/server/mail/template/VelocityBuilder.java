@@ -26,9 +26,7 @@ import document.ui.server.mail.EMailType;
 public class VelocityBuilder implements ITemplateBuiled{
 	private static final Logger _logger = Logger.getLogger(VelocityBuilder.class
 			.getName());
-
-	
-	
+		
 	VelocityEngine _ve;
 
 	String TEMPLATE_PATH = "document/ui/server/mail/template/";

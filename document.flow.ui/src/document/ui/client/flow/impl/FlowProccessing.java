@@ -56,8 +56,8 @@ public class FlowProccessing implements IFlowProcessing {
 					case Draft :
 						return EDocStatus.AtTheApproval;
 					case AtTheApproval:
-						return EDocStatus.Approval;
-					case Approval: 
+						return EDocStatus.Approved;
+					case Approved: 
 						return EDocStatus.AtTheSigning;
 					case AtTheSigning: 
 						return EDocStatus.Signed;
@@ -73,8 +73,8 @@ public class FlowProccessing implements IFlowProcessing {
 				case Draft :
 					return EDocStatus.AtTheApproval;
 				case AtTheApproval:
-					return EDocStatus.Approval;
-				case Approval: 
+					return EDocStatus.Approved;
+				case Approved: 
 					return EDocStatus.Valid;							
 				default:
 					return EDocStatus.Unknown;

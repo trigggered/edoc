@@ -6,6 +6,7 @@ package document.ui.server.mail;
 
 public enum EMailType{
 	ToAccepting,
+	ToNextAccepting,
 	ToSignatory,
 	ToRecipients,
 	ToExecutor,

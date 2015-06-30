@@ -260,14 +260,14 @@ public class CopyOfMailingServiceImp  {
 		
 		switch (emailType) {
 			case ToAccepting:
-				entittId = MdbEntityConst.ACCEPTING_EMP;							
+				entittId = MdbEntityConst.ACCEPTING_EMP_LIST;							
 				emailFldName ="E_MAILE";
 				isSendInfoFldName ="IS_ACCEPT";
 				comareValue="0";
 				break;
 				
 			case ToAcceptingNewVersion:
-				entittId = MdbEntityConst.ACCEPTING_EMP;						
+				entittId = MdbEntityConst.ACCEPTING_EMP_LIST;						
 				emailFldName ="E_MAILE";
 				isSendInfoFldName ="GET_INF_NEW_VER";
 				comareValue="1";

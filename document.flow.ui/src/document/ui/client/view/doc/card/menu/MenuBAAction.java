@@ -85,7 +85,7 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 					@Override
 					public void execute(Boolean value) {
 						if (value) {
-							FlowProccessing.forcedDocumentToStatus(_card.getDocumentId(), EDocStatus.Approval, refreshCallBack);
+							FlowProccessing.forcedDocumentToStatus(_card.getDocumentId(), EDocStatus.Approved, refreshCallBack);
 						}
 						
 					}
@@ -120,7 +120,7 @@ public class MenuBAAction extends mdb.core.ui.client.view.components.menu.Menu{
 			@Override
 			public void execute(IMenuItem sender) {												
 				
-				if (_card.getDocumentStatus() == EDocStatus.Approval) {
+				if (_card.getDocumentStatus() == EDocStatus.Approved) {
 					IDataView view =  _card.getDataSections().get(EDocumentDataSection.Approval);
 					_card.getMainTabSet().selectTab(view.getViewContainerID());
 					//Tab  tab = _mainTabSet.getTab(getDataSections().get(view.getViewContainerID());
