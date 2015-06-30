@@ -221,6 +221,7 @@ public class FlowMsgBuilder {
 		Request req = null;		 
 		Params params = new Params();
 		params.add("ID_DOC", String.valueOf(documentId));
+		
 		int entittId = 0;
 		
 		String emailFldName = null;
@@ -229,14 +230,23 @@ public class FlowMsgBuilder {
 		
 		switch (emailType) {
 			case ToAccepting:
-				entittId = MdbEntityConst.ACCEPTING_EMP;							
+				//entittId = MdbEntityConst.ACCEPTING_EMP;							
+				entittId = MdbEntityConst.ORDERED_ACCEPTING_EMP_LIST;
 				emailFldName ="E_MAILE";
 				isSendInfoFldName ="IS_ACCEPT";
 				compareValue="0";
 				break;
+			
+			case ToNextAccepting:							
+				entittId = MdbEntityConst.ORDERED_ACCEPTING_EMP_LIST;
+				emailFldName ="E_MAILE";				
+				isSendInfoFldName ="IS_ACCEPT";
+				compareValue="0";				
+				params.add("PREV_ACCEPT_EMP", docCard.get("initiatorId"));				
+				break;			
 				
 			case ReqApprovalFromUser:
-				entittId = MdbEntityConst.ACCEPTING_EMP;							
+				entittId = MdbEntityConst.ACCEPTING_EMP_LIST;							
 				emailFldName ="E_MAILE";
 				isSendInfoFldName ="REQUESTER_OFFICER_NUM";				
 				compareValue=docCard.get("initiatorId");
@@ -244,7 +254,7 @@ public class FlowMsgBuilder {
 				break;
 				
 			case ToAcceptingNewVersion:
-				entittId = MdbEntityConst.ACCEPTING_EMP;						
+				entittId = MdbEntityConst.ACCEPTING_EMP_LIST;						
 				emailFldName ="E_MAILE";
 				isSendInfoFldName ="GET_INF_NEW_VER";
 				compareValue="1";

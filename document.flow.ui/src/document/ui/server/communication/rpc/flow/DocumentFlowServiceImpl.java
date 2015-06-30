@@ -136,6 +136,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 		
 		switch ( stage   ) {
 		case Approval:
+			
 			_mailingService.sendInfoMessageTo(initiatorId, EMailType.ToAccepting , documentId, infoMessage);			
 			break;
 		case  InitSigne:
@@ -235,6 +236,7 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 	 */
 	@Override
 	public void sendApproveResult(long documentId, String infoMessage,  int initiatorId) {
+		
 		Map<String, String> mapDoc = DocDataHelper.getDocCard(documentId);
 		
 		Map<String, String> mapApproveResult = DocDataHelper.getDocAproveCurrentUser(documentId, initiatorId);
@@ -243,17 +245,26 @@ public class DocumentFlowServiceImpl  extends RemoteServiceServlet implements Do
 			return;
 		}
 		
-		  Boolean result =mapApproveResult.get("IS_ACCEPT").equals("1")?true:false;
+		  Boolean approveResult =mapApproveResult.get("IS_ACCEPT").equals("1")?true:false;
 		  infoMessage = mapApproveResult.get("FULL_NAME") + "\n"+mapApproveResult.get("NOTE");
 				
-		_mailingService.sendInfoMessageTo(initiatorId, result?EMailType.ApproveCurentUser:EMailType.NotApproveCurentUser, documentId, infoMessage);
+		
+		
+		if (approveResult) {
+			_mailingService.sendInfoMessageTo(initiatorId, EMailType.ApproveCurentUser, documentId, infoMessage);
+			
+			_mailingService.sendInfoMessageTo(initiatorId, EMailType.ToNextAccepting, documentId, infoMessage);
+			
+		}else {
+			_mailingService.sendInfoMessageTo(initiatorId, EMailType.NotApproveCurentUser, documentId, infoMessage);
+		}
 		
 		EDocStatus status  =  EDocStatus.fromInt(Integer.parseInt( mapDoc.get("ID_STATUS")));
 		switch (status) {
 			case Draft:
 				//_mailingService.sendInfoMessageTo(EMailType.DocumentApproved, documentId, infoMessage);
 				break;
-			case Approval:
+			case Approved:
 				_mailingService.sendInfoMessageTo(initiatorId, EMailType.DocumentApproved, documentId, Captions.DocAllApproved);
 				break;
 				

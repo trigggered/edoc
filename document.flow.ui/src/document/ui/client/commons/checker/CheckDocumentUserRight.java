@@ -74,7 +74,7 @@ public class CheckDocumentUserRight {
 			callBack.execute(status != EDocStatus.Cancelled || status != EDocStatus.Revoked); 
 		}
 		else  if (isAuthor) {
-			callBack.execute(status == EDocStatus.Draft || status == EDocStatus.AtTheApproval || status == EDocStatus.Approval);
+			callBack.execute(status == EDocStatus.Draft || status == EDocStatus.AtTheApproval || status == EDocStatus.Approved);
 					
 		}
 		else {
@@ -128,7 +128,7 @@ public class CheckDocumentUserRight {
 					toReturn = 	(card.getViewState() == EViewState.New  ||  
 								 card.getDocumentStatus() == EDocStatus.Draft  ||
 								 card.getDocumentStatus() == EDocStatus.AtTheApproval ||
-								 card.getDocumentStatus() == EDocStatus.Approval );					    							 
+								 card.getDocumentStatus() == EDocStatus.Approved );					    							 
 					
 					
 				}   
@@ -203,7 +203,7 @@ public class CheckDocumentUserRight {
 						}
 					});									
 				break;
-			case Approval:
+			case Approved:
 				boolean isCommandDoc = docCard.getCorrespondentType() == ECorrespondentType.INSIDE_PRIKAZ;
 				docCard.visibleButtons(new Boolean[]{isUserBAorAuthor,true,false,isUserBAorAuthor && isCommandDoc,false, false, false, false,false});
 				break;

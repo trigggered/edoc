@@ -229,7 +229,7 @@ public class ViewReport extends GridView {
 			grid = nestedGrids.addGrid(MdbEntityConst.RECIPIENTS_EMP,null);
 			grid.setCaption(Captions.DOC_EMP_RECIPIENTS);			
 			
-			grid = nestedGrids.addGrid(MdbEntityConst.ACCEPTING_EMP,null);
+			grid = nestedGrids.addGrid(MdbEntityConst.ACCEPTING_EMP_LIST,null);
 			grid.setCaption(Captions.DOC_EMP_APPROVALS);
 			
 			/*

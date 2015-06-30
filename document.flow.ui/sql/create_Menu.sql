@@ -10,16 +10,22 @@ declare
 l_CREATE_DOC_menuId number;
 begin
 
+l_appId :=1;
  --select id_app into l_appId from mdb.app_module
  
-delete mdb.app_menu;
+DELETE DF.SEC_ROLE_ACTION;
+ where id in (select id_menu from mdb.app_menu where id_app in (1,2));
+ 
+delete mdb.app_menu
+ where id_app in (1,2);
 
-delete mdb.app_module;
+/*delete mdb.app_module;
 
-l_appId :=1;
+
 insert into mdb.app_module (id_app, name)
  values (l_appId, 'Document management system');
  
+ */
  /*Hot Menu*/
 insert into mdb.app_menu (id_menu_parent, id_app, name, action, img_path)
   values (null, l_appId, 'Home', 'Home', 'silk/cube_green.png') returning id_menu into l_menuId;

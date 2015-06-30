@@ -128,18 +128,18 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	
 
 	protected DataGridSection createDataSection(EDocumentDataSection value) {		
-		DataGridSection docData = new DataGridSection(value, this);
-		_hmDataSections.put(value, docData);
+		DataGridSection dataSection = new DataGridSection(value, this);
+		_hmDataSections.put(value, dataSection);
 		Tab tab = new Tab();
-		tab.setTitle( docData.getCaption());
-		tab.setIcon( docData.getImgCaption());
+		tab.setTitle( dataSection.getCaption());
+		tab.setIcon( dataSection.getImgCaption());
 		
-		tab.setPane(docData);
+		tab.setPane(dataSection);
 		_mainTabSet.addTab(tab);
 		
-		docData.setViewContainerID(tab.getID());		
+		dataSection.setViewContainerID(tab.getID());		
 		
-		return docData;	
+		return dataSection;	
 	}
 	
 
@@ -380,8 +380,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 			public void execute(Boolean value) {
 				if (value) {
 					simpleSave(false);
-				}
-				
+				}		
 			}
 		});
 	}
