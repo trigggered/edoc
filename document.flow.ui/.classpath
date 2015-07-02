@@ -16,6 +16,115 @@
 	<classpathentry kind="con" path="org.jboss.ide.eclipse.as.classpath.core.ejb3.classpathContainer/JBoss 7.1 Runtime Server"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/JBoss 7.1 Runtime"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Velocity"/>
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/jsp/repackaged-appengine-jasper-6.0.29.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/jsp/repackaged-appengine-ant-1.7.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/jsp/repackaged-appengine-ant-launcher-1.7.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/jsp/repackaged-appengine-tomcat-juli-6.0.29.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/jsp/repackaged-appengine-jasper-el-6.0.29.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/appengine-local-runtime-shared.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/jsp-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/el-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/shared/servlet-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/appengine-tools-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/appengine-api-labs/v1/appengine-api-labs.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/appengine-endpoints/v1/appengine-endpoints.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/appengine-endpoints/v1/appengine-endpoints-deps.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/jsr107/v1/appengine-jsr107cache-1.9.22.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/jsr107/v1/jsr107cache-1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/user/appengine-api-1.0-sdk-1.9.22.jar" sourcepath="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/src/user/appengine-api-1.0-sdk-1.9.22-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/datanucleus/v1/jdo2-api-2.3-eb.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/datanucleus/v1/datanucleus-core-1.1.5.jar" sourcepath="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/src/orm/datanucleus-core-1.1.5-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/datanucleus/v1/datanucleus-jpa-1.1.5.jar" sourcepath="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/src/orm/datanucleus-jpa-1.1.5-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/datanucleus/v1/datanucleus-appengine-1.0.10.final.jar" sourcepath="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/src/orm/datanucleus-appengine-1.0.10.final-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/datanucleus/v1/geronimo-jpa_3.0_spec-1.1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/lib/opt/user/datanucleus/v1/geronimo-jta_1.1_spec-1.1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/u01/tools/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.22/appengine-java-sdk-1.9.22/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
