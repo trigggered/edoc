@@ -37,7 +37,7 @@ import com.smartgwt.client.widgets.tab.TabSet;
 import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.commons.EDocStatus;
 import document.ui.client.commons.EFlowStage;
-import document.ui.client.commons.checker.CheckGenerateDocCode;
+import document.ui.client.commons.checkers.CheckGenerateDocCode;
 import document.ui.client.flow.impl.FlowProccessing;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.doc.card.DocumentCard;

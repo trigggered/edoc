@@ -20,7 +20,7 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 
-import document.ui.client.commons.checker.CheckDocumentUserRight;
+import document.ui.client.commons.checkers.CheckDocumentUserRight;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.doc.card.section.DataGridSection;
 import document.ui.client.view.doc.card.section.EDocumentDataSection;

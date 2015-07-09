@@ -1,7 +1,7 @@
 /**
  * 
  */
-package document.ui.client.commons.checker;
+package document.ui.client.commons.checkers;
 
 import java.util.logging.Logger;
 
@@ -10,6 +10,8 @@ import com.smartgwt.client.util.BooleanCallback;
 
 import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.events.ICallbackEvent;
+import mdb.core.ui.client.data.checkers.SimpleChecker;
+
 import document.ui.client.commons.EDocStatus;
 import document.ui.client.view.doc.card.DocumentCard;
 import document.ui.shared.MdbEntityConst;
@@ -19,7 +21,7 @@ import document.ui.shared.MdbEntityConst;
  * Creation date: Nov 18, 2014
  *
  */
-public class CheckCanApproval extends Checker {
+public class CheckCanApproval extends SimpleChecker {
 	private static final Logger _logger = Logger
 			.getLogger(CheckCanApproval.class.getName());
 

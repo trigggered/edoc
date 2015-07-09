@@ -1,12 +1,13 @@
 /**
  * 
  */
-package document.ui.client.commons.checker;
+package document.ui.client.commons.checkers;
 
 import java.util.logging.Logger;
 
 import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.events.ICallbackEvent;
+import mdb.core.ui.client.data.checkers.SimpleChecker;
 
 import com.smartgwt.client.data.Record;
 
@@ -17,7 +18,7 @@ import document.ui.shared.MdbEntityConst;
  * Creation date: Oct 30, 2014
  *
  */
-public class CheckDocumentFlowStage extends Checker {
+public class CheckDocumentFlowStage extends SimpleChecker {
 	private static final Logger _logger = Logger
 			.getLogger(CheckDocumentFlowStage.class.getName());
 	

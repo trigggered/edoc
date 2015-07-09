@@ -1,12 +1,13 @@
 /**
  * 
  */
-package document.ui.client.commons.checker;
+package document.ui.client.commons.checkers;
 
 import java.util.logging.Logger;
 
 import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.events.ICallbackEvent;
+import mdb.core.ui.client.data.checkers.SimpleChecker;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
@@ -18,7 +19,7 @@ import document.ui.shared.MdbEntityConst;
  * Creation date: Oct 16, 2014
  *
  */
-public class CheckCanSignatoryDoc extends Checker {
+public class CheckCanSignatoryDoc extends SimpleChecker {
 	private static final Logger _logger = Logger
 			.getLogger(CheckCanSignatoryDoc.class.getName());
 	

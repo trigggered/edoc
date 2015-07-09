@@ -1,13 +1,14 @@
 /**
  * 
  */
-package document.ui.client.commons.checker;
+package document.ui.client.commons.checkers;
 
 import java.util.logging.Logger;
 
 import mdb.core.ui.client.app.AppController;
 import mdb.core.ui.client.events.ICallbackEvent;
 import mdb.core.ui.client.view.dialogs.message.Dialogs;
+import mdb.core.ui.client.data.checkers.SimpleChecker;
 
 import com.smartgwt.client.data.Record;
 
@@ -20,7 +21,7 @@ import document.ui.shared.MdbEntityConst;
  * Creation date: Jun 11, 2014
  *
  */
-public class CheckDocumentExists  extends Checker {
+public class CheckDocumentExists  extends SimpleChecker {
 
 	private static final Logger _logger = Logger
 			.getLogger(CheckDocumentExists.class.getName());

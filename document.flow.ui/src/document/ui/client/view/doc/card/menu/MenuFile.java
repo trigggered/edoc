@@ -12,7 +12,7 @@ import mdb.core.ui.client.view.components.menu.IMenu;
 import mdb.core.ui.client.view.components.menu.IMenuItem;
 import mdb.core.ui.client.view.dialogs.message.Dialogs;
 import document.ui.client.commons.EDocStatus;
-import document.ui.client.commons.checker.CheckDocumentUserRight;
+import document.ui.client.commons.checkers.CheckDocumentUserRight;
 import document.ui.client.flow.impl.FlowProccessing;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.view.doc.card.DocumentActions;

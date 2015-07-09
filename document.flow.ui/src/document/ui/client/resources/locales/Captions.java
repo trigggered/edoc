@@ -29,9 +29,9 @@ public class Captions extends mdb.core.ui.client.resources.locales.Captions {
 	public static final String CHECK_SIGN = "Проверить ЭЦП";	
 	
 	
-	public static final String ERROR_VALIDATION = "Ошибка валидации";
-	public static final String ERROR_REQUIRED = "Введены не все или не корректные данные. Проверьте!";
-	//public static final String ERROR_REQUIRED = "Не все необходимые данные заполнены";
+	
+	
+	
 
 	public static final String ADD_ATACH = "Добавить вложение";
 	

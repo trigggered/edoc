@@ -18,7 +18,7 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.grid.ListGrid;
 
 import document.ui.client.commons.EViewIdent;
-import document.ui.client.commons.checker.CheckDocumentUserRight;
+import document.ui.client.commons.checkers.CheckDocumentUserRight;
 import document.ui.client.resources.locales.Captions;
 import document.ui.shared.MdbEntityConst;
 

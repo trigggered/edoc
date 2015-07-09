@@ -1,22 +1,19 @@
 /**
  * 
  */
-package document.ui.client.commons.checker;
+package document.ui.client.commons.checkers;
 
 import java.util.logging.Logger;
-
 import mdb.core.ui.client.events.ICallbackEvent;
-
 import com.smartgwt.client.data.Record;
-
 import document.ui.shared.MdbEntityConst;
-
+import mdb.core.ui.client.data.checkers.SimpleChecker;
 /**
  * @author azhuk
  * Creation date: Oct 16, 2014
  *
  */
-public class CheckGenerateDocCode extends Checker {
+public class CheckGenerateDocCode extends SimpleChecker {
 	private static final Logger _logger = Logger
 			.getLogger(CheckGenerateDocCode.class.getName());
 	

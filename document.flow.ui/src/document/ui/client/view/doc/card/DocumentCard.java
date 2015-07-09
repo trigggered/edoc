@@ -39,8 +39,8 @@ import com.smartgwt.client.widgets.tab.TabSet;
 
 import document.ui.client.commons.ECorrespondentType;
 import document.ui.client.commons.EDocStatus;
-import document.ui.client.commons.checker.CheckDocumentExists;
-import document.ui.client.commons.checker.CheckDocumentUserRight;
+import document.ui.client.commons.checkers.CheckDocumentExists;
+import document.ui.client.commons.checkers.CheckDocumentUserRight;
 import document.ui.client.communication.files.MultiDocumentAttachUploadWidget;
 import document.ui.client.flow.impl.FlowProccessing;
 import document.ui.client.resources.locales.Captions;
@@ -61,8 +61,8 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	}
 	
 	public enum EViewState {
-	 New,
-	 Edit 
+		 New,
+		 Edit 
 	}
 		
 	

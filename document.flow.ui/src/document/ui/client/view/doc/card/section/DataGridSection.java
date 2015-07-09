@@ -24,8 +24,8 @@ import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 import document.ui.client.commons.ECorrespondentType;
-import document.ui.client.commons.checker.CheckCanApproval;
-import document.ui.client.commons.checker.CheckDocumentUserRight;
+import document.ui.client.commons.checkers.CheckCanApproval;
+import document.ui.client.commons.checkers.CheckDocumentUserRight;
 import document.ui.client.resources.locales.Captions;
 import document.ui.client.resources.locales.Images;
 import document.ui.client.view.dialogs.EmpSelectDlg;
