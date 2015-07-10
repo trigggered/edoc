@@ -23,10 +23,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VisibilityMode;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
+import mdb.core.ui.client.util.BooleanCallback;
 import com.smartgwt.client.widgets.Button;
-import com.smartgwt.client.widgets.Dialog;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -413,7 +411,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 		    String docId =recs[0].getAttribute("ID_DOC"); 	   	    		    	
 			setDocumentId(Long.parseLong(docId ));									
 			_logger.info("call bindDataComponents doc_id ="+getDocumentId());			
-			getOwnerWindow().setTitle(getCaption());										
+			getOwnerWindow().setCaption(getCaption());										
 		}		
 		
 		CheckDocumentUserRight.changeVisibleControls(this);
@@ -589,12 +587,8 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 			
 		if ( isHaseChanges()) {
 			
-			Dialog dialog = new Dialog();
-		     dialog.setShowModalMask(true);
-		     dialog.setButtons(Dialog.YES,Dialog.NO, Dialog.CANCEL);     
-		     
-		     
-			SC.ask(Captions.ALARM, Captions.Q_DOC_HAS_CHANGE_SAVE_BEFORE_CLOSE , new BooleanCallback() {
+		      
+		     Dialogs.AskDialog2(Captions.Q_DOC_HAS_CHANGE_SAVE_BEFORE_CLOSE , new BooleanCallback() {
 				
 				@Override
 				public void execute(Boolean value) {					
@@ -613,7 +607,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 						}		
 				}
 				
-			}, dialog);				
+			});				
 		}
 		else {
 			AppController.getInstance().getMainView().closeCurrentTab();			
@@ -645,12 +639,13 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	public void save() {
 		
 		if (!isValidate() ) {
-			SC.warn(Captions.ERROR_VALIDATION ,Captions.ERROR_REQUIRED );
+			Dialogs.ValidatonWarning();			
 			return; //false;
 		}		
 		if ( isHaseChanges() ) {			
 
-			SC.ask(Captions.Q_SAVE_CHANGES , new BooleanCallback() {				
+			
+			Dialogs.AskDialog(Captions.Q_SAVE_CHANGES , new BooleanCallback() {				
 				@Override
 				public void execute(Boolean value) {
 					if (value) {
@@ -667,7 +662,7 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 	private void simpleSave(boolean checkHaseChanges) {
 	
 		if (!isValidate() ) {
-			SC.warn(Captions.ERROR_VALIDATION , Captions.ERROR_REQUIRED);
+			Dialogs.ValidatonWarning();
 			return;
 		}
 		
@@ -706,7 +701,8 @@ public abstract class DocumentCard extends DataView implements IRemoteDataSave {
 			
 		switch (_afterSaveAction) {
 		case Refresh:
-				SC.say(Captions.DOC_SAVE_CORRECT, new BooleanCallback() {
+			
+			Dialogs.Message(Captions.DOC_SAVE_CORRECT, new BooleanCallback() {
 					
 					@Override
 					public void execute(Boolean value) {

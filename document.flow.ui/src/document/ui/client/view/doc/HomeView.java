@@ -4,9 +4,10 @@ import mdb.core.ui.client.events.ICallbackEvent;
 import mdb.core.ui.client.view.IMainView;
 import mdb.core.ui.client.view.components.menu.IMenuContainer;
 import mdb.core.ui.client.view.data.DataView;
+import mdb.core.ui.client.util.BooleanCallback;
+
 
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;

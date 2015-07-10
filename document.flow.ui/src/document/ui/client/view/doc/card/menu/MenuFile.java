@@ -4,7 +4,7 @@
 package document.ui.client.view.doc.card.menu;
 
 
-import com.smartgwt.client.util.BooleanCallback;
+import mdb.core.ui.client.util.BooleanCallback;
 
 import mdb.core.shared.utils.Clipboard;
 import mdb.core.ui.client.command.ICommand;

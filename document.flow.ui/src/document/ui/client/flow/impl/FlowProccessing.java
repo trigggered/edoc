@@ -12,11 +12,12 @@ import mdb.core.ui.client.view.data.IDataView;
 import mdb.core.ui.client.view.data.grid.GridView;
 import mdb.core.ui.client.view.dialogs.input.InputTextDialog;
 import mdb.core.ui.client.view.dialogs.message.Dialogs;
+import mdb.core.ui.client.util.BooleanCallback;
+
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
+
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 import document.ui.client.commons.ECorrespondentType;
@@ -193,7 +194,8 @@ public class FlowProccessing implements IFlowProcessing {
 				}); 					
 				textDlg.view();	
 		} else {
-			SC.ask(askMsg, new BooleanCallback() {
+			
+			Dialogs.AskDialog(askMsg, new BooleanCallback() {
 				
 				@Override
 				public void execute(Boolean value) {

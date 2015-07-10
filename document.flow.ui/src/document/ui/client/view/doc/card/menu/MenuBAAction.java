@@ -12,7 +12,7 @@ import mdb.core.ui.client.view.dialogs.message.Dialogs;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.BooleanCallback;
+import mdb.core.ui.client.util.BooleanCallback;
 
 import document.ui.client.commons.EDocStatus;
 import document.ui.client.flow.impl.FlowProccessing;
